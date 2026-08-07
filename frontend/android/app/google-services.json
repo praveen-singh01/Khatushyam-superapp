@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "191548396096",
+    "project_id": "khatu-shyam-7452d",
+    "storage_bucket": "khatu-shyam-7452d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191548396096:android:e64c8b9006ffd184be85a5",
+        "android_client_info": {
+          "package_name": "com.khatushyam.khatushyam_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "191548396096-lnpoiu6r0grakuua4j55an49rq05idee.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.khatushyam.khatushyam_app",
+            "certificate_hash": "4f08fb171c178bcc1f5bffdc4ef520456af3f407"
+          }
+        },
+        {
+          "client_id": "191548396096-dvjb97icqrd5gjmq0pp04aj2gpig5325.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTspHxWO8qQSaLrLDW1rz1fgSUWHvsP5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191548396096-dvjb97icqrd5gjmq0pp04aj2gpig5325.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "191548396096-vjesb1fagfk40if91rohtrrjtoe86dg4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.khatushyam.khatushyamApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

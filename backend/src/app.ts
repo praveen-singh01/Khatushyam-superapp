@@ -1,0 +1,113 @@
+import cors from "cors";
+import express, {
+  type ErrorRequestHandler,
+  type RequestHandler,
+} from "express";
+import helmet from "helmet";
+import { pinoHttp } from "pino-http";
+import { ZodError } from "zod";
+import type { AppEnv } from "./config/env.js";
+import { authenticate, requirePremium } from "./middleware/auth.js";
+import { createAuthRouter } from "./modules/auth/auth.routes.js";
+import { createChamatkarRouter } from "./modules/chamatkars/chamatkar.routes.js";
+import { createContentRouter } from "./modules/content/content.routes.js";
+import { createEntitlementRouter } from "./modules/subscriptions/entitlement.routes.js";
+import { createSubscriptionRouter } from "./modules/subscriptions/subscription.routes.js";
+import { createRazorpayWebhookHandler } from "./modules/subscriptions/webhook.handler.js";
+import { createUploadRouter } from "./modules/uploads/upload.routes.js";
+import type { SubscriptionGateway, UploadPresigner } from "./shared/ports.js";
+import type { IdentityVerifier } from "./shared/types.js";
+
+export interface AppDependencies {
+  env: AppEnv;
+  identityVerifier: IdentityVerifier;
+  subscriptionGateway: SubscriptionGateway;
+  uploadPresigner: UploadPresigner;
+}
+
+export function createApp({
+  env,
+  identityVerifier,
+  subscriptionGateway,
+  uploadPresigner,
+}: AppDependencies) {
+  const app = express();
+  const auth: RequestHandler = authenticate(identityVerifier);
+  const subscriptionRouter = createSubscriptionRouter({
+    authenticate: auth,
+    keyId: env.RAZORPAY_KEY_ID,
+    planId: env.RAZORPAY_PLAN_ID,
+    gateway: subscriptionGateway,
+  });
+  const webhookHandler = createRazorpayWebhookHandler(
+    env.RAZORPAY_WEBHOOK_SECRET,
+  );
+
+  app.disable("x-powered-by");
+  app.use(helmet());
+  app.use(cors({ origin: env.APP_ORIGIN === "*" ? true : env.APP_ORIGIN }));
+  if (env.NODE_ENV !== "test") {
+    app.use(pinoHttp());
+  }
+
+  // Raw body must be preserved for Razorpay signature verification.
+  const rawJson = express.raw({
+    type: () => true,
+    limit: "1mb",
+  });
+  app.post("/v1/subscriptions/webhook", rawJson, webhookHandler);
+  app.post("/api/v1/subscriptions/webhook", rawJson, webhookHandler);
+
+  app.use(express.json({ limit: "1mb" }));
+
+  const health: RequestHandler = (_req, res) => {
+    res.json({ status: "ok" });
+  };
+  app.get("/health", health);
+  app.get("/v1/health", health);
+
+  const entitlementRouter = createEntitlementRouter(auth, env.RAZORPAY_PLAN_ID);
+  const authRouter = createAuthRouter(auth);
+  const chamatkarRouter = createChamatkarRouter(auth);
+  const contentRouter = createContentRouter(auth, requirePremium);
+  const uploadRouter = createUploadRouter({
+    authenticate: auth,
+    requirePremium,
+    bucket: env.S3_MEDIA_BUCKET,
+    presigner: uploadPresigner,
+  });
+
+  app.use("/v1/subscriptions", subscriptionRouter);
+  app.use("/api/v1/subscriptions", subscriptionRouter);
+  app.use("/v1/entitlement", entitlementRouter);
+  app.use("/api/v1/entitlement", entitlementRouter);
+  app.use("/v1/auth", authRouter);
+  app.use("/api/v1/auth", authRouter);
+  app.use("/v1/chamatkars", chamatkarRouter);
+  app.use("/api/v1/chamatkars", chamatkarRouter);
+  app.use("/v1/content", contentRouter);
+  app.use("/api/v1/content", contentRouter);
+  app.use("/v1/uploads", uploadRouter);
+  app.use("/api/v1/uploads", uploadRouter);
+
+  app.use((_req, res) => {
+    res.status(404).json({ error: "NOT_FOUND" });
+  });
+
+  const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {
+    if (env.NODE_ENV !== "test") {
+      req.log?.error({ err: error }, "request failed");
+    }
+    if (error instanceof ZodError) {
+      res.status(400).json({
+        error: "VALIDATION_ERROR",
+        issues: error.issues,
+      });
+      return;
+    }
+    res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
+  };
+  app.use(errorHandler);
+
+  return app;
+}
