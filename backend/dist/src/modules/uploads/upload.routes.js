@@ -1,0 +1,33 @@
+import { randomUUID } from "node:crypto";
+import { Router } from "express";
+import { z } from "zod";
+const uploadSchema = z.object({
+    contentType: z.enum(["image/jpeg", "image/png", "image/webp"]),
+    purpose: z.enum(["profile_photo", "poster_photo"]),
+});
+const extensionByType = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+};
+export function createUploadRouter(options) {
+    const router = Router();
+    router.post("/presign", options.authenticate, options.requirePremium, async (req, res, next) => {
+        try {
+            const input = uploadSchema.parse(req.body);
+            const key = `private/users/${req.user.id}/${input.purpose}/${randomUUID()}.${extensionByType[input.contentType]}`;
+            const uploadUrl = await options.presigner.createUploadUrl({
+                bucket: options.bucket,
+                key,
+                contentType: input.contentType,
+                metadata: { owner: req.user.id, purpose: input.purpose },
+                expiresInSeconds: 300,
+            });
+            res.json({ key, uploadUrl, expiresInSeconds: 300 });
+        }
+        catch (error) {
+            next(error);
+        }
+    });
+    return router;
+}

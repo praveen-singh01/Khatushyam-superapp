@@ -1,8 +1,7 @@
 # Dependencies
 node_modules/
 
-# Build
-dist/
+# Build (dist/ is committed so EC2 can run without compiling TypeScript)
 build/
 *.tsbuildinfo
 
@@ -13,6 +12,8 @@ build/
 *serviceAccount*.json
 service-account*.json
 firebase-adminsdk*.json
+*firebase-adminsdk*.json
+*adminsdk*.json
 credentials.json
 *.pem
 *.p12
