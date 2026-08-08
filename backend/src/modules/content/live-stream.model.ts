@@ -9,6 +9,8 @@ export interface LiveStreamDocument {
   youtubeVideoId: string | null;
   title: { hi: string; en: string };
   updatedBy?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const liveStreamSchema = new Schema<LiveStreamDocument>(
