@@ -6,6 +6,9 @@ import { createApp } from "../src/app.js";
 import type { AppEnv } from "../src/config/env.js";
 import { User } from "../src/modules/auth/user.model.js";
 import { Chamatkar } from "../src/modules/chamatkars/chamatkar.model.js";
+import { ContentAsset } from "../src/modules/content/content-asset.model.js";
+import { ContentCategory } from "../src/modules/content/content-category.model.js";
+import { LiveStream } from "../src/modules/content/live-stream.model.js";
 import { validWebhookSignature } from "../src/modules/subscriptions/subscription.routes.js";
 import { WebhookEvent } from "../src/modules/subscriptions/webhook-event.model.js";
 import type { IdentityVerifier } from "../src/shared/types.js";
@@ -23,6 +26,7 @@ const env: AppEnv = {
   AWS_REGION: "ap-south-1",
   S3_MEDIA_BUCKET: "test-bucket",
   CLOUDFRONT_BASE_URL: "https://cdn.example.com",
+  ADMIN_EMAILS: "admin@example.com",
 };
 
 function identityFor(token: string): IdentityVerifier {
@@ -50,6 +54,14 @@ function identityFor(token: string): IdentityVerifier {
           email: "premium@example.com",
           name: "Premium Devotee",
           picture: "https://cdn.example.com/premium.jpg",
+          signInProvider: "google.com",
+        };
+      }
+      if (incoming === "admin") {
+        return {
+          uid: "admin-user",
+          email: "admin@example.com",
+          name: "Admin Devotee",
           signInProvider: "google.com",
         };
       }
@@ -90,6 +102,9 @@ beforeEach(async () => {
   await Promise.all([
     User.deleteMany({}),
     Chamatkar.deleteMany({}),
+    ContentAsset.deleteMany({}),
+    ContentCategory.deleteMany({}),
+    LiveStream.deleteMany({}),
     WebhookEvent.deleteMany({}),
   ]);
 });
@@ -110,6 +125,17 @@ describe("health and public content", () => {
     const response = await request(app).get("/v1/content/story");
     expect(response.status).toBe(200);
     expect(response.body.access).toBe("free");
+  });
+
+  it("serves offline live darshan by default without auth", async () => {
+    const response = await request(app).get("/v1/content/live");
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({
+      isLive: false,
+      youtubeVideoId: null,
+      embedUrl: null,
+      access: "free",
+    });
   });
 
   it("returns 404 for unknown routes", async () => {
@@ -368,5 +394,206 @@ describe("webhook signature helper", () => {
     const signature = createHmac("sha256", "secret").update(raw).digest("hex");
     expect(validWebhookSignature(raw, signature, "secret")).toBe(true);
     expect(validWebhookSignature(raw, "bad", "secret")).toBe(false);
+  });
+});
+
+describe("admin dashboard APIs", () => {
+  it("rejects non-admins from admin routes", async () => {
+    const response = await request(app)
+      .get("/v1/admin/stats")
+      .set("Authorization", "Bearer free");
+    expect(response.status).toBe(403);
+    expect(response.body.error).toBe("ADMIN_REQUIRED");
+  });
+
+  it("promotes ADMIN_EMAILS users and serves admin stats", async () => {
+    const me = await request(app)
+      .get("/v1/auth/me")
+      .set("Authorization", "Bearer admin");
+    expect(me.status).toBe(200);
+    expect(me.body.user.role).toBe("admin");
+
+    const stats = await request(app)
+      .get("/v1/admin/stats")
+      .set("Authorization", "Bearer admin");
+    expect(stats.status).toBe(200);
+    expect(stats.body.users.total).toBe(1);
+    expect(stats.body.users.admins).toBe(1);
+    expect(stats.body.categories.wallpapers).toBeGreaterThan(0);
+  });
+
+  it("creates and lists content categories", async () => {
+    await request(app)
+      .get("/v1/auth/me")
+      .set("Authorization", "Bearer admin");
+
+    const created = await request(app)
+      .post("/v1/admin/categories")
+      .set("Authorization", "Bearer admin")
+      .send({
+        type: "wallpaper",
+        slug: "temple-night",
+        label: { en: "Temple Night", hi: "मंदिर रात" },
+      });
+    expect(created.status).toBe(201);
+    expect(created.body.item.slug).toBe("temple-night");
+
+    const listed = await request(app)
+      .get("/v1/admin/categories?type=wallpaper")
+      .set("Authorization", "Bearer admin");
+    expect(listed.status).toBe(200);
+    expect(listed.body.byType.wallpaper).toContain("temple-night");
+    expect(listed.body.byType.wallpaper).toContain("baba-darshan");
+
+    const duplicate = await request(app)
+      .post("/v1/admin/categories")
+      .set("Authorization", "Bearer admin")
+      .send({ type: "wallpaper", slug: "temple-night" });
+    expect(duplicate.status).toBe(409);
+
+    const removed = await request(app)
+      .delete(`/v1/admin/categories/${created.body.item.id}`)
+      .set("Authorization", "Bearer admin");
+    expect(removed.status).toBe(204);
+  });
+
+  it("lists users and updates subscription status", async () => {
+    await request(app)
+      .get("/v1/auth/me")
+      .set("Authorization", "Bearer free");
+    await request(app)
+      .get("/v1/auth/me")
+      .set("Authorization", "Bearer admin");
+
+    const list = await request(app)
+      .get("/v1/admin/users")
+      .set("Authorization", "Bearer admin");
+    expect(list.status).toBe(200);
+    expect(list.body.total).toBe(2);
+
+    const freeUser = list.body.items.find(
+      (item: { email: string }) => item.email === "free@example.com",
+    );
+    expect(freeUser).toBeTruthy();
+
+    const patched = await request(app)
+      .patch(`/v1/admin/users/${freeUser.id}`)
+      .set("Authorization", "Bearer admin")
+      .send({ subscriptionStatus: "active" });
+    expect(patched.status).toBe(200);
+    expect(patched.body.user.subscriptionStatus).toBe("active");
+  });
+
+  it("presigns library uploads and creates content assets", async () => {
+    await request(app)
+      .get("/v1/auth/me")
+      .set("Authorization", "Bearer admin");
+
+    const presign = await request(app)
+      .post("/v1/admin/uploads/presign")
+      .set("Authorization", "Bearer admin")
+      .send({
+        type: "wallpaper",
+        category: "baba-darshan",
+        contentType: "image/jpeg",
+      });
+    expect(presign.status).toBe(200);
+    expect(presign.body.key).toContain("khatu-shyam-content/wallpapers/");
+    expect(presign.body.uploadUrl).toContain("https://s3.example.com");
+
+    const created = await request(app)
+      .post("/v1/admin/content")
+      .set("Authorization", "Bearer admin")
+      .send({
+        slug: "test-baba-darshan-01",
+        type: "wallpaper",
+        category: "baba-darshan",
+        title: { hi: "परीक्षण", en: "Test wallpaper" },
+        fileKey: presign.body.key,
+        format: "jpg",
+        width: 1080,
+        height: 1920,
+        premium: true,
+        status: "published",
+      });
+    expect(created.status).toBe(201);
+    expect(created.body.item.slug).toBe("test-baba-darshan-01");
+    expect(created.body.item.url).toContain(presign.body.key);
+
+    const library = await request(app)
+      .get("/v1/content/library")
+      .set("Authorization", "Bearer premium");
+    // premium user is not active yet
+    expect(library.status).toBe(402);
+
+    await User.findOneAndUpdate(
+      { firebaseUid: "premium-user" },
+      {
+        $set: {
+          email: "premium@example.com",
+          subscriptionStatus: "active",
+        },
+      },
+      { upsert: true },
+    );
+    const activeLibrary = await request(app)
+      .get("/v1/content/library?type=wallpaper")
+      .set("Authorization", "Bearer premium");
+    expect(activeLibrary.status).toBe(200);
+    expect(activeLibrary.body.items).toHaveLength(1);
+  });
+
+  it("lets admins start and stop live darshan for free clients", async () => {
+    await request(app)
+      .get("/v1/auth/me")
+      .set("Authorization", "Bearer admin");
+
+    const rejected = await request(app)
+      .put("/v1/admin/live")
+      .set("Authorization", "Bearer admin")
+      .send({ isLive: true });
+    expect(rejected.status).toBe(400);
+
+    const started = await request(app)
+      .put("/v1/admin/live")
+      .set("Authorization", "Bearer admin")
+      .send({
+        isLive: true,
+        youtubeVideoId: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        title: {
+          hi: "लाइव आरती",
+          en: "Live Aarti",
+        },
+      });
+    expect(started.status).toBe(200);
+    expect(started.body.live).toMatchObject({
+      isLive: true,
+      youtubeVideoId: "dQw4w9WgXcQ",
+      embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      title: { hi: "लाइव आरती", en: "Live Aarti" },
+      public: {
+        isLive: true,
+        youtubeVideoId: "dQw4w9WgXcQ",
+        access: "free",
+      },
+    });
+
+    const publicLive = await request(app).get("/v1/content/live");
+    expect(publicLive.status).toBe(200);
+    expect(publicLive.body.isLive).toBe(true);
+    expect(publicLive.body.youtubeVideoId).toBe("dQw4w9WgXcQ");
+
+    const stopped = await request(app)
+      .put("/v1/admin/live")
+      .set("Authorization", "Bearer admin")
+      .send({ isLive: false });
+    expect(stopped.status).toBe(200);
+    expect(stopped.body.live.isLive).toBe(false);
+    // Admin keeps the saved URL for quick re-enable; public clients see offline.
+    expect(stopped.body.live.youtubeVideoId).toBe("dQw4w9WgXcQ");
+    expect(stopped.body.live.public.isLive).toBe(false);
+
+    const offline = await request(app).get("/v1/content/live");
+    expect(offline.body.isLive).toBe(false);
   });
 });

@@ -45,12 +45,22 @@ class CalendarDay {
     required this.title,
     required this.note,
     required this.isSpecial,
+    this.weekdayHi = '',
+    this.weekdayEn = '',
+    this.tithiHi = '',
+    this.tithiEn = '',
+    this.isToday = false,
   });
 
   final DateTime date;
   final String title;
   final String note;
   final bool isSpecial;
+  final String weekdayHi;
+  final String weekdayEn;
+  final String tithiHi;
+  final String tithiEn;
+  final bool isToday;
 }
 
 class AartiSlot {
@@ -153,11 +163,15 @@ class MediaAsset {
     required this.id,
     required this.title,
     required this.subtitle,
+    this.url,
+    this.category,
   });
 
   final String id;
   final String title;
   final String subtitle;
+  final String? url;
+  final String? category;
 }
 
 class PosterTemplate {

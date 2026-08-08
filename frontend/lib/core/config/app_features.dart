@@ -1,10 +1,11 @@
 /// App feature identifiers for entitlement gating.
 ///
-/// Free forever: [story], [chamatkar].
+/// Free forever: [story], [chamatkar], [liveDarshan].
 /// Everything else requires an active Razorpay monthly subscription.
 enum AppFeature {
   story,
   chamatkar,
+  liveDarshan,
   calendar,
   aartiAlarms,
   events,
@@ -19,11 +20,15 @@ enum AppFeature {
 }
 
 extension AppFeatureAccess on AppFeature {
-  bool get isFree => this == AppFeature.story || this == AppFeature.chamatkar;
+  bool get isFree =>
+      this == AppFeature.story ||
+      this == AppFeature.chamatkar ||
+      this == AppFeature.liveDarshan;
 
   String get routeSegment => switch (this) {
     AppFeature.story => 'story',
     AppFeature.chamatkar => 'chamatkar',
+    AppFeature.liveDarshan => 'live-darshan',
     AppFeature.calendar => 'calendar',
     AppFeature.aartiAlarms => 'aarti-alarms',
     AppFeature.events => 'events',

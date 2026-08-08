@@ -10,6 +10,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/circle_action.dart';
 import '../../../core/widgets/soft_card.dart';
 import '../../auth/presentation/auth_providers.dart';
+import '../../live/presentation/live_providers.dart';
+import '../../live/presentation/live_youtube_player.dart';
 import '../../subscription/presentation/subscription_providers.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -17,6 +19,7 @@ class HomeScreen extends ConsumerWidget {
 
   String _label(AppLocalizations l10n, AppFeature feature) {
     return switch (feature) {
+      AppFeature.liveDarshan => l10n.featureLiveDarshan,
       AppFeature.calendar => l10n.featureCalendar,
       AppFeature.aartiAlarms => l10n.featureAartiAlarms,
       AppFeature.events => l10n.featureEvents,
@@ -41,9 +44,20 @@ class HomeScreen extends ConsumerWidget {
         ref.watch(subscriptionControllerProvider).asData?.value.isPremium ??
         false;
     final temple = ref.watch(templeStatusProvider);
+    final live = ref.watch(liveStreamProvider).asData?.value;
+    final isLiveNow = live?.canPlay ?? false;
     final name = user?.displayName?.split(' ').first ?? 'भक्त';
+    final livePath = AppRoutes.featurePath(
+      AppFeature.liveDarshan.routeSegment,
+    );
 
     final quickActions = <(AppFeature?, String, IconData, String)>[
+      (
+        AppFeature.liveDarshan,
+        livePath,
+        Icons.live_tv_rounded,
+        l10n.featureLiveDarshan,
+      ),
       (null, AppRoutes.story, Icons.auto_stories_rounded, l10n.storyTitle),
       (
         AppFeature.bhajans,
@@ -133,91 +147,101 @@ class HomeScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 18),
-          SoftCard(
-            padding: EdgeInsets.zero,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFFFFB347),
-                    AppColors.orange,
-                    AppColors.orangeDeep,
-                  ],
+          if (isLiveNow && live?.youtubeVideoId != null)
+            _HomeLiveHero(
+              videoId: live!.youtubeVideoId!,
+              title:
+                  Localizations.localeOf(context).languageCode == 'en'
+                      ? live.titleEn
+                      : live.titleHi,
+              onOpen: () => context.push(livePath),
+            )
+          else
+            SoftCard(
+              padding: EdgeInsets.zero,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFFFFB347),
+                      AppColors.orange,
+                      AppColors.orangeDeep,
+                    ],
+                  ),
                 ),
-              ),
-              padding: const EdgeInsets.all(18),
-              child: temple.when(
-                data:
-                    (status) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "आज की आरती",
-                          style: Theme.of(
-                            context,
-                          ).textTheme.titleMedium?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.9),
+                padding: const EdgeInsets.all(18),
+                child: temple.when(
+                  data:
+                      (status) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "आज की आरती",
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleMedium?.copyWith(
+                              color: Colors.white.withValues(alpha: 0.9),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          status.nextChangeLabel,
-                          style: Theme.of(context).textTheme.headlineMedium
-                              ?.copyWith(color: Colors.white, fontSize: 24),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                status.statusLabel,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
+                          const SizedBox(height: 6),
+                          Text(
+                            status.nextChangeLabel,
+                            style: Theme.of(context).textTheme.headlineMedium
+                                ?.copyWith(color: Colors.white, fontSize: 24),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  status.statusLabel,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const Spacer(),
-                            TextButton(
-                              onPressed:
-                                  () => context.push(
-                                    AppRoutes.featurePath('temple-status'),
-                                  ),
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.white,
+                              const Spacer(),
+                              TextButton(
+                                onPressed:
+                                    () => context.push(
+                                      AppRoutes.featurePath('temple-status'),
+                                    ),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('विवरण'),
                               ),
-                              child: const Text('विवरण'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                loading:
-                    () => Text(
-                      "आज की आरती",
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(color: Colors.white, fontSize: 24),
-                    ),
-                error:
-                    (_, __) => Text(
-                      l10n.featureTempleStatus,
-                      style: const TextStyle(color: Colors.white),
-                    ),
+                            ],
+                          ),
+                        ],
+                      ),
+                  loading:
+                      () => Text(
+                        "आज की आरती",
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(color: Colors.white, fontSize: 24),
+                      ),
+                  error:
+                      (_, __) => Text(
+                        l10n.featureTempleStatus,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                ),
               ),
             ),
-          ),
           const SizedBox(height: 12),
           SoftCard(
             onTap: () => context.go(AppRoutes.paywall),
@@ -298,6 +322,48 @@ class HomeScreen extends ConsumerWidget {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 12),
+          if (!isLiveNow) ...[
+            SoftCard(
+              onTap: () => context.push(livePath),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.orangeSoft,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(
+                      Icons.live_tv_rounded,
+                      color: AppColors.orange,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.featureLiveDarshan,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        Text(
+                          l10n.liveDarshanOfflineBadge,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    color: AppColors.inkMuted,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
           Row(
             children: [
               Expanded(
@@ -409,5 +475,61 @@ class HomeScreen extends ConsumerWidget {
       AppFeature.callerTunes => Icons.call_rounded,
       _ => Icons.star_rounded,
     };
+  }
+}
+
+class _HomeLiveHero extends StatelessWidget {
+  const _HomeLiveHero({
+    required this.videoId,
+    required this.title,
+    required this.onOpen,
+  });
+
+  final String videoId;
+  final String title;
+  final VoidCallback onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppColors.error,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                l10n.liveDarshanLiveBadge,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.titleLarge,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            TextButton(
+              onPressed: onOpen,
+              child: Text(l10n.liveDarshanWatchCta),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        LiveYoutubePlayer(videoId: videoId),
+      ],
+    );
   }
 }

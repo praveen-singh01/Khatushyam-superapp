@@ -62,12 +62,48 @@ Firebase options are **not** checked in with fabricated values.
 
 Until `FIREBASE_CONFIGURED=true`, the app uses **FakeAuthService** so UI and tests run without live Firebase.
 
-## Local run
+## Local run (with backend)
 
+Terminal 1 — API (fake Google auth):
+```bash
+cd backend
+npm run local
+# http://127.0.0.1:4000
+```
+
+Terminal 2 — Flutter pointed at that API:
+
+**Android emulator**
 ```bash
 cd frontend
-flutter pub get
-flutter run
+flutter run \
+  --dart-define=USE_BACKEND_API=true \
+  --dart-define=API_BASE_URL=http://10.0.2.2:4000
+```
+
+**iOS simulator**
+```bash
+cd frontend
+flutter run \
+  --dart-define=USE_BACKEND_API=true \
+  --dart-define=API_BASE_URL=http://127.0.0.1:4000
+```
+
+**Physical phone** (same Wi‑Fi; replace with your Mac IP):
+```bash
+flutter run \
+  --dart-define=USE_BACKEND_API=true \
+  --dart-define=API_BASE_URL=http://192.168.0.100:4000
+```
+
+`USE_BACKEND_API` defaults to **true** (wallpapers/ringtones/story/chamatkar/live/entitlement hit the API). FakeAuth sign-in sends `Bearer premium` to match `npm run local`. Pass `--dart-define=USE_BACKEND_API=false` only for pure offline UI mocks.
+
+Real Firebase Google Sign-In:
+```bash
+flutter run \
+  --dart-define=FIREBASE_CONFIGURED=true \
+  --dart-define=USE_BACKEND_API=true \
+  --dart-define=API_BASE_URL=http://10.0.2.2:4000
 ```
 
 Default locale is **Hindi** (`hi`) with English (`en`) available via Flutter localization.

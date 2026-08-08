@@ -12,6 +12,7 @@ class PaywallScreen extends ConsumerWidget {
 
   String _label(AppLocalizations l10n, AppFeature feature) {
     return switch (feature) {
+      AppFeature.liveDarshan => l10n.featureLiveDarshan,
       AppFeature.calendar => l10n.featureCalendar,
       AppFeature.aartiAlarms => l10n.featureAartiAlarms,
       AppFeature.events => l10n.featureEvents,

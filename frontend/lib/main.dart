@@ -12,7 +12,7 @@ import 'firebase_options.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  const config = AppConfig.development;
+  final config = AppConfig.development;
 
   if (config.firebaseConfigured) {
     await Firebase.initializeApp(

@@ -81,6 +81,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chamatkarEmpty => 'No stories yet. Be the first to share.';
 
   @override
+  String get featureLiveDarshan => 'Live Darshan';
+
+  @override
+  String get liveDarshanSubtitle => 'Watch Khatu Shyam live on YouTube — free';
+
+  @override
+  String get liveDarshanOfflineTitle => 'Live darshan is offline';
+
+  @override
+  String get liveDarshanOfflineMessage => 'When aarti starts, Baba\'s live stream will appear here.';
+
+  @override
+  String get liveDarshanLiveBadge => 'Live now';
+
+  @override
+  String get liveDarshanOfflineBadge => 'Not live right now';
+
+  @override
+  String get liveDarshanWatchCta => 'Watch live';
+
+  @override
   String get paywallTitle => 'Premium membership';
 
   @override
@@ -90,7 +111,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallCta => 'Start monthly plan';
 
   @override
-  String get paywallNote => 'Story and Chamatkar stay free. Mock checkout for now.';
+  String get paywallNote => 'Story, Chamatkar and Live Darshan stay free. Mock checkout for now.';
 
   @override
   String get lockedTitle => 'Membership needed';

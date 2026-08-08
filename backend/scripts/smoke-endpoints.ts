@@ -20,6 +20,7 @@ const env: AppEnv = {
   AWS_REGION: "ap-south-1",
   S3_MEDIA_BUCKET: "smoke-bucket",
   CLOUDFRONT_BASE_URL: "https://cdn.example.com",
+  ADMIN_EMAILS: "admin@smoke.test",
 };
 
 const app = createApp({

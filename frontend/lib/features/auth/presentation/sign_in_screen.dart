@@ -44,15 +44,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             children: [
               const Spacer(flex: 2),
               Container(
-                width: 120,
-                height: 120,
+                width: 140,
+                height: 140,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppColors.orangeSoft, AppColors.orange],
-                  ),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.orange.withValues(alpha: 0.28),
@@ -61,10 +56,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.temple_hindu_rounded,
-                  size: 54,
-                  color: Colors.white,
+                clipBehavior: Clip.antiAlias,
+                child: Image.asset(
+                  'assets/applogo.png',
+                  fit: BoxFit.cover,
                 ),
               ),
               const SizedBox(height: 28),

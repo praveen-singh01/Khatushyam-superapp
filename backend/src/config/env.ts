@@ -13,6 +13,13 @@ const envSchema = z.object({
   AWS_REGION: z.string().default("ap-south-1"),
   S3_MEDIA_BUCKET: z.string().min(1),
   CLOUDFRONT_BASE_URL: z.string().url(),
+  /**
+   * Absolute path to `khatu-shyam-content` for local static serving.
+   * When set, media URLs are built from the request Host (phone-friendly).
+   */
+  MEDIA_LOCAL_ROOT: z.string().optional(),
+  /** Comma-separated emails granted admin on first authenticated request. */
+  ADMIN_EMAILS: z.string().default(""),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;

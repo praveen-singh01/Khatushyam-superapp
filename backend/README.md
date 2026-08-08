@@ -22,10 +22,24 @@ uploads.
 ### Verify endpoints
 
 ```bash
-npm test        # 22 integration tests (local Mongo)
-npm run smoke   # prints PASS/FAIL for every route
-npm run local   # http://127.0.0.1:4000 with Bearer free|premium
+npm test         # integration tests (local Mongo)
+npm run smoke    # prints PASS/FAIL for every route
+npm run local    # http://127.0.0.1:4000 with Bearer free|premium|admin
+npm run seed:content  # import khatu-shyam-content/metadata.json into Mongo
 ```
+
+### Admin APIs
+
+Require `role: admin` (auto-granted for emails in `ADMIN_EMAILS`):
+
+| Method | Path | Notes |
+|--------|------|-------|
+| `GET` | `/v1/admin/stats` | User + content counts |
+| `GET`/`PATCH` | `/v1/admin/users` | List / update role & subscription |
+| `GET`/`POST`/`PATCH`/`DELETE` | `/v1/admin/content` | Library CRUD (delete archives) |
+| `POST` | `/v1/admin/uploads/presign` | Presign S3 upload for wallpapers/ringtones |
+
+Premium clients can list published assets at `GET /v1/content/library`.
 
 See [`PRODUCTION_CHECKLIST.md`](PRODUCTION_CHECKLIST.md) for what is required to productionize.
 

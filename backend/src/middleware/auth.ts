@@ -1,8 +1,23 @@
 import type { NextFunction, Request, RequestHandler, Response } from "express";
-import type { IdentityVerifier } from "../shared/types.js";
+import type { IdentityVerifier, UserRole } from "../shared/types.js";
 import { User } from "../modules/auth/user.model.js";
 
-export function authenticate(verifier: IdentityVerifier): RequestHandler {
+function parseAdminEmails(raw?: string): Set<string> {
+  if (!raw) return new Set();
+  return new Set(
+    raw
+      .split(",")
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
+
+export function authenticate(
+  verifier: IdentityVerifier,
+  options: { adminEmails?: string } = {},
+): RequestHandler {
+  const adminEmails = parseAdminEmails(options.adminEmails);
+
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const header = req.header("authorization");
@@ -22,15 +37,30 @@ export function authenticate(verifier: IdentityVerifier): RequestHandler {
         return;
       }
 
+      const email = identity.email.toLowerCase();
+      const shouldBeAdmin = adminEmails.has(email);
+      const setFields: {
+        email: string;
+        displayName?: string;
+        photoUrl?: string;
+        role?: UserRole;
+      } = {
+        email,
+        displayName: identity.name,
+        photoUrl: identity.picture,
+      };
+      if (shouldBeAdmin) {
+        setFields.role = "admin";
+      }
+
       const user = await User.findOneAndUpdate(
         { firebaseUid: identity.uid },
         {
-          $set: {
-            email: identity.email,
-            displayName: identity.name,
-            photoUrl: identity.picture,
+          $set: setFields,
+          $setOnInsert: {
+            subscriptionStatus: "inactive",
+            ...(shouldBeAdmin ? {} : { role: "user" as UserRole }),
           },
-          $setOnInsert: { subscriptionStatus: "inactive" },
         },
         { new: true, upsert: true },
       ).lean();
@@ -41,6 +71,7 @@ export function authenticate(verifier: IdentityVerifier): RequestHandler {
         email: user.email,
         displayName: user.displayName,
         photoUrl: user.photoUrl,
+        role: (user.role as UserRole | undefined) ?? "user",
         subscriptionStatus: user.subscriptionStatus,
       };
       next();
@@ -56,6 +87,14 @@ export const requirePremium: RequestHandler = (req, res, next) => {
       error: "PREMIUM_REQUIRED",
       subscriptionStatus: req.user?.subscriptionStatus ?? "inactive",
     });
+    return;
+  }
+  next();
+};
+
+export const requireAdmin: RequestHandler = (req, res, next) => {
+  if (req.user?.role !== "admin") {
+    res.status(403).json({ error: "ADMIN_REQUIRED" });
     return;
   }
   next();

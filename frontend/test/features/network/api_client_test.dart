@@ -29,7 +29,7 @@ void main() {
 
       await client.get<Map<String, dynamic>>('/v1/entitlement');
 
-      expect(captured.headers['Authorization'], 'Bearer fake-id-token-u1');
+      expect(captured.headers['Authorization'], 'Bearer premium');
       auth.dispose();
     });
 

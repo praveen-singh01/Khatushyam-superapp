@@ -10,7 +10,11 @@ import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/async_body.dart';
 import '../../../core/widgets/soft_card.dart';
+import '../../live/presentation/live_darshan_screen.dart';
 import '../../subscription/presentation/subscription_providers.dart';
+import 'calendar_screen.dart';
+import 'ringtone_actions.dart';
+import 'wallpaper_viewer.dart';
 
 class FeatureHostScreen extends ConsumerWidget {
   const FeatureHostScreen({super.key, required this.feature});
@@ -36,6 +40,7 @@ class FeatureHostScreen extends ConsumerWidget {
     }
 
     return switch (feature!) {
+      AppFeature.liveDarshan => const LiveDarshanScreen(),
       AppFeature.calendar => const CalendarFeatureScreen(),
       AppFeature.aartiAlarms => const AartiAlarmsFeatureScreen(),
       AppFeature.events => const EventsFeatureScreen(),
@@ -56,6 +61,7 @@ class FeatureHostScreen extends ConsumerWidget {
 
   static String _title(AppLocalizations l10n, AppFeature feature) {
     return switch (feature) {
+      AppFeature.liveDarshan => l10n.featureLiveDarshan,
       AppFeature.calendar => l10n.featureCalendar,
       AppFeature.aartiAlarms => l10n.featureAartiAlarms,
       AppFeature.events => l10n.featureEvents,
@@ -152,114 +158,6 @@ class _FeatureScaffold extends StatelessWidget {
         ),
       ),
       body: child,
-    );
-  }
-}
-
-class CalendarFeatureScreen extends ConsumerWidget {
-  const CalendarFeatureScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final days = ref.watch(calendarProvider);
-    return _FeatureScaffold(
-      title: l10n.featureCalendar,
-      child: AsyncBody(
-        value: days,
-        onRetry: () => ref.invalidate(calendarProvider),
-        builder:
-            (items) => ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-              children: [
-                SoftCard(
-                  child: Column(
-                    children: [
-                      Text(
-                        'पवित्र तिथियाँ',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children:
-                            items
-                                .map(
-                                  (day) => Container(
-                                    width: 44,
-                                    height: 44,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color:
-                                          day.isSpecial
-                                              ? AppColors.orange
-                                              : AppColors.orangeSoft,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Text(
-                                      '${day.date.day}',
-                                      style: TextStyle(
-                                        color:
-                                            day.isSpecial
-                                                ? Colors.white
-                                                : AppColors.ink,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ...items.map(
-                  (day) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: SoftCard(
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color:
-                                  day.isSpecial
-                                      ? AppColors.orangeSoft
-                                      : AppColors.canvas,
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: Text(
-                              '${day.date.day}/${day.date.month}',
-                              style: Theme.of(context).textTheme.labelMedium
-                                  ?.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  day.title,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
-                                ),
-                                Text(day.note),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-      ),
     );
   }
 }
@@ -820,6 +718,7 @@ class WallpapersFeatureScreen extends ConsumerWidget {
       onRetry: () => ref.invalidate(wallpapersProvider),
       actionLabel: l10n.setWallpaper,
       icon: Icons.wallpaper_rounded,
+      onItemTap: (asset) => openWallpaperViewer(context, asset: asset),
     );
   }
 }
@@ -836,6 +735,7 @@ class RingtonesFeatureScreen extends ConsumerWidget {
       onRetry: () => ref.invalidate(ringtonesProvider),
       actionLabel: l10n.setRingtone,
       icon: Icons.ring_volume_rounded,
+      onItemTap: (asset) => openRingtoneActions(context, asset: asset),
     );
   }
 }
@@ -852,6 +752,7 @@ class CallerTunesFeatureScreen extends ConsumerWidget {
       onRetry: () => ref.invalidate(callerTunesProvider),
       actionLabel: l10n.activateTune,
       icon: Icons.call_rounded,
+      onItemTap: (asset) => openRingtoneActions(context, asset: asset),
     );
   }
 }
@@ -863,6 +764,7 @@ class _MediaGridScreen extends StatelessWidget {
     required this.onRetry,
     required this.actionLabel,
     required this.icon,
+    this.onItemTap,
   });
 
   final String title;
@@ -870,6 +772,7 @@ class _MediaGridScreen extends StatelessWidget {
   final VoidCallback onRetry;
   final String actionLabel;
   final IconData icon;
+  final void Function(MediaAsset asset)? onItemTap;
 
   @override
   Widget build(BuildContext context) {
@@ -890,30 +793,41 @@ class _MediaGridScreen extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 final item = items[index];
+                final imageUrl = item.url;
                 return SoftCard(
+                  onTap: onItemTap == null ? null : () => onItemTap!(item),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFFFFB347), AppColors.orange],
-                            ),
-                          ),
-                          child: Icon(icon, color: Colors.white, size: 34),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14),
+                          child:
+                              imageUrl != null && imageUrl.isNotEmpty
+                                  ? Image.network(
+                                    imageUrl,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (_, __, ___) => _MediaPlaceholder(
+                                          icon: icon,
+                                        ),
+                                  )
+                                  : _MediaPlaceholder(icon: icon),
                         ),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         item.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      Text(item.subtitle),
+                      Text(
+                        item.subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         actionLabel,
@@ -938,6 +852,7 @@ class _MediaListScreen extends StatelessWidget {
     required this.onRetry,
     required this.actionLabel,
     required this.icon,
+    this.onItemTap,
   });
 
   final String title;
@@ -945,6 +860,7 @@ class _MediaListScreen extends StatelessWidget {
   final VoidCallback onRetry;
   final String actionLabel;
   final IconData icon;
+  final void Function(MediaAsset asset)? onItemTap;
 
   @override
   Widget build(BuildContext context) {
@@ -961,6 +877,7 @@ class _MediaListScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final item = items[index];
                 return SoftCard(
+                  onTap: onItemTap == null ? null : () => onItemTap!(item),
                   child: Row(
                     children: [
                       Container(
@@ -997,6 +914,27 @@ class _MediaListScreen extends StatelessWidget {
               },
             ),
       ),
+    );
+  }
+}
+
+class _MediaPlaceholder extends StatelessWidget {
+  const _MediaPlaceholder({required this.icon});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFFFB347), AppColors.orange],
+        ),
+      ),
+      child: Icon(icon, color: Colors.white, size: 34),
     );
   }
 }

@@ -1,11 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/auth/presentation/auth_providers.dart';
+import '../calendar/hindu_calendar.dart';
+import '../content/content_repository.dart';
 import 'mock_api.dart';
 import 'mock_models.dart';
 
 final mockApiProvider = Provider<MockApi>((ref) => MockApi.instance);
 
-final storyProvider = FutureProvider<StoryContent>((ref) {
+final contentRepositoryProvider = Provider<ContentRepository>((ref) {
+  return ContentRepository(ref.watch(apiClientProvider));
+});
+
+bool _useApi(Ref ref) => ref.watch(appConfigProvider).useBackendApi;
+
+final storyProvider = FutureProvider<StoryContent>((ref) async {
+  if (_useApi(ref)) {
+    return ref.watch(contentRepositoryProvider).fetchStory();
+  }
   return ref.watch(mockApiProvider).fetchStory();
 });
 
@@ -17,14 +29,20 @@ final chamatkarListProvider =
 class ChamatkarListController extends AsyncNotifier<List<ChamatkarPost>> {
   @override
   Future<List<ChamatkarPost>> build() {
+    if (_useApi(ref)) {
+      return ref.read(contentRepositoryProvider).fetchChamatkars();
+    }
     return ref.read(mockApiProvider).fetchChamatkars();
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => ref.read(mockApiProvider).fetchChamatkars(),
-    );
+    state = await AsyncValue.guard(() async {
+      if (_useApi(ref)) {
+        return ref.read(contentRepositoryProvider).fetchChamatkars();
+      }
+      return ref.read(mockApiProvider).fetchChamatkars();
+    });
   }
 
   Future<void> addPost({
@@ -32,15 +50,40 @@ class ChamatkarListController extends AsyncNotifier<List<ChamatkarPost>> {
     required String title,
     required String story,
   }) async {
-    await ref
-        .read(mockApiProvider)
-        .createChamatkar(authorName: authorName, title: title, story: story);
+    if (_useApi(ref)) {
+      await ref
+          .read(contentRepositoryProvider)
+          .createChamatkar(title: title, story: story);
+    } else {
+      await ref
+          .read(mockApiProvider)
+          .createChamatkar(
+            authorName: authorName,
+            title: title,
+            story: story,
+          );
+    }
     await refresh();
   }
 }
 
-final calendarProvider = FutureProvider<List<CalendarDay>>((ref) {
-  return ref.watch(mockApiProvider).fetchCalendar();
+class CalendarMonthNotifier extends Notifier<DateTime> {
+  @override
+  DateTime build() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month);
+  }
+
+  void setMonth(DateTime month) => state = DateTime(month.year, month.month);
+}
+
+final calendarMonthProvider =
+    NotifierProvider<CalendarMonthNotifier, DateTime>(CalendarMonthNotifier.new);
+
+final calendarProvider = FutureProvider<List<CalendarDay>>((ref) async {
+  // Always use local Hindu calendar engine (backend CMS can replace later).
+  final month = ref.watch(calendarMonthProvider);
+  return HinduCalendar.monthDays(month);
 });
 
 final aartiSlotsProvider =
@@ -51,48 +94,78 @@ final aartiSlotsProvider =
 class AartiSlotsController extends AsyncNotifier<List<AartiSlot>> {
   @override
   Future<List<AartiSlot>> build() {
+    if (_useApi(ref)) return Future.value(const []);
     return ref.read(mockApiProvider).fetchAartiSlots();
   }
 
   Future<void> toggle(String id, bool enabled) async {
+    if (_useApi(ref)) {
+      state = const AsyncData([]);
+      return;
+    }
     state = await AsyncValue.guard(
       () => ref.read(mockApiProvider).setAartiEnabled(id, enabled),
     );
   }
 }
 
-final eventsProvider = FutureProvider<List<EventPoster>>((ref) {
+final eventsProvider = FutureProvider<List<EventPoster>>((ref) async {
+  if (_useApi(ref)) return const [];
   return ref.watch(mockApiProvider).fetchEvents();
 });
 
-final singersProvider = FutureProvider<List<SingerContact>>((ref) {
+final singersProvider = FutureProvider<List<SingerContact>>((ref) async {
+  if (_useApi(ref)) return const [];
   return ref.watch(mockApiProvider).fetchSingers();
 });
 
-final templeStatusProvider = FutureProvider<TempleStatus>((ref) {
+final templeStatusProvider = FutureProvider<TempleStatus>((ref) async {
+  if (_useApi(ref)) {
+    return const TempleStatus(
+      isOpen: true,
+      statusLabel: 'अपडेट जल्द',
+      nextChangeLabel: '—',
+      note: 'मंदिर स्थिति शीघ्र CMS से जुड़ेगी।',
+    );
+  }
   return ref.watch(mockApiProvider).fetchTempleStatus();
 });
 
-final travelGuidesProvider = FutureProvider<List<TravelGuide>>((ref) {
+final travelGuidesProvider = FutureProvider<List<TravelGuide>>((ref) async {
+  if (_useApi(ref)) return const [];
   return ref.watch(mockApiProvider).fetchTravelGuides();
 });
 
-final bhajansProvider = FutureProvider<List<BhajanTrack>>((ref) {
+final bhajansProvider = FutureProvider<List<BhajanTrack>>((ref) async {
+  if (_useApi(ref)) return const [];
   return ref.watch(mockApiProvider).fetchBhajans();
 });
 
-final postersProvider = FutureProvider<List<PosterTemplate>>((ref) {
+final postersProvider = FutureProvider<List<PosterTemplate>>((ref) async {
+  if (_useApi(ref)) return const [];
   return ref.watch(mockApiProvider).fetchPosterTemplates();
 });
 
-final wallpapersProvider = FutureProvider<List<MediaAsset>>((ref) {
+final wallpapersProvider = FutureProvider<List<MediaAsset>>((ref) async {
+  if (_useApi(ref)) {
+    return ref
+        .watch(contentRepositoryProvider)
+        .fetchLibrary(type: 'wallpaper');
+  }
   return ref.watch(mockApiProvider).fetchWallpapers();
 });
 
-final ringtonesProvider = FutureProvider<List<MediaAsset>>((ref) {
+final ringtonesProvider = FutureProvider<List<MediaAsset>>((ref) async {
+  if (_useApi(ref)) {
+    return ref.watch(contentRepositoryProvider).fetchLibrary(type: 'ringtone');
+  }
   return ref.watch(mockApiProvider).fetchRingtones();
 });
 
-final callerTunesProvider = FutureProvider<List<MediaAsset>>((ref) {
+final callerTunesProvider = FutureProvider<List<MediaAsset>>((ref) async {
+  // No separate caller-tune catalog yet — reuse ringtone library.
+  if (_useApi(ref)) {
+    return ref.watch(contentRepositoryProvider).fetchLibrary(type: 'ringtone');
+  }
   return ref.watch(mockApiProvider).fetchCallerTunes();
 });

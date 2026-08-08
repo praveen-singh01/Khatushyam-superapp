@@ -4,10 +4,12 @@ import express, {
   type RequestHandler,
 } from "express";
 import helmet from "helmet";
+import { existsSync } from "node:fs";
 import { pinoHttp } from "pino-http";
 import { ZodError } from "zod";
 import type { AppEnv } from "./config/env.js";
-import { authenticate, requirePremium } from "./middleware/auth.js";
+import { authenticate, requireAdmin, requirePremium } from "./middleware/auth.js";
+import { createAdminRouter } from "./modules/admin/admin.routes.js";
 import { createAuthRouter } from "./modules/auth/auth.routes.js";
 import { createChamatkarRouter } from "./modules/chamatkars/chamatkar.routes.js";
 import { createContentRouter } from "./modules/content/content.routes.js";
@@ -32,7 +34,9 @@ export function createApp({
   uploadPresigner,
 }: AppDependencies) {
   const app = express();
-  const auth: RequestHandler = authenticate(identityVerifier);
+  const auth: RequestHandler = authenticate(identityVerifier, {
+    adminEmails: env.ADMIN_EMAILS,
+  });
   const subscriptionRouter = createSubscriptionRouter({
     authenticate: auth,
     keyId: env.RAZORPAY_KEY_ID,
@@ -60,6 +64,17 @@ export function createApp({
 
   app.use(express.json({ limit: "1mb" }));
 
+  // Local content pack (wallpapers/ringtones) — production uses CloudFront/S3.
+  if (env.MEDIA_LOCAL_ROOT && existsSync(env.MEDIA_LOCAL_ROOT)) {
+    app.use(
+      "/khatu-shyam-content",
+      express.static(env.MEDIA_LOCAL_ROOT, {
+        maxAge: "1h",
+        fallthrough: true,
+      }),
+    );
+  }
+
   const health: RequestHandler = (_req, res) => {
     res.json({ status: "ok" });
   };
@@ -69,11 +84,23 @@ export function createApp({
   const entitlementRouter = createEntitlementRouter(auth, env.RAZORPAY_PLAN_ID);
   const authRouter = createAuthRouter(auth);
   const chamatkarRouter = createChamatkarRouter(auth);
-  const contentRouter = createContentRouter(auth, requirePremium);
+  const contentRouter = createContentRouter(
+    auth,
+    requirePremium,
+    env.CLOUDFRONT_BASE_URL,
+    { useRequestHostForMedia: Boolean(env.MEDIA_LOCAL_ROOT) },
+  );
   const uploadRouter = createUploadRouter({
     authenticate: auth,
     requirePremium,
     bucket: env.S3_MEDIA_BUCKET,
+    presigner: uploadPresigner,
+  });
+  const adminRouter = createAdminRouter({
+    authenticate: auth,
+    requireAdmin,
+    bucket: env.S3_MEDIA_BUCKET,
+    cloudFrontBaseUrl: env.CLOUDFRONT_BASE_URL,
     presigner: uploadPresigner,
   });
 
@@ -89,6 +116,8 @@ export function createApp({
   app.use("/api/v1/content", contentRouter);
   app.use("/v1/uploads", uploadRouter);
   app.use("/api/v1/uploads", uploadRouter);
+  app.use("/v1/admin", adminRouter);
+  app.use("/api/v1/admin", adminRouter);
 
   app.use((_req, res) => {
     res.status(404).json({ error: "NOT_FOUND" });

@@ -4,10 +4,18 @@ import '../domain/auth_service.dart';
 import '../domain/auth_user.dart';
 
 /// In-memory auth for widget/unit tests and Firebase-less local UI work.
+///
+/// Tokens match `npm run local` on the backend: `free` | `premium` | `admin`.
 class FakeAuthService implements AuthService {
-  FakeAuthService({AuthUser? initialUser}) : _user = initialUser {
+  FakeAuthService({
+    AuthUser? initialUser,
+    this.localBearerToken = 'premium',
+  }) : _user = initialUser {
     _controller.add(_user);
   }
+
+  /// Sent as `Authorization: Bearer …` to the local Node API.
+  final String localBearerToken;
 
   AuthUser? _user;
   final _controller = StreamController<AuthUser?>.broadcast();
@@ -24,15 +32,15 @@ class FakeAuthService implements AuthService {
   @override
   Future<String?> getIdToken({bool forceRefresh = false}) async {
     if (_user == null) return null;
-    return 'fake-id-token-${_user!.uid}';
+    return localBearerToken;
   }
 
   @override
   Future<AuthUser> signInWithGoogle() async {
-    const user = AuthUser(
-      uid: 'fake-uid',
-      email: 'devotee@example.com',
-      displayName: 'Test Devotee',
+    final user = AuthUser(
+      uid: 'local-$localBearerToken',
+      email: '$localBearerToken@local.test',
+      displayName: 'Local ${localBearerToken[0].toUpperCase()}${localBearerToken.substring(1)}',
     );
     _user = user;
     _controller.add(user);

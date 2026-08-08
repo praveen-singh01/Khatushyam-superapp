@@ -12,7 +12,8 @@
     "start": "node dist/src/server.js",
     "check": "npm run build && npm test",
     "smoke": "tsx scripts/smoke-endpoints.ts",
-    "local": "tsx scripts/local-dev-server.ts"
+    "local": "tsx scripts/local-dev-server.ts",
+    "seed:content": "tsx scripts/seed-content-library.ts"
   },
   "keywords": [],
   "author": "",

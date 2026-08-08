@@ -1,0 +1,1625 @@
+{
+  "version": 1,
+  "bucketHint": "s3://YOUR_BUCKET/khatu-shyam-content/",
+  "cdnBaseUrlHint": "https://YOUR_CLOUDFRONT/",
+  "categories": {
+    "wallpapers": [
+      "baba-darshan",
+      "khatu-temple",
+      "festival",
+      "ekadashi",
+      "quotes"
+    ],
+    "ringtones": [
+      "jai-shree-shyam",
+      "shyam-mantra",
+      "bhajan",
+      "notification"
+    ]
+  },
+  "counts": {
+    "wallpapers": 53,
+    "ringtones": 40,
+    "byCategory": {
+      "baba-darshan": 11,
+      "bhajan": 10,
+      "ekadashi": 10,
+      "festival": 10,
+      "jai-shree-shyam": 10,
+      "khatu-temple": 12,
+      "notification": 10,
+      "quotes": 10,
+      "shyam-mantra": 10
+    }
+  },
+  "licenseNote": "Wikimedia assets require attribution (and ShareAlike for BY-SA). Generated tones/wallpapers are app-owned placeholders. Do not ship third-party bhajan vocals without a license.",
+  "assets": [
+    {
+      "id": "gen-baba-darshan-01",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "हे श्याम बाबा कृपा करो",
+        "en": "Shyam Baba, bless us"
+      },
+      "file": "wallpapers/baba-darshan/gen-baba-darshan-01.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-baba-darshan-02",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "बालेला मुकुट श्याम के",
+        "en": "Blessed crown of Shyam"
+      },
+      "file": "wallpapers/baba-darshan/gen-baba-darshan-02.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-baba-darshan-03",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "हाथ जोड़े खड़े हैं द्वारे",
+        "en": "Hands folded at your door"
+      },
+      "file": "wallpapers/baba-darshan/gen-baba-darshan-03.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-baba-darshan-04",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "श्याम नाम सुमिरन करो",
+        "en": "Remember the name of Shyam"
+      },
+      "file": "wallpapers/baba-darshan/gen-baba-darshan-04.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-baba-darshan-05",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "मेरे श्याम मेरे राम",
+        "en": "My Shyam, my Ram"
+      },
+      "file": "wallpapers/baba-darshan/gen-baba-darshan-05.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-baba-darshan-06",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "एकादशी व्रत फलदायी",
+        "en": "Ekadashi brings merit"
+      },
+      "file": "wallpapers/baba-darshan/gen-baba-darshan-06.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-baba-darshan-07",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "फाल्गुन मेला श्याम धाम",
+        "en": "Falgun Mela at Shyam Dham"
+      },
+      "file": "wallpapers/baba-darshan/gen-baba-darshan-07.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-baba-darshan-08",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "खाटू वाले श्याम",
+        "en": "Khatu Wale Shyam"
+      },
+      "file": "wallpapers/baba-darshan/gen-baba-darshan-08.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-baba-darshan-09",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "श्याम शरणम् गच्छामि",
+        "en": "I seek refuge in Shyam"
+      },
+      "file": "wallpapers/baba-darshan/gen-baba-darshan-09.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-baba-darshan-10",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "gen-baba-darshan-10",
+        "en": "gen-baba-darshan-10"
+      },
+      "file": "wallpapers/baba-darshan/gen-baba-darshan-10.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "wiki-baba-02",
+      "type": "wallpaper",
+      "category": "baba-darshan",
+      "title": {
+        "hi": "खाटू श्याम जी",
+        "en": "Khatu Shyam Ji"
+      },
+      "file": "wallpapers/baba-darshan/wiki-baba-02.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "CC BY-SA 4.0",
+      "attribution": "AdityaSharma92 / Wikimedia Commons",
+      "premium": true,
+      "source": "wikimedia"
+    },
+    {
+      "id": "gen-ekadashi-01",
+      "type": "wallpaper",
+      "category": "ekadashi",
+      "title": {
+        "hi": "हे श्याम बाबा कृपा करो",
+        "en": "Shyam Baba, bless us"
+      },
+      "file": "wallpapers/ekadashi/gen-ekadashi-01.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-ekadashi-02",
+      "type": "wallpaper",
+      "category": "ekadashi",
+      "title": {
+        "hi": "बालेला मुकुट श्याम के",
+        "en": "Blessed crown of Shyam"
+      },
+      "file": "wallpapers/ekadashi/gen-ekadashi-02.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-ekadashi-03",
+      "type": "wallpaper",
+      "category": "ekadashi",
+      "title": {
+        "hi": "हाथ जोड़े खड़े हैं द्वारे",
+        "en": "Hands folded at your door"
+      },
+      "file": "wallpapers/ekadashi/gen-ekadashi-03.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-ekadashi-04",
+      "type": "wallpaper",
+      "category": "ekadashi",
+      "title": {
+        "hi": "श्याम नाम सुमिरन करो",
+        "en": "Remember the name of Shyam"
+      },
+      "file": "wallpapers/ekadashi/gen-ekadashi-04.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-ekadashi-05",
+      "type": "wallpaper",
+      "category": "ekadashi",
+      "title": {
+        "hi": "मेरे श्याम मेरे राम",
+        "en": "My Shyam, my Ram"
+      },
+      "file": "wallpapers/ekadashi/gen-ekadashi-05.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-ekadashi-06",
+      "type": "wallpaper",
+      "category": "ekadashi",
+      "title": {
+        "hi": "एकादशी व्रत फलदायी",
+        "en": "Ekadashi brings merit"
+      },
+      "file": "wallpapers/ekadashi/gen-ekadashi-06.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-ekadashi-07",
+      "type": "wallpaper",
+      "category": "ekadashi",
+      "title": {
+        "hi": "फाल्गुन मेला श्याम धाम",
+        "en": "Falgun Mela at Shyam Dham"
+      },
+      "file": "wallpapers/ekadashi/gen-ekadashi-07.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-ekadashi-08",
+      "type": "wallpaper",
+      "category": "ekadashi",
+      "title": {
+        "hi": "खाटू वाले श्याम",
+        "en": "Khatu Wale Shyam"
+      },
+      "file": "wallpapers/ekadashi/gen-ekadashi-08.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-ekadashi-09",
+      "type": "wallpaper",
+      "category": "ekadashi",
+      "title": {
+        "hi": "श्याम शरणम् गच्छामि",
+        "en": "I seek refuge in Shyam"
+      },
+      "file": "wallpapers/ekadashi/gen-ekadashi-09.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-ekadashi-10",
+      "type": "wallpaper",
+      "category": "ekadashi",
+      "title": {
+        "hi": "gen-ekadashi-10",
+        "en": "gen-ekadashi-10"
+      },
+      "file": "wallpapers/ekadashi/gen-ekadashi-10.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-festival-01",
+      "type": "wallpaper",
+      "category": "festival",
+      "title": {
+        "hi": "हे श्याम बाबा कृपा करो",
+        "en": "Shyam Baba, bless us"
+      },
+      "file": "wallpapers/festival/gen-festival-01.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-festival-02",
+      "type": "wallpaper",
+      "category": "festival",
+      "title": {
+        "hi": "बालेला मुकुट श्याम के",
+        "en": "Blessed crown of Shyam"
+      },
+      "file": "wallpapers/festival/gen-festival-02.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-festival-03",
+      "type": "wallpaper",
+      "category": "festival",
+      "title": {
+        "hi": "हाथ जोड़े खड़े हैं द्वारे",
+        "en": "Hands folded at your door"
+      },
+      "file": "wallpapers/festival/gen-festival-03.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-festival-04",
+      "type": "wallpaper",
+      "category": "festival",
+      "title": {
+        "hi": "श्याम नाम सुमिरन करो",
+        "en": "Remember the name of Shyam"
+      },
+      "file": "wallpapers/festival/gen-festival-04.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-festival-05",
+      "type": "wallpaper",
+      "category": "festival",
+      "title": {
+        "hi": "मेरे श्याम मेरे राम",
+        "en": "My Shyam, my Ram"
+      },
+      "file": "wallpapers/festival/gen-festival-05.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-festival-06",
+      "type": "wallpaper",
+      "category": "festival",
+      "title": {
+        "hi": "एकादशी व्रत फलदायी",
+        "en": "Ekadashi brings merit"
+      },
+      "file": "wallpapers/festival/gen-festival-06.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-festival-07",
+      "type": "wallpaper",
+      "category": "festival",
+      "title": {
+        "hi": "फाल्गुन मेला श्याम धाम",
+        "en": "Falgun Mela at Shyam Dham"
+      },
+      "file": "wallpapers/festival/gen-festival-07.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-festival-08",
+      "type": "wallpaper",
+      "category": "festival",
+      "title": {
+        "hi": "खाटू वाले श्याम",
+        "en": "Khatu Wale Shyam"
+      },
+      "file": "wallpapers/festival/gen-festival-08.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-festival-09",
+      "type": "wallpaper",
+      "category": "festival",
+      "title": {
+        "hi": "gen-festival-09",
+        "en": "gen-festival-09"
+      },
+      "file": "wallpapers/festival/gen-festival-09.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "wiki-festival-01",
+      "type": "wallpaper",
+      "category": "festival",
+      "title": {
+        "hi": "फाल्गुन मेला",
+        "en": "Falgun Mela 2014"
+      },
+      "file": "wallpapers/festival/wiki-festival-01.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "CC BY-SA 3.0",
+      "attribution": "Niru786 / Wikimedia Commons",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Khatu_shyam_ji_Falgun_Mela_2014_by_niks.jpg",
+      "premium": true,
+      "source": "wikimedia"
+    },
+    {
+      "id": "gen-khatu-temple-01",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "हे श्याम बाबा कृपा करो",
+        "en": "Shyam Baba, bless us"
+      },
+      "file": "wallpapers/khatu-temple/gen-khatu-temple-01.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-khatu-temple-02",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "बालेला मुकुट श्याम के",
+        "en": "Blessed crown of Shyam"
+      },
+      "file": "wallpapers/khatu-temple/gen-khatu-temple-02.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-khatu-temple-03",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "हाथ जोड़े खड़े हैं द्वारे",
+        "en": "Hands folded at your door"
+      },
+      "file": "wallpapers/khatu-temple/gen-khatu-temple-03.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-khatu-temple-04",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "श्याम नाम सुमिरन करो",
+        "en": "Remember the name of Shyam"
+      },
+      "file": "wallpapers/khatu-temple/gen-khatu-temple-04.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-khatu-temple-05",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "gen-khatu-temple-05",
+        "en": "gen-khatu-temple-05"
+      },
+      "file": "wallpapers/khatu-temple/gen-khatu-temple-05.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "wiki-khatu-temple-01",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "खाटू श्याम मंदिर",
+        "en": "Khatu Shyam Temple"
+      },
+      "file": "wallpapers/khatu-temple/wiki-khatu-temple-01.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "CC BY-SA 4.0",
+      "attribution": "Abhaybeniwalreengus / Wikimedia Commons",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Khatu_Shyam_Temple.jpg",
+      "premium": true,
+      "source": "wikimedia"
+    },
+    {
+      "id": "wiki-khatu-temple-02",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "खाटू दरबार",
+        "en": "Khatu Darbar"
+      },
+      "file": "wallpapers/khatu-temple/wiki-khatu-temple-02.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "CC BY-SA 4.0",
+      "attribution": "Shubhamvs22 / Wikimedia Commons",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Khatu_darbar.jpg",
+      "premium": true,
+      "source": "wikimedia"
+    },
+    {
+      "id": "wiki-khatu-temple-03",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "खाटू श्याम प्रवेश द्वार",
+        "en": "Entrance Gate"
+      },
+      "file": "wallpapers/khatu-temple/wiki-khatu-temple-03.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "CC BY-SA 4.0",
+      "attribution": "TheSlumPanda / Wikimedia Commons",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Khatu_Shyam_Ji_Entrance_Gate.jpg",
+      "premium": true,
+      "source": "wikimedia"
+    },
+    {
+      "id": "wiki-khatu-temple-04",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "श्याम कुंड",
+        "en": "Shyam Kund"
+      },
+      "file": "wallpapers/khatu-temple/wiki-khatu-temple-04.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "CC BY-SA 4.0",
+      "attribution": "Vadaykeviv / Wikimedia Commons",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Shyam_Kund,_Khatu_Shyam,_Rajasthan.jpg",
+      "premium": true,
+      "source": "wikimedia"
+    },
+    {
+      "id": "wiki-khatu-temple-05",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "श्री श्री खाटू श्याम मंदिर",
+        "en": "Shree Shree Temple"
+      },
+      "file": "wallpapers/khatu-temple/wiki-khatu-temple-05.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "CC BY 4.0",
+      "attribution": "SayandeepDutta / Wikimedia Commons",
+      "premium": true,
+      "source": "wikimedia"
+    },
+    {
+      "id": "wiki-khatu-temple-06",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "खाटू श्याम जी",
+        "en": "Khatu Shyam Ji panorama"
+      },
+      "file": "wallpapers/khatu-temple/wiki-khatu-temple-06.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "CC BY-SA 3.0",
+      "attribution": "Indrapal Jangid / Wikimedia Commons",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Khatu_Shyam_Ji_-_panoramio.jpg",
+      "premium": true,
+      "source": "wikimedia"
+    },
+    {
+      "id": "wiki-khatu-temple-07",
+      "type": "wallpaper",
+      "category": "khatu-temple",
+      "title": {
+        "hi": "खाटू श्याम सीकर",
+        "en": "Khatu Shyam Sikar"
+      },
+      "file": "wallpapers/khatu-temple/wiki-khatu-temple-07.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "CC BY-SA 4.0",
+      "attribution": "Dhruvi agarwal / Wikimedia Commons",
+      "premium": true,
+      "source": "wikimedia"
+    },
+    {
+      "id": "gen-quotes-01",
+      "type": "wallpaper",
+      "category": "quotes",
+      "title": {
+        "hi": "हे श्याम बाबा कृपा करो",
+        "en": "Shyam Baba, bless us"
+      },
+      "file": "wallpapers/quotes/gen-quotes-01.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-quotes-02",
+      "type": "wallpaper",
+      "category": "quotes",
+      "title": {
+        "hi": "बालेला मुकुट श्याम के",
+        "en": "Blessed crown of Shyam"
+      },
+      "file": "wallpapers/quotes/gen-quotes-02.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-quotes-03",
+      "type": "wallpaper",
+      "category": "quotes",
+      "title": {
+        "hi": "हाथ जोड़े खड़े हैं द्वारे",
+        "en": "Hands folded at your door"
+      },
+      "file": "wallpapers/quotes/gen-quotes-03.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-quotes-04",
+      "type": "wallpaper",
+      "category": "quotes",
+      "title": {
+        "hi": "श्याम नाम सुमिरन करो",
+        "en": "Remember the name of Shyam"
+      },
+      "file": "wallpapers/quotes/gen-quotes-04.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-quotes-05",
+      "type": "wallpaper",
+      "category": "quotes",
+      "title": {
+        "hi": "मेरे श्याम मेरे राम",
+        "en": "My Shyam, my Ram"
+      },
+      "file": "wallpapers/quotes/gen-quotes-05.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-quotes-06",
+      "type": "wallpaper",
+      "category": "quotes",
+      "title": {
+        "hi": "एकादशी व्रत फलदायी",
+        "en": "Ekadashi brings merit"
+      },
+      "file": "wallpapers/quotes/gen-quotes-06.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-quotes-07",
+      "type": "wallpaper",
+      "category": "quotes",
+      "title": {
+        "hi": "फाल्गुन मेला श्याम धाम",
+        "en": "Falgun Mela at Shyam Dham"
+      },
+      "file": "wallpapers/quotes/gen-quotes-07.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-quotes-08",
+      "type": "wallpaper",
+      "category": "quotes",
+      "title": {
+        "hi": "खाटू वाले श्याम",
+        "en": "Khatu Wale Shyam"
+      },
+      "file": "wallpapers/quotes/gen-quotes-08.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-quotes-09",
+      "type": "wallpaper",
+      "category": "quotes",
+      "title": {
+        "hi": "श्याम शरणम् गच्छामि",
+        "en": "I seek refuge in Shyam"
+      },
+      "file": "wallpapers/quotes/gen-quotes-09.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "gen-quotes-10",
+      "type": "wallpaper",
+      "category": "quotes",
+      "title": {
+        "hi": "gen-quotes-10",
+        "en": "gen-quotes-10"
+      },
+      "file": "wallpapers/quotes/gen-quotes-10.jpg",
+      "format": "jpg",
+      "width": 1080,
+      "height": 1920,
+      "license": "Original / App-owned",
+      "attribution": "Generated for Khatu Shyam Superapp",
+      "premium": true,
+      "source": "generated"
+    },
+    {
+      "id": "tone-bhajan-00",
+      "type": "ringtone",
+      "category": "bhajan",
+      "title": {
+        "hi": "भजन स्वर १",
+        "en": "Bhajan tone 1"
+      },
+      "file": "ringtones/bhajan/bhajan-00.m4a",
+      "format": "m4a",
+      "durationSec": 2.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-bhajan-01",
+      "type": "ringtone",
+      "category": "bhajan",
+      "title": {
+        "hi": "भजन स्वर २",
+        "en": "Bhajan tone 2"
+      },
+      "file": "ringtones/bhajan/bhajan-01.m4a",
+      "format": "m4a",
+      "durationSec": 2.45,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-bhajan-02",
+      "type": "ringtone",
+      "category": "bhajan",
+      "title": {
+        "hi": "कीर्तन धुन",
+        "en": "Kirtan tune"
+      },
+      "file": "ringtones/bhajan/bhajan-02.m4a",
+      "format": "m4a",
+      "durationSec": 2.7,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-bhajan-03",
+      "type": "ringtone",
+      "category": "bhajan",
+      "title": {
+        "hi": "मधुर भजन",
+        "en": "Sweet bhajan"
+      },
+      "file": "ringtones/bhajan/bhajan-03.m4a",
+      "format": "m4a",
+      "durationSec": 2.95,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-bhajan-04",
+      "type": "ringtone",
+      "category": "bhajan",
+      "title": {
+        "hi": "राग भक्ति",
+        "en": "Bhakti raga"
+      },
+      "file": "ringtones/bhajan/bhajan-04.m4a",
+      "format": "m4a",
+      "durationSec": 2.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-bhajan-05",
+      "type": "ringtone",
+      "category": "bhajan",
+      "title": {
+        "hi": "श्याम भजन",
+        "en": "Shyam bhajan"
+      },
+      "file": "ringtones/bhajan/bhajan-05.m4a",
+      "format": "m4a",
+      "durationSec": 2.45,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-bhajan-06",
+      "type": "ringtone",
+      "category": "bhajan",
+      "title": {
+        "hi": "आरती धुन",
+        "en": "Aarti tune"
+      },
+      "file": "ringtones/bhajan/bhajan-06.m4a",
+      "format": "m4a",
+      "durationSec": 2.7,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-bhajan-07",
+      "type": "ringtone",
+      "category": "bhajan",
+      "title": {
+        "hi": "संत स्वर",
+        "en": "Saint tone"
+      },
+      "file": "ringtones/bhajan/bhajan-07.m4a",
+      "format": "m4a",
+      "durationSec": 2.95,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-bhajan-08",
+      "type": "ringtone",
+      "category": "bhajan",
+      "title": {
+        "hi": "भक्ति संगीत",
+        "en": "Devotional music"
+      },
+      "file": "ringtones/bhajan/bhajan-08.m4a",
+      "format": "m4a",
+      "durationSec": 2.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-bhajan-09",
+      "type": "ringtone",
+      "category": "bhajan",
+      "title": {
+        "hi": "हार्मोनियम स्वर",
+        "en": "Harmonium tone"
+      },
+      "file": "ringtones/bhajan/bhajan-09.m4a",
+      "format": "m4a",
+      "durationSec": 2.45,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-jai-shree-shyam-00",
+      "type": "ringtone",
+      "category": "jai-shree-shyam",
+      "title": {
+        "hi": "जय श्री श्याम स्वर",
+        "en": "Jai Shree Shyam tone"
+      },
+      "file": "ringtones/jai-shree-shyam/jai-shree-shyam-00.m4a",
+      "format": "m4a",
+      "durationSec": 2.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-jai-shree-shyam-01",
+      "type": "ringtone",
+      "category": "jai-shree-shyam",
+      "title": {
+        "hi": "श्याम वंदना",
+        "en": "Shyam Vandana"
+      },
+      "file": "ringtones/jai-shree-shyam/jai-shree-shyam-01.m4a",
+      "format": "m4a",
+      "durationSec": 2.45,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-jai-shree-shyam-02",
+      "type": "ringtone",
+      "category": "jai-shree-shyam",
+      "title": {
+        "hi": "आरती घंटी",
+        "en": "Aarti bell"
+      },
+      "file": "ringtones/jai-shree-shyam/jai-shree-shyam-02.m4a",
+      "format": "m4a",
+      "durationSec": 2.7,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-jai-shree-shyam-03",
+      "type": "ringtone",
+      "category": "jai-shree-shyam",
+      "title": {
+        "hi": "मंदिर घंटा",
+        "en": "Temple bell"
+      },
+      "file": "ringtones/jai-shree-shyam/jai-shree-shyam-03.m4a",
+      "format": "m4a",
+      "durationSec": 2.95,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-jai-shree-shyam-04",
+      "type": "ringtone",
+      "category": "jai-shree-shyam",
+      "title": {
+        "hi": "भक्ति नाद",
+        "en": "Bhakti note"
+      },
+      "file": "ringtones/jai-shree-shyam/jai-shree-shyam-04.m4a",
+      "format": "m4a",
+      "durationSec": 2.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-jai-shree-shyam-05",
+      "type": "ringtone",
+      "category": "jai-shree-shyam",
+      "title": {
+        "hi": "श्याम जयकारा",
+        "en": "Shyam call"
+      },
+      "file": "ringtones/jai-shree-shyam/jai-shree-shyam-05.m4a",
+      "format": "m4a",
+      "durationSec": 2.45,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-jai-shree-shyam-06",
+      "type": "ringtone",
+      "category": "jai-shree-shyam",
+      "title": {
+        "hi": "प्रणाम स्वर",
+        "en": "Pranam tone"
+      },
+      "file": "ringtones/jai-shree-shyam/jai-shree-shyam-06.m4a",
+      "format": "m4a",
+      "durationSec": 2.7,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-jai-shree-shyam-07",
+      "type": "ringtone",
+      "category": "jai-shree-shyam",
+      "title": {
+        "hi": "दरबार ध्वनि",
+        "en": "Darbar chime"
+      },
+      "file": "ringtones/jai-shree-shyam/jai-shree-shyam-07.m4a",
+      "format": "m4a",
+      "durationSec": 2.95,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-jai-shree-shyam-08",
+      "type": "ringtone",
+      "category": "jai-shree-shyam",
+      "title": {
+        "hi": "मंगल स्वर",
+        "en": "Mangal tone"
+      },
+      "file": "ringtones/jai-shree-shyam/jai-shree-shyam-08.m4a",
+      "format": "m4a",
+      "durationSec": 2.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-jai-shree-shyam-09",
+      "type": "ringtone",
+      "category": "jai-shree-shyam",
+      "title": {
+        "hi": "श्याम कीर्तन स्वर",
+        "en": "Kirtan tone"
+      },
+      "file": "ringtones/jai-shree-shyam/jai-shree-shyam-09.m4a",
+      "format": "m4a",
+      "durationSec": 2.45,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-notification-00",
+      "type": "ringtone",
+      "category": "notification",
+      "title": {
+        "hi": "सूचना घंटी",
+        "en": "Notify bell"
+      },
+      "file": "ringtones/notification/notification-00.m4a",
+      "format": "m4a",
+      "durationSec": 1.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-notification-01",
+      "type": "ringtone",
+      "category": "notification",
+      "title": {
+        "hi": "लघु चाइम",
+        "en": "Short chime"
+      },
+      "file": "ringtones/notification/notification-01.m4a",
+      "format": "m4a",
+      "durationSec": 1.35,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-notification-02",
+      "type": "ringtone",
+      "category": "notification",
+      "title": {
+        "hi": "डिंग श्याम",
+        "en": "Shyam ding"
+      },
+      "file": "ringtones/notification/notification-02.m4a",
+      "format": "m4a",
+      "durationSec": 1.5,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-notification-03",
+      "type": "ringtone",
+      "category": "notification",
+      "title": {
+        "hi": "अलर्ट स्वर",
+        "en": "Alert tone"
+      },
+      "file": "ringtones/notification/notification-03.m4a",
+      "format": "m4a",
+      "durationSec": 1.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-notification-04",
+      "type": "ringtone",
+      "category": "notification",
+      "title": {
+        "hi": "पॉप चाइम",
+        "en": "Pop chime"
+      },
+      "file": "ringtones/notification/notification-04.m4a",
+      "format": "m4a",
+      "durationSec": 1.35,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-notification-05",
+      "type": "ringtone",
+      "category": "notification",
+      "title": {
+        "hi": "सॉफ्ट पिंग",
+        "en": "Soft ping"
+      },
+      "file": "ringtones/notification/notification-05.m4a",
+      "format": "m4a",
+      "durationSec": 1.5,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-notification-06",
+      "type": "ringtone",
+      "category": "notification",
+      "title": {
+        "hi": "डबल बेल",
+        "en": "Double bell"
+      },
+      "file": "ringtones/notification/notification-06.m4a",
+      "format": "m4a",
+      "durationSec": 1.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-notification-07",
+      "type": "ringtone",
+      "category": "notification",
+      "title": {
+        "hi": "ट्रिपल चाइम",
+        "en": "Triple chime"
+      },
+      "file": "ringtones/notification/notification-07.m4a",
+      "format": "m4a",
+      "durationSec": 1.35,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-notification-08",
+      "type": "ringtone",
+      "category": "notification",
+      "title": {
+        "hi": "मंदिर टिंग",
+        "en": "Temple ting"
+      },
+      "file": "ringtones/notification/notification-08.m4a",
+      "format": "m4a",
+      "durationSec": 1.5,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-notification-09",
+      "type": "ringtone",
+      "category": "notification",
+      "title": {
+        "hi": "हल्की घंटी",
+        "en": "Light bell"
+      },
+      "file": "ringtones/notification/notification-09.m4a",
+      "format": "m4a",
+      "durationSec": 1.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-shyam-mantra-00",
+      "type": "ringtone",
+      "category": "shyam-mantra",
+      "title": {
+        "hi": "श्याम मंत्र १",
+        "en": "Mantra tone 1"
+      },
+      "file": "ringtones/shyam-mantra/shyam-mantra-00.m4a",
+      "format": "m4a",
+      "durationSec": 2.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-shyam-mantra-01",
+      "type": "ringtone",
+      "category": "shyam-mantra",
+      "title": {
+        "hi": "श्याम मंत्र २",
+        "en": "Mantra tone 2"
+      },
+      "file": "ringtones/shyam-mantra/shyam-mantra-01.m4a",
+      "format": "m4a",
+      "durationSec": 2.45,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-shyam-mantra-02",
+      "type": "ringtone",
+      "category": "shyam-mantra",
+      "title": {
+        "hi": "ध्यान स्वर",
+        "en": "Dhyan tone"
+      },
+      "file": "ringtones/shyam-mantra/shyam-mantra-02.m4a",
+      "format": "m4a",
+      "durationSec": 2.7,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-shyam-mantra-03",
+      "type": "ringtone",
+      "category": "shyam-mantra",
+      "title": {
+        "hi": "नाम जप",
+        "en": "Naam jap"
+      },
+      "file": "ringtones/shyam-mantra/shyam-mantra-03.m4a",
+      "format": "m4a",
+      "durationSec": 2.95,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-shyam-mantra-04",
+      "type": "ringtone",
+      "category": "shyam-mantra",
+      "title": {
+        "hi": "शांत मंत्र",
+        "en": "Calm mantra"
+      },
+      "file": "ringtones/shyam-mantra/shyam-mantra-04.m4a",
+      "format": "m4a",
+      "durationSec": 2.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-shyam-mantra-05",
+      "type": "ringtone",
+      "category": "shyam-mantra",
+      "title": {
+        "hi": "प्रातः स्मरण",
+        "en": "Morning recall"
+      },
+      "file": "ringtones/shyam-mantra/shyam-mantra-05.m4a",
+      "format": "m4a",
+      "durationSec": 2.45,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-shyam-mantra-06",
+      "type": "ringtone",
+      "category": "shyam-mantra",
+      "title": {
+        "hi": "संध्या मंत्र",
+        "en": "Evening mantra"
+      },
+      "file": "ringtones/shyam-mantra/shyam-mantra-06.m4a",
+      "format": "m4a",
+      "durationSec": 2.7,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-shyam-mantra-07",
+      "type": "ringtone",
+      "category": "shyam-mantra",
+      "title": {
+        "hi": "माला स्वर",
+        "en": "Mala tone"
+      },
+      "file": "ringtones/shyam-mantra/shyam-mantra-07.m4a",
+      "format": "m4a",
+      "durationSec": 2.95,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-shyam-mantra-08",
+      "type": "ringtone",
+      "category": "shyam-mantra",
+      "title": {
+        "hi": "ॐ श्याम",
+        "en": "Om Shyam"
+      },
+      "file": "ringtones/shyam-mantra/shyam-mantra-08.m4a",
+      "format": "m4a",
+      "durationSec": 2.2,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    },
+    {
+      "id": "tone-shyam-mantra-09",
+      "type": "ringtone",
+      "category": "shyam-mantra",
+      "title": {
+        "hi": "मंत्र घंटी",
+        "en": "Mantra chime"
+      },
+      "file": "ringtones/shyam-mantra/shyam-mantra-09.m4a",
+      "format": "m4a",
+      "durationSec": 2.45,
+      "license": "Original / App-owned",
+      "attribution": "Synthesized for Khatu Shyam Superapp (placeholder until licensed vocals)",
+      "premium": true,
+      "source": "generated",
+      "note": "Replace with licensed singer recordings before marketing as real bhajans."
+    }
+  ]
+}

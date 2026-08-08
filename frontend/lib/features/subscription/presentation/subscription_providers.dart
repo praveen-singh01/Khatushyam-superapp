@@ -7,7 +7,7 @@ import '../domain/subscription_state.dart';
 
 final subscriptionRepositoryProvider = Provider<SubscriptionRepository>((ref) {
   final config = ref.watch(appConfigProvider);
-  if (config.firebaseConfigured) {
+  if (config.firebaseConfigured || config.useBackendApi) {
     return ApiSubscriptionRepository(ref.watch(apiClientProvider));
   }
   return FakeSubscriptionRepository();

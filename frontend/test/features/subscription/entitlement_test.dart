@@ -11,6 +11,7 @@ void main() {
       const free = SubscriptionState.free();
       expect(free.canAccess(AppFeature.story), isTrue);
       expect(free.canAccess(AppFeature.chamatkar), isTrue);
+      expect(free.canAccess(AppFeature.liveDarshan), isTrue);
       expect(free.canAccess(AppFeature.bhajans), isFalse);
       expect(free.canAccess(AppFeature.calendar), isFalse);
     });
@@ -54,8 +55,8 @@ void main() {
       expect(auth.currentUser, isNull);
 
       final user = await auth.signInWithGoogle();
-      expect(user.uid, 'fake-uid');
-      expect(await auth.getIdToken(), 'fake-id-token-fake-uid');
+      expect(user.uid, 'local-premium');
+      expect(await auth.getIdToken(), 'premium');
 
       await auth.signOut();
       expect(auth.currentUser, isNull);
@@ -65,11 +66,13 @@ void main() {
   });
 
   group('AppFeature', () {
-    test('premium list excludes story and chamatkar', () {
+    test('premium list excludes free features', () {
       expect(kPremiumFeatures, isNot(contains(AppFeature.story)));
       expect(kPremiumFeatures, isNot(contains(AppFeature.chamatkar)));
+      expect(kPremiumFeatures, isNot(contains(AppFeature.liveDarshan)));
       expect(AppFeature.story.isFree, isTrue);
       expect(AppFeature.chamatkar.isFree, isTrue);
+      expect(AppFeature.liveDarshan.isFree, isTrue);
     });
   });
 }

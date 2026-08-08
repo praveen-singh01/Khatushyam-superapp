@@ -239,6 +239,48 @@ abstract class AppLocalizations {
   /// **'अभी कोई अनुभव नहीं। पहले आप लिखें।'**
   String get chamatkarEmpty;
 
+  /// No description provided for @featureLiveDarshan.
+  ///
+  /// In hi, this message translates to:
+  /// **'लाइव दर्शन'**
+  String get featureLiveDarshan;
+
+  /// No description provided for @liveDarshanSubtitle.
+  ///
+  /// In hi, this message translates to:
+  /// **'खाटू श्याम को YouTube पर लाइव देखें — मुफ़्त'**
+  String get liveDarshanSubtitle;
+
+  /// No description provided for @liveDarshanOfflineTitle.
+  ///
+  /// In hi, this message translates to:
+  /// **'लाइव दर्शन अभी बंद है'**
+  String get liveDarshanOfflineTitle;
+
+  /// No description provided for @liveDarshanOfflineMessage.
+  ///
+  /// In hi, this message translates to:
+  /// **'जब आरती शुरू होगी, बाबा का लाइव यहाँ दिखेगा।'**
+  String get liveDarshanOfflineMessage;
+
+  /// No description provided for @liveDarshanLiveBadge.
+  ///
+  /// In hi, this message translates to:
+  /// **'अभी लाइव'**
+  String get liveDarshanLiveBadge;
+
+  /// No description provided for @liveDarshanOfflineBadge.
+  ///
+  /// In hi, this message translates to:
+  /// **'अभी लाइव नहीं'**
+  String get liveDarshanOfflineBadge;
+
+  /// No description provided for @liveDarshanWatchCta.
+  ///
+  /// In hi, this message translates to:
+  /// **'लाइव देखें'**
+  String get liveDarshanWatchCta;
+
   /// No description provided for @paywallTitle.
   ///
   /// In hi, this message translates to:
@@ -260,7 +302,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallNote.
   ///
   /// In hi, this message translates to:
-  /// **'कथा और चमत्कार मुफ़्त रहेंगे। अभी मॉक चेकआउट।'**
+  /// **'कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे। अभी मॉक चेकआउट।'**
   String get paywallNote;
 
   /// No description provided for @lockedTitle.

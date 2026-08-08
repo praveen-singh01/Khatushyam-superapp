@@ -5,12 +5,15 @@ export type SubscriptionStatus =
   | "halted"
   | "cancelled";
 
+export type UserRole = "user" | "admin";
+
 export interface AuthenticatedUser {
   id: string;
   firebaseUid: string;
   email: string;
   displayName?: string;
   photoUrl?: string;
+  role: UserRole;
   subscriptionStatus: SubscriptionStatus;
 }
 

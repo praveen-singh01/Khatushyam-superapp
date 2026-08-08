@@ -1,14 +1,17 @@
 import { Schema, model } from "mongoose";
-import type { SubscriptionStatus } from "../../shared/types.js";
+import type { SubscriptionStatus, UserRole } from "../../shared/types.js";
 
 export interface UserDocument {
   firebaseUid: string;
   email: string;
   displayName?: string;
   photoUrl?: string;
+  role: UserRole;
   fcmTokens: string[];
   subscriptionStatus: SubscriptionStatus;
   razorpaySubscriptionId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const userSchema = new Schema<UserDocument>(
@@ -17,6 +20,12 @@ const userSchema = new Schema<UserDocument>(
     email: { type: String, required: true, lowercase: true, trim: true },
     displayName: String,
     photoUrl: String,
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+      index: true,
+    },
     fcmTokens: { type: [String], default: [] },
     subscriptionStatus: {
       type: String,

@@ -81,6 +81,27 @@ class AppLocalizationsHi extends AppLocalizations {
   String get chamatkarEmpty => 'अभी कोई अनुभव नहीं। पहले आप लिखें।';
 
   @override
+  String get featureLiveDarshan => 'लाइव दर्शन';
+
+  @override
+  String get liveDarshanSubtitle => 'खाटू श्याम को YouTube पर लाइव देखें — मुफ़्त';
+
+  @override
+  String get liveDarshanOfflineTitle => 'लाइव दर्शन अभी बंद है';
+
+  @override
+  String get liveDarshanOfflineMessage => 'जब आरती शुरू होगी, बाबा का लाइव यहाँ दिखेगा।';
+
+  @override
+  String get liveDarshanLiveBadge => 'अभी लाइव';
+
+  @override
+  String get liveDarshanOfflineBadge => 'अभी लाइव नहीं';
+
+  @override
+  String get liveDarshanWatchCta => 'लाइव देखें';
+
+  @override
   String get paywallTitle => 'प्रीमियम सदस्यता';
 
   @override
@@ -90,7 +111,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get paywallCta => 'मासिक योजना शुरू करें';
 
   @override
-  String get paywallNote => 'कथा और चमत्कार मुफ़्त रहेंगे। अभी मॉक चेकआउट।';
+  String get paywallNote => 'कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे। अभी मॉक चेकआउट।';
 
   @override
   String get lockedTitle => 'सदस्यता आवश्यक';

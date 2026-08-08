@@ -30,3 +30,9 @@ coverage/
 .cache/
 tmp/
 temp/
+
+# Large local content pack binaries (keep metadata + scripts in git)
+khatu-shyam-content/wallpapers/**/*.jpg
+khatu-shyam-content/ringtones/**/*.m4a
+khatu-shyam-content/ringtones/**/*.wav
+khatu-shyam-content/**/.DS_Store
