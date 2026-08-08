@@ -6,6 +6,12 @@ import {
   LiveStream,
   toLiveStreamResponse,
 } from "./live-stream.model.js";
+import {
+  DEFAULT_STORY,
+  STORY_KEY,
+  Story,
+  toStoryResponse,
+} from "./story.model.js";
 
 export function createContentRouter(
   authenticate: RequestHandler,
@@ -27,35 +33,17 @@ export function createContentRouter(
     return cdnBase;
   };
 
-  router.get("/story", (_req, res) => {
-    res.json({
-      title: {
-        hi: "खाटू श्याम बाबा की कथा",
-        en: "The story of Khatu Shyam Baba",
-      },
-      summary: {
-        hi: "महाभारत के बबरिक से खाटू धाम के श्याम बाबा तक — भक्ति की अमर कथा।",
-        en: "From Barbarik of the Mahabharata to Shyam Baba of Khatu — an immortal story of devotion.",
-      },
-      chapters: [
-        {
-          title: { hi: "बबरिक की प्रतिज्ञा", en: "Barbarik's vow" },
-          body: {
-            hi: "महाभारत काल में बबरिक ने तीन बाणों से युद्ध जीतने की शक्ति पाई, फिर श्रीकृष्ण की इच्छा पर अपना शीश अर्पित कर दिया।",
-            en: "In the Mahabharata age, Barbarik gained the power to win war with three arrows, then offered his head at Krishna's wish.",
-          },
-        },
-        {
-          title: { hi: "खाटू में विराजमान", en: "Enshrined at Khatu" },
-          body: {
-            hi: "भगवान की कृपा से उनका शीश राजस्थान के खाटू में विराजमान हुआ — आज करोड़ों भक्त श्याम बाबा के नाम से पुकारते हैं।",
-            en: "By divine grace his head was enshrined at Khatu in Rajasthan — crores of devotees now call him Shyam Baba.",
-          },
-        },
-      ],
-      videoKey: "public/story/khatu-shyam-introduction.mp4",
-      access: "free",
-    });
+  router.get("/story", async (_req, res, next) => {
+    try {
+      const doc = await Story.findOne({ key: STORY_KEY }).lean();
+      if (!doc) {
+        res.json(toStoryResponse({ ...DEFAULT_STORY, chapters: [...DEFAULT_STORY.chapters] }));
+        return;
+      }
+      res.json(toStoryResponse(doc));
+    } catch (error) {
+      next(error);
+    }
   });
 
   /** Free Live Darshan config — backend-controlled YouTube embed. */

@@ -21,28 +21,114 @@ final storyProvider = FutureProvider<StoryContent>((ref) async {
   return ref.watch(mockApiProvider).fetchStory();
 });
 
+class ChamatkarFeedState {
+  const ChamatkarFeedState({
+    required this.items,
+    this.nextCursor,
+    this.loadingMore = false,
+  });
+
+  final List<ChamatkarPost> items;
+  final String? nextCursor;
+  final bool loadingMore;
+
+  bool get hasMore => nextCursor != null && nextCursor!.isNotEmpty;
+
+  ChamatkarFeedState copyWith({
+    List<ChamatkarPost>? items,
+    String? nextCursor,
+    bool? loadingMore,
+    bool clearCursor = false,
+  }) =>
+      ChamatkarFeedState(
+        items: items ?? this.items,
+        nextCursor: clearCursor ? null : (nextCursor ?? this.nextCursor),
+        loadingMore: loadingMore ?? this.loadingMore,
+      );
+}
+
 final chamatkarListProvider =
-    AsyncNotifierProvider<ChamatkarListController, List<ChamatkarPost>>(
+    AsyncNotifierProvider<ChamatkarListController, ChamatkarFeedState>(
       ChamatkarListController.new,
     );
 
-class ChamatkarListController extends AsyncNotifier<List<ChamatkarPost>> {
+class ChamatkarListController extends AsyncNotifier<ChamatkarFeedState> {
   @override
-  Future<List<ChamatkarPost>> build() {
+  Future<ChamatkarFeedState> build() => _loadInitial();
+
+  Future<ChamatkarFeedState> _loadInitial() async {
     if (_useApi(ref)) {
-      return ref.read(contentRepositoryProvider).fetchChamatkars();
+      final page = await ref.read(contentRepositoryProvider).fetchChamatkars();
+      return ChamatkarFeedState(
+        items: page.items,
+        nextCursor: page.nextCursor,
+      );
     }
-    return ref.read(mockApiProvider).fetchChamatkars();
+    final items = await ref.read(mockApiProvider).fetchChamatkars();
+    return ChamatkarFeedState(items: items);
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      if (_useApi(ref)) {
-        return ref.read(contentRepositoryProvider).fetchChamatkars();
-      }
-      return ref.read(mockApiProvider).fetchChamatkars();
-    });
+    state = await AsyncValue.guard(_loadInitial);
+  }
+
+  Future<void> loadMore() async {
+    final current = state.asData?.value;
+    if (current == null || !current.hasMore || current.loadingMore) return;
+    if (!_useApi(ref)) return;
+
+    state = AsyncData(current.copyWith(loadingMore: true));
+    try {
+      final page = await ref
+          .read(contentRepositoryProvider)
+          .fetchChamatkars(cursor: current.nextCursor);
+      state = AsyncData(
+        ChamatkarFeedState(
+          items: [...current.items, ...page.items],
+          nextCursor: page.nextCursor,
+        ),
+      );
+    } catch (_) {
+      state = AsyncData(current.copyWith(loadingMore: false));
+    }
+  }
+
+  Future<void> toggleLike(String id) async {
+    final current = state.asData?.value;
+    if (current == null) return;
+
+    if (_useApi(ref)) {
+      final updated =
+          await ref.read(contentRepositoryProvider).toggleChamatkarLike(id);
+      state = AsyncData(
+        current.copyWith(
+          items: [
+            for (final post in current.items)
+              if (post.id == id) updated else post,
+          ],
+        ),
+      );
+      return;
+    }
+
+    state = AsyncData(
+      current.copyWith(
+        items: [
+          for (final post in current.items)
+            if (post.id == id)
+              post.copyWith(
+                likedByMe: !post.likedByMe,
+                likeCount:
+                    post.likedByMe
+                        ? (post.likeCount - 1).clamp(0, 1 << 30)
+                        : post.likeCount + 1,
+              )
+            else
+              post,
+        ],
+      ),
+    );
   }
 
   Future<void> addPost({

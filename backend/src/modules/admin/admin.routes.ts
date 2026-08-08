@@ -16,6 +16,12 @@ import {
   extractYoutubeVideoId,
   toLiveStreamResponse,
 } from "../content/live-stream.model.js";
+import {
+  DEFAULT_STORY,
+  STORY_KEY,
+  Story,
+  toStoryResponse,
+} from "../content/story.model.js";
 import { Chamatkar } from "../chamatkars/chamatkar.model.js";
 import type { UploadPresigner } from "../../shared/ports.js";
 
@@ -103,6 +109,29 @@ const libraryPresignSchema = z.object({
     "audio/m4a",
   ]),
   fileName: z.string().min(1).max(200).optional(),
+});
+
+const localizedTextSchema = z.object({
+  hi: z.string().trim().min(1).max(300),
+  en: z.string().trim().min(1).max(300),
+});
+
+const storyChapterSchema = z.object({
+  title: localizedTextSchema,
+  body: z.object({
+    hi: z.string().trim().min(1).max(8000),
+    en: z.string().trim().min(1).max(8000),
+  }),
+});
+
+const storyUpdateSchema = z.object({
+  title: localizedTextSchema,
+  summary: z.object({
+    hi: z.string().trim().min(1).max(1000),
+    en: z.string().trim().min(1).max(1000),
+  }),
+  youtubeVideoId: z.union([z.string().max(500), z.null()]).optional(),
+  chapters: z.array(storyChapterSchema).min(1).max(50),
 });
 
 const liveStreamUpdateSchema = z
@@ -574,6 +603,65 @@ export function createAdminRouter(options: AdminRouterOptions): Router {
       await asset.save();
       res.json({
         item: assetResponse(asset.toObject(), options.cloudFrontBaseUrl),
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.get("/story", async (_req, res, next) => {
+    try {
+      const doc = await Story.findOne({ key: STORY_KEY }).lean();
+      if (!doc) {
+        const defaults = toStoryResponse({
+          ...DEFAULT_STORY,
+          chapters: [...DEFAULT_STORY.chapters],
+        });
+        res.json({
+          story: {
+            ...defaults,
+            updatedAt: null,
+          },
+        });
+        return;
+      }
+      res.json({
+        story: toStoryResponse(doc),
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.put("/story", async (req, res, next) => {
+    try {
+      const input = storyUpdateSchema.parse(req.body);
+      let youtubeVideoId: string | null = null;
+      if (input.youtubeVideoId != null && input.youtubeVideoId.trim() !== "") {
+        youtubeVideoId = extractYoutubeVideoId(input.youtubeVideoId);
+        if (!youtubeVideoId) {
+          res.status(400).json({ error: "INVALID_YOUTUBE_URL" });
+          return;
+        }
+      }
+
+      const doc = await Story.findOneAndUpdate(
+        { key: STORY_KEY },
+        {
+          $set: {
+            key: STORY_KEY,
+            title: input.title,
+            summary: input.summary,
+            youtubeVideoId,
+            chapters: input.chapters,
+            updatedBy: req.user!.id,
+          },
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true },
+      );
+
+      res.json({
+        story: toStoryResponse(doc.toObject()),
       });
     } catch (error) {
       next(error);

@@ -8,6 +8,7 @@ import type {
   LiveStreamConfig,
   ManagedUser,
   Paginated,
+  StoryConfig,
   SubscriptionStatus,
   UserRole,
 } from "../types";
@@ -98,6 +99,25 @@ export function createCategory(
 export function deleteCategory(token: string, id: string) {
   return request<void>(`/v1/admin/categories/${id}`, token, {
     method: "DELETE",
+  });
+}
+
+export function fetchStory(token: string) {
+  return request<{ story: StoryConfig }>("/v1/admin/story", token);
+}
+
+export function updateStory(
+  token: string,
+  payload: {
+    title: { hi: string; en: string };
+    summary: { hi: string; en: string };
+    youtubeVideoId?: string | null;
+    chapters: StoryConfig["chapters"];
+  },
+) {
+  return request<{ story: StoryConfig }>("/v1/admin/story", token, {
+    method: "PUT",
+    body: JSON.stringify(payload),
   });
 }
 

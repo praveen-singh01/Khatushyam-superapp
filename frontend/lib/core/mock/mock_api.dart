@@ -16,6 +16,7 @@ class MockApi {
           'जब मैं खटु पहुँचा तो मंदिर बंद था, पर एक भक्त ने रात का इंतज़ार करवाया। सुबह दर्शन मिलते ही मन शांत हो गया।',
       language: 'hi',
       createdAt: DateTime.now().subtract(const Duration(hours: 5)),
+      likeCount: 12,
     ),
     ChamatkarPost(
       id: 'c2',
@@ -25,6 +26,7 @@ class MockApi {
           'After months of worry for my child, a neighbor shared a Shyam bhajan. Listening every morning gave our family peace.',
       language: 'en',
       createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      likeCount: 5,
     ),
   ];
 

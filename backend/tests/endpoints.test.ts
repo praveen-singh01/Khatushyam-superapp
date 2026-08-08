@@ -9,6 +9,7 @@ import { Chamatkar } from "../src/modules/chamatkars/chamatkar.model.js";
 import { ContentAsset } from "../src/modules/content/content-asset.model.js";
 import { ContentCategory } from "../src/modules/content/content-category.model.js";
 import { LiveStream } from "../src/modules/content/live-stream.model.js";
+import { Story } from "../src/modules/content/story.model.js";
 import { validWebhookSignature } from "../src/modules/subscriptions/subscription.routes.js";
 import { WebhookEvent } from "../src/modules/subscriptions/webhook-event.model.js";
 import type { IdentityVerifier } from "../src/shared/types.js";
@@ -105,6 +106,7 @@ beforeEach(async () => {
     ContentAsset.deleteMany({}),
     ContentCategory.deleteMany({}),
     LiveStream.deleteMany({}),
+    Story.deleteMany({}),
     WebhookEvent.deleteMany({}),
   ]);
 });
@@ -125,6 +127,8 @@ describe("health and public content", () => {
     const response = await request(app).get("/v1/content/story");
     expect(response.status).toBe(200);
     expect(response.body.access).toBe("free");
+    expect(response.body.chapters.length).toBeGreaterThan(0);
+    expect(response.body.title.hi).toBeTruthy();
   });
 
   it("serves offline live darshan by default without auth", async () => {
@@ -243,10 +247,43 @@ describe("chamatkars", () => {
       });
     expect(create.status).toBe(201);
     expect(create.body.item.title).toContain("श्याम");
+    expect(create.body.item.likeCount).toBe(0);
+    expect(create.body.item.likedByMe).toBe(false);
 
     const list = await request(app).get("/v1/chamatkars");
     expect(list.status).toBe(200);
     expect(list.body.items).toHaveLength(1);
+  });
+
+  it("toggles likes for authenticated users", async () => {
+    const create = await request(app)
+      .post("/v1/chamatkars")
+      .set("Authorization", "Bearer free")
+      .send({
+        title: "कृपा का अनुभव",
+        story: "A long enough miracle story so that like toggle can be tested.",
+        language: "hi",
+      });
+    const id = create.body.item.id as string;
+
+    const liked = await request(app)
+      .post(`/v1/chamatkars/${id}/like`)
+      .set("Authorization", "Bearer free");
+    expect(liked.status).toBe(200);
+    expect(liked.body.item.likeCount).toBe(1);
+    expect(liked.body.item.likedByMe).toBe(true);
+
+    const authedList = await request(app)
+      .get("/v1/chamatkars")
+      .set("Authorization", "Bearer free");
+    expect(authedList.body.items[0].likedByMe).toBe(true);
+
+    const unliked = await request(app)
+      .post(`/v1/chamatkars/${id}/like`)
+      .set("Authorization", "Bearer free");
+    expect(unliked.status).toBe(200);
+    expect(unliked.body.item.likeCount).toBe(0);
+    expect(unliked.body.item.likedByMe).toBe(false);
   });
 
   it("rejects short chamatkar stories", async () => {
@@ -541,6 +578,38 @@ describe("admin dashboard APIs", () => {
       .set("Authorization", "Bearer premium");
     expect(activeLibrary.status).toBe(200);
     expect(activeLibrary.body.items).toHaveLength(1);
+  });
+
+  it("lets admins edit the public story content", async () => {
+    await request(app)
+      .get("/v1/auth/me")
+      .set("Authorization", "Bearer admin");
+
+    const saved = await request(app)
+      .put("/v1/admin/story")
+      .set("Authorization", "Bearer admin")
+      .send({
+        title: { hi: "नई कथा", en: "New Story" },
+        summary: { hi: "सारांश", en: "Summary" },
+        youtubeVideoId: null,
+        chapters: [
+          {
+            title: { hi: "अध्याय 1", en: "Chapter 1" },
+            body: {
+              hi: "यह पहला अध्याय है जिसमें श्याम बाबा की कथा है।",
+              en: "This is the first chapter of the Shyam story.",
+            },
+          },
+        ],
+      });
+    expect(saved.status).toBe(200);
+    expect(saved.body.story.title).toEqual({ hi: "नई कथा", en: "New Story" });
+    expect(saved.body.story.chapters).toHaveLength(1);
+
+    const publicStory = await request(app).get("/v1/content/story");
+    expect(publicStory.status).toBe(200);
+    expect(publicStory.body.title.hi).toBe("नई कथा");
+    expect(publicStory.body.chapters[0].title.en).toBe("Chapter 1");
   });
 
   it("lets admins start and stop live darshan for free clients", async () => {

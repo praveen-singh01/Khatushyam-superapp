@@ -1,20 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/app_localizations.dart';
+import '../../../core/mock/mock_models.dart';
 import '../../../core/mock/mock_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/async_body.dart';
 import '../../../core/widgets/soft_card.dart';
 import '../../auth/presentation/auth_providers.dart';
 
-class ChamatkarScreen extends ConsumerWidget {
+class ChamatkarScreen extends ConsumerStatefulWidget {
   const ChamatkarScreen({super.key});
 
-  Future<void> _compose(BuildContext context, WidgetRef ref) async {
+  @override
+  ConsumerState<ChamatkarScreen> createState() => _ChamatkarScreenState();
+}
+
+class _ChamatkarScreenState extends ConsumerState<ChamatkarScreen> {
+  final _scroll = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scroll.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scroll
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scroll.hasClients) return;
+    if (_scroll.position.pixels > _scroll.position.maxScrollExtent - 240) {
+      ref.read(chamatkarListProvider.notifier).loadMore();
+    }
+  }
+
+  Future<void> _compose() async {
     final l10n = AppLocalizations.of(context)!;
+    final user = ref.read(authStateProvider).asData?.value;
+    if (user == null) {
+      _toast('साझा करने के लिए साइन इन करें');
+      return;
+    }
+
     final titleController = TextEditingController();
     final storyController = TextEditingController();
+    String? formError;
 
     final submitted = await showModalBottomSheet<bool>(
       context: context,
@@ -24,67 +61,130 @@ class ChamatkarScreen extends ConsumerWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.viewInsetsOf(context).bottom + 20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                l10n.chamatkarShareCta,
-                style: Theme.of(context).textTheme.titleLarge,
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: MediaQuery.viewInsetsOf(context).bottom + 20,
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: titleController,
-                decoration: InputDecoration(hintText: l10n.chamatkarTitleHint),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    l10n.chamatkarShareCta,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: titleController,
+                    decoration: InputDecoration(
+                      hintText: l10n.chamatkarTitleHint,
+                    ),
+                    textInputAction: TextInputAction.next,
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: storyController,
+                    minLines: 4,
+                    maxLines: 6,
+                    decoration: InputDecoration(
+                      hintText: l10n.chamatkarStoryHint,
+                    ),
+                  ),
+                  if (formError != null) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      formError!,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () {
+                      final title = titleController.text.trim();
+                      final story = storyController.text.trim();
+                      if (title.length < 3) {
+                        setModalState(
+                          () => formError = 'शीर्षक कम से कम 3 अक्षर का हो',
+                        );
+                        return;
+                      }
+                      if (story.length < 20) {
+                        setModalState(
+                          () =>
+                              formError =
+                                  'अनुभव कम से कम 20 अक्षर का लिखें',
+                        );
+                        return;
+                      }
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Text(l10n.chamatkarPublish),
+                  ),
+                ],
               ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: storyController,
-                minLines: 4,
-                maxLines: 6,
-                decoration: InputDecoration(hintText: l10n.chamatkarStoryHint),
-              ),
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(l10n.chamatkarPublish),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
 
-    if (submitted != true) return;
     final title = titleController.text.trim();
     final story = storyController.text.trim();
-    if (title.length < 3 || story.length < 20) return;
+    titleController.dispose();
+    storyController.dispose();
+    if (submitted != true || !mounted) return;
+    try {
+      await ref
+          .read(chamatkarListProvider.notifier)
+          .addPost(
+            authorName: user.displayName ?? 'भक्त',
+            title: title,
+            story: story,
+          );
+      if (mounted) _toast('आपका अनुभव साझा हो गया 🙏');
+    } catch (_) {
+      if (mounted) _toast('साझा नहीं हो सका। फिर कोशिश करें।');
+    }
+  }
 
+  Future<void> _toggleLike(ChamatkarPost post) async {
     final user = ref.read(authStateProvider).asData?.value;
-    await ref
-        .read(chamatkarListProvider.notifier)
-        .addPost(
-          authorName: user?.displayName ?? 'भक्त',
-          title: title,
-          story: story,
-        );
+    if (user == null) {
+      _toast('लाइक के लिए साइन इन करें');
+      return;
+    }
+    try {
+      await ref.read(chamatkarListProvider.notifier).toggleLike(post.id);
+    } catch (_) {
+      if (mounted) _toast('लाइक नहीं हो सका');
+    }
+  }
+
+  Future<void> _share(ChamatkarPost post) async {
+    final text = '${post.title}\n\n${post.story}\n\n— ${post.authorName}\nजय श्री श्याम';
+    await Clipboard.setData(ClipboardData(text: text));
+    if (mounted) _toast('अनुभव कॉपी हो गया — अब शेयर करें');
+  }
+
+  void _toast(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final feed = ref.watch(chamatkarListProvider);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _compose(context, ref),
+        onPressed: _compose,
         icon: const Icon(Icons.add_rounded),
         label: Text(l10n.chamatkarShareCta),
       ),
@@ -114,100 +214,145 @@ class ChamatkarScreen extends ConsumerWidget {
                 value: feed,
                 onRetry:
                     () => ref.read(chamatkarListProvider.notifier).refresh(),
-                builder: (posts) {
-                  if (posts.isEmpty) {
-                    return Center(child: Text(l10n.chamatkarEmpty));
-                  }
+                builder: (state) {
+                  final posts = state.items;
                   return RefreshIndicator(
                     color: AppColors.orange,
                     onRefresh:
                         () =>
                             ref.read(chamatkarListProvider.notifier).refresh(),
-                    child: ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-                      itemCount: posts.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        final post = posts[index];
-                        final initial =
-                            post.authorName.isNotEmpty
-                                ? post.authorName.characters.first
-                                : 'भ';
-                        return SoftCard(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: AppColors.orangeSoft,
-                                    child: Text(
-                                      initial,
-                                      style: const TextStyle(
+                    child:
+                        posts.isEmpty
+                            ? ListView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              children: [
+                                SizedBox(
+                                  height:
+                                      MediaQuery.sizeOf(context).height * 0.35,
+                                ),
+                                Center(child: Text(l10n.chamatkarEmpty)),
+                              ],
+                            )
+                            : ListView.separated(
+                              controller: _scroll,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.fromLTRB(
+                                20,
+                                8,
+                                20,
+                                100,
+                              ),
+                              itemCount:
+                                  posts.length + (state.loadingMore ? 1 : 0),
+                              separatorBuilder:
+                                  (_, __) => const SizedBox(height: 12),
+                              itemBuilder: (context, index) {
+                                if (index >= posts.length) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
                                         color: AppColors.orange,
-                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
+                                  );
+                                }
+                                final post = posts[index];
+                                final initial =
+                                    post.authorName.isNotEmpty
+                                        ? post.authorName.characters.first
+                                        : 'भ';
+                                return SoftCard(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundColor:
+                                                AppColors.orangeSoft,
+                                            child: Text(
+                                              initial,
+                                              style: const TextStyle(
+                                                color: AppColors.orange,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  post.authorName,
+                                                  style:
+                                                      Theme.of(
+                                                        context,
+                                                      ).textTheme.titleMedium,
+                                                ),
+                                                Text(
+                                                  _timeAgo(post.createdAt),
+                                                  style:
+                                                      Theme.of(
+                                                        context,
+                                                      ).textTheme.bodyMedium,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        post.title,
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.titleMedium,
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        post.story,
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.bodyLarge,
+                                      ),
+                                      const SizedBox(height: 14),
+                                      Row(
+                                        children: [
+                                          _ActionChip(
+                                            icon:
+                                                post.likedByMe
+                                                    ? Icons.favorite_rounded
+                                                    : Icons
+                                                        .favorite_border_rounded,
+                                            label:
+                                                post.likeCount > 0
+                                                    ? '${post.likeCount}'
+                                                    : 'लाइक',
+                                            color:
+                                                post.likedByMe
+                                                    ? AppColors.orange
+                                                    : AppColors.inkMuted,
+                                            onTap: () => _toggleLike(post),
+                                          ),
+                                          const SizedBox(width: 16),
+                                          _ActionChip(
+                                            icon: Icons.ios_share_rounded,
+                                            label: 'शेयर',
+                                            onTap: () => _share(post),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          post.authorName,
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.titleMedium,
-                                        ),
-                                        Text(
-                                          _timeAgo(post.createdAt),
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                post.title,
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                post.story,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              const SizedBox(height: 14),
-                              const Row(
-                                children: [
-                                  _ActionChip(
-                                    icon: Icons.favorite_border_rounded,
-                                    label: 'Like',
-                                  ),
-                                  SizedBox(width: 16),
-                                  _ActionChip(
-                                    icon: Icons.chat_bubble_outline_rounded,
-                                    label: 'Comment',
-                                  ),
-                                  SizedBox(width: 16),
-                                  _ActionChip(
-                                    icon: Icons.share_outlined,
-                                    label: 'Share',
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                                );
+                              },
+                            ),
                   );
                 },
               ),
@@ -220,6 +365,7 @@ class ChamatkarScreen extends ConsumerWidget {
 
   String _timeAgo(DateTime time) {
     final diff = DateTime.now().difference(time);
+    if (diff.inMinutes < 1) return 'अभी';
     if (diff.inMinutes < 60) return '${diff.inMinutes} मिनेट पहले';
     if (diff.inHours < 24) return '${diff.inHours} घंटे पहले';
     return '${diff.inDays} दिन पहले';
@@ -227,19 +373,39 @@ class ChamatkarScreen extends ConsumerWidget {
 }
 
 class _ActionChip extends StatelessWidget {
-  const _ActionChip({required this.icon, required this.label});
+  const _ActionChip({
+    required this.icon,
+    required this.label,
+    this.onTap,
+    this.color = AppColors.inkMuted,
+  });
 
   final IconData icon;
   final String label;
+  final VoidCallback? onTap;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 18, color: AppColors.inkMuted),
-        const SizedBox(width: 4),
-        Text(label, style: Theme.of(context).textTheme.bodyMedium),
-      ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

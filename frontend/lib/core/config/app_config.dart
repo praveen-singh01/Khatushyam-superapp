@@ -35,6 +35,16 @@ class AppConfig {
     );
   }
 
+  /// Store / production build flags (HTTPS API + real Firebase required).
+  ///
+  /// ```bash
+  /// flutter build appbundle \
+  ///   --dart-define=API_BASE_URL=https://api.yourdomain.com \
+  ///   --dart-define=FIREBASE_CONFIGURED=true \
+  ///   --dart-define=USE_BACKEND_API=true
+  /// ```
+  static AppConfig get production => development;
+
   /// Strips accidental trailing junk (e.g. shell `~`) so Dio can parse the URI.
   static String sanitizeApiBaseUrl(String raw) {
     var url = raw.trim();

@@ -217,6 +217,13 @@ a {
   border: 1px solid rgba(248, 235, 226, 0.18);
 }
 
+/* Ghost on light panels (sidebar ghost stays light-on-dark). */
+.panel .btn.ghost {
+  color: var(--panel-ink);
+  border-color: var(--line);
+  background: rgba(42, 27, 20, 0.04);
+}
+
 .btn.danger {
   background: var(--danger);
 }
@@ -328,6 +335,22 @@ tbody tr:hover {
   background: rgba(163, 59, 43, 0.08);
   border-radius: 12px;
   padding: 10px 12px;
+}
+
+.banner {
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 600;
+}
+
+.banner.danger {
+  color: var(--danger);
+  background: rgba(163, 59, 43, 0.08);
+}
+
+.banner.success {
+  color: var(--success);
+  background: rgba(47, 107, 58, 0.1);
 }
 
 .muted {

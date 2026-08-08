@@ -5,6 +5,7 @@ import { AppLayout } from "./components/AppLayout";
 import { ContentPage } from "./pages/ContentPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
+import { StoryPage } from "./pages/StoryPage";
 import { UsersPage } from "./pages/UsersPage";
 
 function Protected({ children }: { children: ReactNode }) {
@@ -35,6 +36,7 @@ export default function App() {
         }
       >
         <Route index element={<DashboardPage />} />
+        <Route path="story" element={<StoryPage />} />
         <Route path="content" element={<ContentPage />} />
         <Route path="users" element={<UsersPage />} />
       </Route>

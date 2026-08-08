@@ -8,7 +8,12 @@ import { existsSync } from "node:fs";
 import { pinoHttp } from "pino-http";
 import { ZodError } from "zod";
 import type { AppEnv } from "./config/env.js";
-import { authenticate, requireAdmin, requirePremium } from "./middleware/auth.js";
+import {
+  authenticate,
+  optionalAuthenticate,
+  requireAdmin,
+  requirePremium,
+} from "./middleware/auth.js";
 import { createAdminRouter } from "./modules/admin/admin.routes.js";
 import { createAuthRouter } from "./modules/auth/auth.routes.js";
 import { createChamatkarRouter } from "./modules/chamatkars/chamatkar.routes.js";
@@ -83,7 +88,10 @@ export function createApp({
 
   const entitlementRouter = createEntitlementRouter(auth, env.RAZORPAY_PLAN_ID);
   const authRouter = createAuthRouter(auth);
-  const chamatkarRouter = createChamatkarRouter(auth);
+  const optionalAuth: RequestHandler = optionalAuthenticate(identityVerifier, {
+    adminEmails: env.ADMIN_EMAILS,
+  });
+  const chamatkarRouter = createChamatkarRouter(auth, optionalAuth);
   const contentRouter = createContentRouter(
     auth,
     requirePremium,

@@ -1,12 +1,14 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, type Types } from "mongoose";
 
 export interface ChamatkarDocument {
-  authorId: Schema.Types.ObjectId;
+  authorId: Types.ObjectId;
   authorName: string;
   title: string;
   story: string;
   language: "hi" | "en";
   status: "published" | "hidden";
+  likeCount: number;
+  likedBy: Types.ObjectId[];
 }
 
 const chamatkarSchema = new Schema<ChamatkarDocument>(
@@ -21,6 +23,11 @@ const chamatkarSchema = new Schema<ChamatkarDocument>(
       enum: ["published", "hidden"],
       default: "published",
       index: true,
+    },
+    likeCount: { type: Number, default: 0, min: 0 },
+    likedBy: {
+      type: [{ type: Schema.Types.ObjectId, ref: "User" }],
+      default: [],
     },
   },
   { timestamps: true },

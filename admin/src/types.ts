@@ -43,6 +43,20 @@ export interface LiveStreamConfig {
   updatedAt?: string | null;
 }
 
+export interface StoryChapter {
+  title: { hi: string; en: string };
+  body: { hi: string; en: string };
+}
+
+export interface StoryConfig {
+  title: { hi: string; en: string };
+  summary: { hi: string; en: string };
+  youtubeVideoId: string | null;
+  chapters: StoryChapter[];
+  access?: "free";
+  updatedAt?: string | null;
+}
+
 export interface ManagedUser {
   id: string;
   firebaseUid: string;

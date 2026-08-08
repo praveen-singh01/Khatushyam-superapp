@@ -37,9 +37,14 @@ class PaywallScreen extends ConsumerWidget {
     final loading = subscription.isLoading;
 
     return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-        children: [
+      child: RefreshIndicator(
+        color: AppColors.orange,
+        onRefresh:
+            () => ref.read(subscriptionControllerProvider.notifier).refresh(),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          children: [
           Text(
             l10n.paywallTitle,
             style: Theme.of(context).textTheme.headlineMedium,
@@ -129,6 +134,7 @@ class PaywallScreen extends ConsumerWidget {
                     : Text(isPremium ? l10n.premiumActive : l10n.paywallCta),
           ),
         ],
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ class StoryContent {
     required this.summaryHi,
     required this.summaryEn,
     required this.chapters,
+    this.youtubeVideoId,
   });
 
   final String titleHi;
@@ -12,6 +13,7 @@ class StoryContent {
   final String summaryHi;
   final String summaryEn;
   final List<StoryChapter> chapters;
+  final String? youtubeVideoId;
 }
 
 class StoryChapter {
@@ -29,6 +31,8 @@ class ChamatkarPost {
     required this.story,
     required this.language,
     required this.createdAt,
+    this.likeCount = 0,
+    this.likedByMe = false,
   });
 
   final String id;
@@ -37,6 +41,30 @@ class ChamatkarPost {
   final String story;
   final String language;
   final DateTime createdAt;
+  final int likeCount;
+  final bool likedByMe;
+
+  ChamatkarPost copyWith({
+    int? likeCount,
+    bool? likedByMe,
+  }) =>
+      ChamatkarPost(
+        id: id,
+        authorName: authorName,
+        title: title,
+        story: story,
+        language: language,
+        createdAt: createdAt,
+        likeCount: likeCount ?? this.likeCount,
+        likedByMe: likedByMe ?? this.likedByMe,
+      );
+}
+
+class ChamatkarPage {
+  const ChamatkarPage({required this.items, this.nextCursor});
+
+  final List<ChamatkarPost> items;
+  final String? nextCursor;
 }
 
 class CalendarDay {

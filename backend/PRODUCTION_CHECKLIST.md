@@ -77,11 +77,40 @@ Give:
 - [ ] Analytics (Firebase Analytics / Mixpanel)
 - [ ] Staging environment (separate Firebase + Razorpay test keys + staging Mongo)
 
+## 7. Khoje (Story) + Samuday (Chamatkar) — product ready
+
+These free tabs are API-backed for launch:
+
+| Tab | Ship with | Still optional later |
+|-----|-----------|----------------------|
+| **खोजें / Story** | 5 Hindi/EN chapters from `GET /v1/content/story`, chapter reader UI | Admin CMS for chapters, `youtubeVideoId` when you have a video |
+| **समुदाय / Chamatkar** | List + create + like toggle + share copy, cursor pagination | Comments, moderation queue, report flow |
+
+Ops:
+
+- [ ] Seed a few real devotee posts (or leave empty — empty state is handled)
+- [ ] Set `ADMIN_EMAILS` so admins can hide abusive posts later via admin tools
+- [ ] (Optional) Set `youtubeVideoId` on story JSON when intro video is ready
+
+## 8. Flutter store build
+
+```bash
+cd frontend
+flutter build appbundle \
+  --dart-define=API_BASE_URL=https://api.yourdomain.com \
+  --dart-define=FIREBASE_CONFIGURED=true \
+  --dart-define=USE_BACKEND_API=true
+```
+
+- [ ] Release keystore + `key.properties` (Android currently signs debug for local release runs)
+- [ ] Cleartext HTTP is **debug-only**; release requires HTTPS API
+- [ ] Apple `DEVELOPMENT_TEAM` + App Store listing assets
+
 ## Local verification already done
 
 ```bash
 cd backend
-npm test          # 22 endpoint/integration tests
+npm test          # endpoint/integration tests
 npm run smoke     # hits all routes against local Mongo with fakes
 npm run local     # fake-auth server on :4000 (Bearer free|premium)
 ```
@@ -92,8 +121,9 @@ npm run local     # fake-auth server on :4000 (Bearer free|premium)
 |----------|--------|
 | `GET /health`, `GET /v1/health` | 200 |
 | `GET /v1/content/story` | 200 free |
-| `GET /v1/chamatkars` | 200 |
+| `GET /v1/chamatkars` | 200 (+ `likeCount` / `likedByMe`) |
 | `POST /v1/chamatkars` | 201 with Google auth |
+| `POST /v1/chamatkars/:id/like` | 200 toggle |
 | `GET /v1/auth/me` | 200 upsert user |
 | `PUT /v1/auth/fcm-token` | 204 |
 | `GET /v1/entitlement` | 401 unauth / 200 auth |

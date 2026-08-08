@@ -25,15 +25,17 @@ class ContentRepository {
           );
         }).toList();
 
+    final youtube = data['youtubeVideoId'];
     return StoryContent(
       titleHi: (title['hi'] as String?) ?? 'खाटू श्याम कथा',
       titleEn: (title['en'] as String?) ?? 'Khatu Shyam Story',
       summaryHi:
           (summary['hi'] as String?) ??
-          'श्याम बाबा की भक्ति कथा — जल्द ही पूर्ण वीडियो के साथ।',
+          'श्याम बाबा की भक्ति कथा — अध्यायों में पढ़ें।',
       summaryEn:
           (summary['en'] as String?) ??
-          'The devotion story of Shyam Baba — full video coming soon.',
+          'The devotion story of Shyam Baba — read in chapters.',
+      youtubeVideoId: youtube is String && youtube.isNotEmpty ? youtube : null,
       chapters:
           chapters.isEmpty
               ? [
@@ -76,22 +78,36 @@ class ContentRepository {
     }).toList();
   }
 
-  Future<List<ChamatkarPost>> fetchChamatkars() async {
-    final response = await _api.get<Map<String, dynamic>>('/v1/chamatkars');
+  ChamatkarPost _mapChamatkar(Map<String, dynamic> map) {
+    return ChamatkarPost(
+      id: (map['_id'] as String?) ?? (map['id'] as String?) ?? '',
+      authorName: (map['authorName'] as String?) ?? 'भक्त',
+      title: (map['title'] as String?) ?? '',
+      story: (map['story'] as String?) ?? '',
+      language: (map['language'] as String?) ?? 'hi',
+      createdAt:
+          DateTime.tryParse((map['createdAt'] as String?) ?? '') ??
+          DateTime.now(),
+      likeCount: (map['likeCount'] as num?)?.toInt() ?? 0,
+      likedByMe: map['likedByMe'] == true,
+    );
+  }
+
+  Future<ChamatkarPage> fetchChamatkars({String? cursor}) async {
+    final response = await _api.get<Map<String, dynamic>>(
+      '/v1/chamatkars',
+      queryParameters: {
+        if (cursor != null && cursor.isNotEmpty) 'cursor': cursor,
+      },
+    );
     final items = response.data?['items'] as List<dynamic>? ?? const [];
-    return items.map((raw) {
-      final map = raw as Map<String, dynamic>;
-      return ChamatkarPost(
-        id: (map['_id'] as String?) ?? (map['id'] as String?) ?? '',
-        authorName: (map['authorName'] as String?) ?? 'भक्त',
-        title: (map['title'] as String?) ?? '',
-        story: (map['story'] as String?) ?? '',
-        language: (map['language'] as String?) ?? 'hi',
-        createdAt:
-            DateTime.tryParse((map['createdAt'] as String?) ?? '') ??
-            DateTime.now(),
-      );
-    }).toList();
+    return ChamatkarPage(
+      items:
+          items
+              .map((raw) => _mapChamatkar(raw as Map<String, dynamic>))
+              .toList(),
+      nextCursor: response.data?['nextCursor'] as String?,
+    );
   }
 
   Future<void> createChamatkar({
@@ -103,5 +119,13 @@ class ContentRepository {
       '/v1/chamatkars',
       data: {'title': title, 'story': story, 'language': language},
     );
+  }
+
+  Future<ChamatkarPost> toggleChamatkarLike(String id) async {
+    final response = await _api.post<Map<String, dynamic>>(
+      '/v1/chamatkars/$id/like',
+    );
+    final item = response.data?['item'] as Map<String, dynamic>? ?? const {};
+    return _mapChamatkar(item);
   }
 }

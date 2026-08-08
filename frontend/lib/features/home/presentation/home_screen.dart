@@ -103,10 +103,28 @@ class HomeScreen extends ConsumerWidget {
       ),
     ];
 
+    Future<void> refreshHome() async {
+      ref.invalidate(liveStreamProvider);
+      ref.invalidate(templeStatusProvider);
+      await Future.wait<void>([
+        ref
+            .read(liveStreamProvider.future)
+            .then((_) {}, onError: (_) {}),
+        ref
+            .read(templeStatusProvider.future)
+            .then((_) {}, onError: (_) {}),
+        ref.read(subscriptionControllerProvider.notifier).refresh(),
+      ]);
+    }
+
     return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-        children: [
+      child: RefreshIndicator(
+        color: AppColors.orange,
+        onRefresh: refreshHome,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          children: [
           Row(
             children: [
               Expanded(
@@ -456,6 +474,7 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
         ],
+        ),
       ),
     );
   }
