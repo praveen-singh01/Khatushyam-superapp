@@ -20,7 +20,7 @@ class AppConfig {
   static AppConfig get development {
     const rawUrl = String.fromEnvironment(
       'API_BASE_URL',
-      defaultValue: 'http://10.0.2.2:4000',
+      defaultValue: 'https://baba.yaaro.online',
     );
     return AppConfig(
       apiBaseUrl: sanitizeApiBaseUrl(rawUrl),
@@ -39,7 +39,7 @@ class AppConfig {
   ///
   /// ```bash
   /// flutter build appbundle \
-  ///   --dart-define=API_BASE_URL=https://api.yourdomain.com \
+  ///   --dart-define=API_BASE_URL=https://baba.yaaro.online \
   ///   --dart-define=FIREBASE_CONFIGURED=true \
   ///   --dart-define=USE_BACKEND_API=true
   /// ```
