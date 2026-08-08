@@ -53,6 +53,8 @@ export function createApp({
   );
 
   app.disable("x-powered-by");
+  // Nginx terminates TLS and forwards X-Forwarded-Proto — needed for https media URLs.
+  app.set("trust proxy", 1);
   app.use(helmet());
   app.use(cors({ origin: env.APP_ORIGIN === "*" ? true : env.APP_ORIGIN }));
   if (env.NODE_ENV !== "test") {
