@@ -36,3 +36,4 @@ khatu-shyam-content/wallpapers/**/*.jpg
 khatu-shyam-content/ringtones/**/*.m4a
 khatu-shyam-content/ringtones/**/*.wav
 khatu-shyam-content/**/.DS_Store
+.vercel

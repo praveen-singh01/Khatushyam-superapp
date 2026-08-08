@@ -68,7 +68,7 @@ See [`frontend/README.md`](frontend/README.md), [`backend/README.md`](backend/RE
 
 ### Admin access
 
-- Add Google emails to backend `ADMIN_EMAILS` (comma-separated).
+- Add admin emails to backend `ADMIN_EMAILS` (comma-separated). Admin dashboard uses Firebase email/password for those accounts.
 - Those users receive `role: admin` on login and can call `/v1/admin/*`.
 - Seed the content catalog from `khatu-shyam-content/metadata.json`:
   ```bash

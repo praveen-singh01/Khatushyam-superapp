@@ -26,7 +26,13 @@ export function AppLayout() {
               {user?.email}
             </div>
           </div>
-          <button className="btn ghost" type="button" onClick={signOut}>
+          <button
+            className="btn ghost"
+            type="button"
+            onClick={() => {
+              void signOut();
+            }}
+          >
             Sign out
           </button>
         </div>

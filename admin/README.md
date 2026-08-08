@@ -21,14 +21,7 @@ Open http://127.0.0.1:5173
 
 ## Auth
 
-1. Start the API with fake auth:
-   ```bash
-   cd ../backend
-   npm run local
-   ```
-2. On the login screen, use token `admin`.
-
-In production, paste a Firebase Google ID token for an email listed in backend `ADMIN_EMAILS`.
+Sign in with a Firebase **email + password** account whose email is listed in backend `ADMIN_EMAILS`.
 
 ## Features
 

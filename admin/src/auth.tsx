@@ -7,80 +7,121 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  type User as FirebaseUser,
+} from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 import { ApiError, fetchMe } from "./lib/api";
+import { firebaseAuth } from "./lib/firebase";
 import type { AuthUser } from "./types";
 
-const TOKEN_KEY = "khatu_admin_token";
+function authErrorMessage(err: unknown): string {
+  if (err instanceof ApiError) return err.message;
+  if (err instanceof FirebaseError) {
+    switch (err.code) {
+      case "auth/invalid-credential":
+      case "auth/wrong-password":
+      case "auth/user-not-found":
+      case "auth/invalid-email":
+        return "Invalid email or password";
+      case "auth/too-many-requests":
+        return "Too many attempts. Try again later.";
+      default:
+        return err.message;
+    }
+  }
+  if (err instanceof Error) return err.message;
+  return "Unable to sign in";
+}
 
 interface AuthContextValue {
   user: AuthUser | null;
   token: string | null;
   loading: boolean;
   error: string | null;
-  signInWithToken: (token: string) => Promise<void>;
-  signOut: () => void;
+  signInWithEmailPassword: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+async function loadAdminSession(firebaseUser: FirebaseUser) {
+  const idToken = await firebaseUser.getIdToken();
+  const { user: me } = await fetchMe(idToken);
+  if (me.role !== "admin") {
+    throw new Error("ADMIN_REQUIRED");
+  }
+  return { token: idToken, user: me };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [token, setToken] = useState<string | null>(
-    () => localStorage.getItem(TOKEN_KEY),
-  );
-  const [loading, setLoading] = useState(Boolean(localStorage.getItem(TOKEN_KEY)));
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const hydrate = useCallback(async (nextToken: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { user: me } = await fetchMe(nextToken);
-      if (me.role !== "admin") {
-        throw new Error("ADMIN_REQUIRED");
-      }
-      localStorage.setItem(TOKEN_KEY, nextToken);
-      setToken(nextToken);
-      setUser(me);
-    } catch (err) {
-      localStorage.removeItem(TOKEN_KEY);
-      setToken(null);
-      setUser(null);
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Unable to sign in");
-      }
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    const saved = localStorage.getItem(TOKEN_KEY);
-    if (!saved) {
-      setLoading(false);
-      return;
-    }
-    void hydrate(saved).catch(() => undefined);
-    // Intentionally run once on mount to restore session.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (firebaseUser) => {
+      void (async () => {
+        if (!firebaseUser) {
+          setUser(null);
+          setToken(null);
+          setLoading(false);
+          return;
+        }
+
+        setLoading(true);
+        setError(null);
+        try {
+          const session = await loadAdminSession(firebaseUser);
+          setToken(session.token);
+          setUser(session.user);
+        } catch (err) {
+          setUser(null);
+          setToken(null);
+          await firebaseSignOut(firebaseAuth).catch(() => undefined);
+          setError(authErrorMessage(err));
+        } finally {
+          setLoading(false);
+        }
+      })();
+    });
+
+    return unsubscribe;
   }, []);
 
-  const signInWithToken = useCallback(
-    async (nextToken: string) => {
-      await hydrate(nextToken.trim());
+  const signInWithEmailPassword = useCallback(
+    async (email: string, password: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const credential = await signInWithEmailAndPassword(
+          firebaseAuth,
+          email.trim(),
+          password,
+        );
+        const session = await loadAdminSession(credential.user);
+        setToken(session.token);
+        setUser(session.user);
+      } catch (err) {
+        setUser(null);
+        setToken(null);
+        setError(authErrorMessage(err));
+        throw err;
+      } finally {
+        setLoading(false);
+      }
     },
-    [hydrate],
+    [],
   );
 
-  const signOut = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
-    setToken(null);
+  const signOut = useCallback(async () => {
+    await firebaseSignOut(firebaseAuth);
     setUser(null);
+    setToken(null);
     setError(null);
   }, []);
 
@@ -90,10 +131,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token,
       loading,
       error,
-      signInWithToken,
+      signInWithEmailPassword,
       signOut,
     }),
-    [user, token, loading, error, signInWithToken, signOut],
+    [user, token, loading, error, signInWithEmailPassword, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

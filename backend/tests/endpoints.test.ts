@@ -164,20 +164,21 @@ describe("authentication guards", () => {
     expect(response.body.error).toBe("INVALID_AUTH_TOKEN");
   });
 
-  it("requires Google sign-in", async () => {
+  it("accepts Firebase password sign-in", async () => {
     const response = await request(app)
       .get("/v1/auth/me")
       .set("Authorization", "Bearer password");
-    expect(response.status).toBe(403);
-    expect(response.body.error).toBe("GOOGLE_SIGN_IN_REQUIRED");
+    expect(response.status).toBe(200);
+    expect(response.body.user.email).toBe("password@example.com");
+    expect(response.body.user.role).toBe("user");
   });
 
-  it("requires Google email", async () => {
+  it("requires email on the identity", async () => {
     const response = await request(app)
       .get("/v1/auth/me")
       .set("Authorization", "Bearer no-email");
     expect(response.status).toBe(403);
-    expect(response.body.error).toBe("GOOGLE_EMAIL_REQUIRED");
+    expect(response.body.error).toBe("EMAIL_REQUIRED");
   });
 });
 

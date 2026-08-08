@@ -4,8 +4,9 @@ import { useAuth } from "../auth";
 import { getApiBase } from "../lib/api";
 
 export function LoginPage() {
-  const { user, loading, error, signInWithToken } = useAuth();
-  const [token, setToken] = useState("admin");
+  const { user, loading, error, signInWithEmailPassword } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
@@ -18,7 +19,7 @@ export function LoginPage() {
     setSubmitting(true);
     setLocalError(null);
     try {
-      await signInWithToken(token);
+      await signInWithEmailPassword(email, password);
     } catch (err) {
       setLocalError(
         err instanceof Error ? err.message : "Unable to sign in as admin",
@@ -39,20 +40,33 @@ export function LoginPage() {
         </div>
 
         <div className="field">
-          <label htmlFor="token">API bearer token</label>
+          <label htmlFor="email">Email</label>
           <input
-            id="token"
-            value={token}
-            onChange={(event) => setToken(event.target.value)}
-            placeholder="admin"
-            autoComplete="off"
+            id="email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="you@example.com"
+            autoComplete="username"
+            required
+          />
+        </div>
+
+        <div className="field">
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="••••••••"
+            autoComplete="current-password"
             required
           />
         </div>
 
         <p className="muted">
-          Local API: use <code>admin</code> with <code>npm run local</code>.
-          Production: paste a Firebase ID token for an email listed in{" "}
+          Sign in with a Firebase email/password account listed in backend{" "}
           <code>ADMIN_EMAILS</code>.
         </p>
         <p className="muted">API: {getApiBase()}</p>

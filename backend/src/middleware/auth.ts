@@ -18,14 +18,18 @@ async function resolveUser(
   adminEmails: Set<string>,
 ) {
   const identity = await verifier.verify(token);
-  if (identity.signInProvider !== "google.com") {
-    const error = new Error("GOOGLE_SIGN_IN_REQUIRED");
-    (error as Error & { code: string }).code = "GOOGLE_SIGN_IN_REQUIRED";
+  const allowedProviders = new Set(["google.com", "password"]);
+  if (
+    !identity.signInProvider ||
+    !allowedProviders.has(identity.signInProvider)
+  ) {
+    const error = new Error("UNSUPPORTED_SIGN_IN_PROVIDER");
+    (error as Error & { code: string }).code = "UNSUPPORTED_SIGN_IN_PROVIDER";
     throw error;
   }
   if (!identity.email) {
-    const error = new Error("GOOGLE_EMAIL_REQUIRED");
-    (error as Error & { code: string }).code = "GOOGLE_EMAIL_REQUIRED";
+    const error = new Error("EMAIL_REQUIRED");
+    (error as Error & { code: string }).code = "EMAIL_REQUIRED";
     throw error;
   }
 
@@ -90,12 +94,12 @@ export function authenticate(
         error instanceof Error && "code" in error
           ? String((error as Error & { code?: string }).code)
           : undefined;
-      if (code === "GOOGLE_SIGN_IN_REQUIRED") {
-        res.status(403).json({ error: "GOOGLE_SIGN_IN_REQUIRED" });
+      if (code === "UNSUPPORTED_SIGN_IN_PROVIDER") {
+        res.status(403).json({ error: "UNSUPPORTED_SIGN_IN_PROVIDER" });
         return;
       }
-      if (code === "GOOGLE_EMAIL_REQUIRED") {
-        res.status(403).json({ error: "GOOGLE_EMAIL_REQUIRED" });
+      if (code === "EMAIL_REQUIRED") {
+        res.status(403).json({ error: "EMAIL_REQUIRED" });
         return;
       }
       res.status(401).json({ error: "INVALID_AUTH_TOKEN" });
