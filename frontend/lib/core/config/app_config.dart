@@ -20,8 +20,7 @@ class AppConfig {
   static AppConfig get development {
     const rawUrl = String.fromEnvironment(
       'API_BASE_URL',
-      // sslip.io avoids broken DNSSEC on baba.yaaro.online for some resolvers.
-      defaultValue: 'https://15.207.112.236.sslip.io',
+      defaultValue: 'https://baba.yaaro.online',
     );
     return AppConfig(
       apiBaseUrl: sanitizeApiBaseUrl(rawUrl),
@@ -42,7 +41,7 @@ class AppConfig {
   ///
   /// ```bash
   /// flutter build appbundle \
-  ///   --dart-define=API_BASE_URL=https://15.207.112.236.sslip.io \
+  ///   --dart-define=API_BASE_URL=https://baba.yaaro.online \
   ///   --dart-define=FIREBASE_CONFIGURED=true \
   ///   --dart-define=USE_BACKEND_API=true
   /// ```

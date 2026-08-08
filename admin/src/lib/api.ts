@@ -15,7 +15,7 @@ import type {
 
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
-  "https://15.207.112.236.sslip.io";
+  "https://baba.yaaro.online";
 
 export class ApiError extends Error {
   status: number;

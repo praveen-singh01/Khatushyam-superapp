@@ -67,11 +67,9 @@ Firebase options are **not** checked in with fabricated values.
 ```bash
 cd frontend
 flutter run
-# API: https://15.207.112.236.sslip.io
+# API: https://baba.yaaro.online
 # Auth: Firebase Google Sign-In
 ```
-
-(`baba.yaaro.online` may fail on some networks due to DNSSEC flapping; sslip.io is the stable API host for now.)
 
 ## Local run (fake API auth)
 
