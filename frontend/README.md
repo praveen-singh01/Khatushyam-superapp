@@ -60,9 +60,20 @@ Firebase options are **not** checked in with fabricated values.
    - default local port `4000`
 8. Google Cloud / Firebase: add SHA-1 for Android debug/release; create OAuth client IDs.
 
-Until `FIREBASE_CONFIGURED=true`, the app uses **FakeAuthService** so UI and tests run without live Firebase.
+`FIREBASE_CONFIGURED` defaults to **true** (real Google Sign-In). Pass `--dart-define=FIREBASE_CONFIGURED=false` only for FakeAuth UI work.
 
-## Local run (with backend)
+## Production API (default)
+
+```bash
+cd frontend
+flutter run
+# API: https://15.207.112.236.sslip.io
+# Auth: Firebase Google Sign-In
+```
+
+(`baba.yaaro.online` may fail on some networks due to DNSSEC flapping; sslip.io is the stable API host for now.)
+
+## Local run (fake API auth)
 
 Terminal 1 — API (fake Google auth):
 ```bash
@@ -77,6 +88,7 @@ Terminal 2 — Flutter pointed at that API:
 ```bash
 cd frontend
 flutter run \
+  --dart-define=FIREBASE_CONFIGURED=false \
   --dart-define=USE_BACKEND_API=true \
   --dart-define=API_BASE_URL=http://10.0.2.2:4000
 ```
@@ -85,6 +97,7 @@ flutter run \
 ```bash
 cd frontend
 flutter run \
+  --dart-define=FIREBASE_CONFIGURED=false \
   --dart-define=USE_BACKEND_API=true \
   --dart-define=API_BASE_URL=http://127.0.0.1:4000
 ```
@@ -92,19 +105,12 @@ flutter run \
 **Physical phone** (same Wi‑Fi; replace with your Mac IP):
 ```bash
 flutter run \
+  --dart-define=FIREBASE_CONFIGURED=false \
   --dart-define=USE_BACKEND_API=true \
   --dart-define=API_BASE_URL=http://192.168.0.100:4000
 ```
 
-`USE_BACKEND_API` defaults to **true** (wallpapers/ringtones/story/chamatkar/live/entitlement hit the API). FakeAuth sign-in sends `Bearer premium` to match `npm run local`. Pass `--dart-define=USE_BACKEND_API=false` only for pure offline UI mocks.
-
-Real Firebase Google Sign-In:
-```bash
-flutter run \
-  --dart-define=FIREBASE_CONFIGURED=true \
-  --dart-define=USE_BACKEND_API=true \
-  --dart-define=API_BASE_URL=http://10.0.2.2:4000
-```
+`USE_BACKEND_API` defaults to **true**. With FakeAuth, sign-in sends `Bearer premium` to match `npm run local`.
 
 Default locale is **Hindi** (`hi`) with English (`en`) available via Flutter localization.
 

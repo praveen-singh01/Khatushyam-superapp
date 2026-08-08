@@ -20,13 +20,16 @@ class AppConfig {
   static AppConfig get development {
     const rawUrl = String.fromEnvironment(
       'API_BASE_URL',
-      defaultValue: 'https://baba.yaaro.online',
+      // sslip.io avoids broken DNSSEC on baba.yaaro.online for some resolvers.
+      defaultValue: 'https://15.207.112.236.sslip.io',
     );
     return AppConfig(
       apiBaseUrl: sanitizeApiBaseUrl(rawUrl),
       firebaseConfigured: const bool.fromEnvironment(
         'FIREBASE_CONFIGURED',
-        defaultValue: false,
+        // firebase_options.dart is checked in — production Google sign-in by default.
+        // Pass --dart-define=FIREBASE_CONFIGURED=false for FakeAuth UI-only work.
+        defaultValue: true,
       ),
       useBackendApi: const bool.fromEnvironment(
         'USE_BACKEND_API',
@@ -39,7 +42,7 @@ class AppConfig {
   ///
   /// ```bash
   /// flutter build appbundle \
-  ///   --dart-define=API_BASE_URL=https://baba.yaaro.online \
+  ///   --dart-define=API_BASE_URL=https://15.207.112.236.sslip.io \
   ///   --dart-define=FIREBASE_CONFIGURED=true \
   ///   --dart-define=USE_BACKEND_API=true
   /// ```

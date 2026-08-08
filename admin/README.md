@@ -6,7 +6,7 @@ Web console for uploading library content (wallpapers / ringtones) and managing 
 
 Deployed on Vercel: https://khatu-shyam-admin.vercel.app
 
-Set `VITE_API_BASE_URL` in the Vercel project to your public API base URL (not localhost), and allow that Vercel origin in backend `APP_ORIGIN`.
+Set `VITE_API_BASE_URL` in the Vercel project to `https://15.207.112.236.sslip.io` (stable API host), and allow that Vercel origin in backend `APP_ORIGIN`.
 
 ## Setup
 
