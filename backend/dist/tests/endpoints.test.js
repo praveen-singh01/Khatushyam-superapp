@@ -25,6 +25,7 @@ const env = {
     S3_MEDIA_BUCKET: "test-bucket",
     CLOUDFRONT_BASE_URL: "https://cdn.example.com",
     ADMIN_EMAILS: "admin@example.com",
+    APP_FREE_MODE: false,
 };
 function identityFor(token) {
     return {

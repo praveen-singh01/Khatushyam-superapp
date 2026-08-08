@@ -1,7 +1,12 @@
 /// App feature identifiers for entitlement gating.
 ///
-/// Free forever: [story], [chamatkar], [liveDarshan].
-/// Everything else requires an active Razorpay monthly subscription.
+/// Temporary: entire app is free (`kAppFreeMode`). When billing launches,
+/// set [kAppFreeMode] to false so only story / chamatkar / live stay free.
+const bool kAppFreeMode = bool.fromEnvironment(
+  'APP_FREE_MODE',
+  defaultValue: true,
+);
+
 enum AppFeature {
   story,
   chamatkar,
@@ -20,10 +25,12 @@ enum AppFeature {
 }
 
 extension AppFeatureAccess on AppFeature {
-  bool get isFree =>
-      this == AppFeature.story ||
-      this == AppFeature.chamatkar ||
-      this == AppFeature.liveDarshan;
+  bool get isFree {
+    if (kAppFreeMode) return true;
+    return this == AppFeature.story ||
+        this == AppFeature.chamatkar ||
+        this == AppFeature.liveDarshan;
+  }
 
   String get routeSegment => switch (this) {
     AppFeature.story => 'story',

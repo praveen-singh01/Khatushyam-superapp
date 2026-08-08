@@ -86,7 +86,13 @@ export function createApp({
   app.get("/health", health);
   app.get("/v1/health", health);
 
-  const entitlementRouter = createEntitlementRouter(auth, env.RAZORPAY_PLAN_ID);
+  const premiumGate: RequestHandler = env.APP_FREE_MODE
+    ? (_req, _res, next) => next()
+    : requirePremium;
+
+  const entitlementRouter = createEntitlementRouter(auth, env.RAZORPAY_PLAN_ID, {
+    freeMode: env.APP_FREE_MODE,
+  });
   const authRouter = createAuthRouter(auth);
   const optionalAuth: RequestHandler = optionalAuthenticate(identityVerifier, {
     adminEmails: env.ADMIN_EMAILS,
@@ -94,13 +100,13 @@ export function createApp({
   const chamatkarRouter = createChamatkarRouter(auth, optionalAuth);
   const contentRouter = createContentRouter(
     auth,
-    requirePremium,
+    premiumGate,
     env.CLOUDFRONT_BASE_URL,
     { useRequestHostForMedia: Boolean(env.MEDIA_LOCAL_ROOT) },
   );
   const uploadRouter = createUploadRouter({
     authenticate: auth,
-    requirePremium,
+    requirePremium: premiumGate,
     bucket: env.S3_MEDIA_BUCKET,
     presigner: uploadPresigner,
   });

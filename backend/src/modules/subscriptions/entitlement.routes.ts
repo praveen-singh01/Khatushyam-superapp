@@ -4,11 +4,14 @@ import { entitlementFromUser } from "../../shared/ports.js";
 export function createEntitlementRouter(
   authenticate: RequestHandler,
   planId: string,
+  options: { freeMode?: boolean } = {},
 ): Router {
   const router = Router();
 
   router.get("/", authenticate, (req, res) => {
-    res.json(entitlementFromUser(req.user!, planId));
+    res.json(
+      entitlementFromUser(req.user!, planId, { freeMode: options.freeMode }),
+    );
   });
 
   return router;

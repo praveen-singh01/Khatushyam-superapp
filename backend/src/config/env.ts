@@ -20,6 +20,14 @@ const envSchema = z.object({
   MEDIA_LOCAL_ROOT: z.string().optional(),
   /** Comma-separated emails granted admin on first authenticated request. */
   ADMIN_EMAILS: z.string().default(""),
+  /**
+   * When true, all signed-in users get premium access (no paywall).
+   * Flip to false before enabling Razorpay billing.
+   */
+  APP_FREE_MODE: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((value) => value === "true"),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;
