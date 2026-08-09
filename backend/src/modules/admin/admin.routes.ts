@@ -23,6 +23,7 @@ import {
   toStoryResponse,
 } from "../content/story.model.js";
 import { Chamatkar } from "../chamatkars/chamatkar.model.js";
+import { s3LibraryKey } from "../../shared/media-paths.js";
 import type { UploadPresigner } from "../../shared/ports.js";
 
 const subscriptionStatusSchema = z.enum([
@@ -797,8 +798,11 @@ export function createAdminRouter(options: AdminRouterOptions): Router {
       }
 
       const ext = extensionByContentType[input.contentType];
-      const folder = input.type === "wallpaper" ? "wallpapers" : "ringtones";
-      const key = `khatu-shyam-content/${folder}/${input.category}/${randomUUID()}.${ext}`;
+      const key = s3LibraryKey(
+        input.type,
+        input.category,
+        `${randomUUID()}.${ext}`,
+      );
       const uploadUrl = await options.presigner.createUploadUrl({
         bucket: options.bucket,
         key,

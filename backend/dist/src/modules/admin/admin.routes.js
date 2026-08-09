@@ -7,6 +7,7 @@ import { ContentCategory, categoryExists, categoryResponse, listCategoriesByType
 import { DEFAULT_LIVE_TITLE, LIVE_STREAM_KEY, LiveStream, extractYoutubeVideoId, toLiveStreamResponse, } from "../content/live-stream.model.js";
 import { DEFAULT_STORY, STORY_KEY, Story, toStoryResponse, } from "../content/story.model.js";
 import { Chamatkar } from "../chamatkars/chamatkar.model.js";
+import { s3LibraryKey } from "../../shared/media-paths.js";
 const subscriptionStatusSchema = z.enum([
     "inactive",
     "pending",
@@ -666,8 +667,7 @@ export function createAdminRouter(options) {
                 return;
             }
             const ext = extensionByContentType[input.contentType];
-            const folder = input.type === "wallpaper" ? "wallpapers" : "ringtones";
-            const key = `khatu-shyam-content/${folder}/${input.category}/${randomUUID()}.${ext}`;
+            const key = s3LibraryKey(input.type, input.category, `${randomUUID()}.${ext}`);
             const uploadUrl = await options.presigner.createUploadUrl({
                 bucket: options.bucket,
                 key,

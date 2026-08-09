@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ContentAsset } from "./content-asset.model.js";
 import { DEFAULT_LIVE_TITLE, LIVE_STREAM_KEY, LiveStream, toLiveStreamResponse, } from "./live-stream.model.js";
+import { isS3MediaKey } from "../../shared/media-paths.js";
 import { DEFAULT_STORY, STORY_KEY, Story, toStoryResponse, } from "./story.model.js";
 export function createContentRouter(authenticate, requirePremium, cloudFrontBaseUrl, options = {}) {
     const router = Router();
@@ -77,21 +78,24 @@ export function createContentRouter(authenticate, requirePremium, cloudFrontBase
             const items = await ContentAsset.find(filter)
                 .sort({ category: 1, createdAt: -1 })
                 .lean();
-            const base = mediaBaseFor(req);
+            const localBase = mediaBaseFor(req);
             res.json({
-                items: items.map((item) => ({
-                    id: item.slug,
-                    type: item.type,
-                    category: item.category,
-                    title: item.title,
-                    fileKey: item.fileKey,
-                    url: `${base}/${item.fileKey}`,
-                    format: item.format,
-                    width: item.width,
-                    height: item.height,
-                    durationSeconds: item.durationSeconds,
-                    premium: item.premium,
-                })),
+                items: items.map((item) => {
+                    const base = isS3MediaKey(item.fileKey) ? cdnBase : localBase;
+                    return {
+                        id: item.slug,
+                        type: item.type,
+                        category: item.category,
+                        title: item.title,
+                        fileKey: item.fileKey,
+                        url: `${base}/${item.fileKey}`,
+                        format: item.format,
+                        width: item.width,
+                        height: item.height,
+                        durationSeconds: item.durationSeconds,
+                        premium: item.premium,
+                    };
+                }),
             });
         }
         catch (error) {

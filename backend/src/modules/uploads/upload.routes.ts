@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { Router, type RequestHandler } from "express";
 import { z } from "zod";
+import { s3UserUploadKey } from "../../shared/media-paths.js";
 import type { UploadPresigner } from "../../shared/ports.js";
 
 const uploadSchema = z.object({
@@ -31,7 +32,11 @@ export function createUploadRouter(options: UploadRouterOptions): Router {
     async (req, res, next) => {
       try {
         const input = uploadSchema.parse(req.body);
-        const key = `private/users/${req.user!.id}/${input.purpose}/${randomUUID()}.${extensionByType[input.contentType]}`;
+        const key = s3UserUploadKey(
+          req.user!.id,
+          input.purpose,
+          `${randomUUID()}.${extensionByType[input.contentType]}`,
+        );
         const uploadUrl = await options.presigner.createUploadUrl({
           bucket: options.bucket,
           key,

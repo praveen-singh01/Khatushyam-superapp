@@ -341,7 +341,7 @@ describe("premium gates", () => {
       .send({ contentType: "image/png", purpose: "profile_photo" });
     expect(upload.status).toBe(200);
     expect(upload.body.uploadUrl).toContain("https://s3.example.com");
-    expect(upload.body.key).toContain("private/users/");
+    expect(upload.body.key).toContain("khatu-shyam/private/users/");
   });
 });
 
@@ -537,7 +537,7 @@ describe("admin dashboard APIs", () => {
         contentType: "image/jpeg",
       });
     expect(presign.status).toBe(200);
-    expect(presign.body.key).toContain("khatu-shyam-content/wallpapers/");
+    expect(presign.body.key).toContain("khatu-shyam/wallpapers/");
     expect(presign.body.uploadUrl).toContain("https://s3.example.com");
 
     const created = await request(app)
