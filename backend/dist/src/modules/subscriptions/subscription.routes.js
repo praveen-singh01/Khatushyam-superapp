@@ -40,6 +40,7 @@ async function startSubscription(options, plan, req, res, next) {
         const subscription = await options.gateway.createMonthlySubscription({
             planId: razorpayPlanIdFor(plan, options),
             userId: req.user.id,
+            trialAddonInr: plan === "trial_monthly" ? 3 : undefined,
         });
         await User.findByIdAndUpdate(req.user.id, {
             subscriptionStatus: "pending",
@@ -59,6 +60,15 @@ async function startSubscription(options, plan, req, res, next) {
         }));
     }
     catch (error) {
+        const razorpayError = error;
+        if (razorpayError.statusCode && razorpayError.error?.description) {
+            res.status(502).json({
+                error: "RAZORPAY_ERROR",
+                message: razorpayError.error.description,
+                code: razorpayError.error.code,
+            });
+            return;
+        }
         next(error);
     }
 }

@@ -8,7 +8,10 @@ const envSchema = z.object({
   FIREBASE_PROJECT_ID: z.string().min(1),
   RAZORPAY_KEY_ID: z.string().min(1),
   RAZORPAY_KEY_SECRET: z.string().min(1),
+  /** Monthly plan (₹199) — also used after ₹3 intro trial. */
   RAZORPAY_PLAN_ID: z.string().min(1),
+  /** Weekly plan (₹49) for returning users. */
+  RAZORPAY_PLAN_ID_WEEKLY: z.string().min(1).optional(),
   RAZORPAY_WEBHOOK_SECRET: z.string().min(1),
   AWS_REGION: z.string().default("ap-south-1"),
   S3_MEDIA_BUCKET: z.string().min(1),

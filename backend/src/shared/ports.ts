@@ -11,6 +11,8 @@ export interface SubscriptionGateway {
   createMonthlySubscription(input: {
     planId: string;
     userId: string;
+    /** Optional one-time addon in INR (e.g. ₹3 intro trial). */
+    trialAddonInr?: number;
   }): Promise<SubscriptionCreateResult>;
 }
 

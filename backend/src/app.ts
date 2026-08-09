@@ -46,6 +46,7 @@ export function createApp({
     authenticate: auth,
     keyId: env.RAZORPAY_KEY_ID,
     planId: env.RAZORPAY_PLAN_ID,
+    weeklyPlanId: env.RAZORPAY_PLAN_ID_WEEKLY,
     gateway: subscriptionGateway,
   });
   const webhookHandler = createRazorpayWebhookHandler(
