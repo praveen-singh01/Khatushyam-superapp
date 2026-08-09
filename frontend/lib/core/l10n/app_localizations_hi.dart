@@ -111,7 +111,42 @@ class AppLocalizationsHi extends AppLocalizations {
   String get paywallSubtitle => 'मासिक योजना से भक्ति सेवाएँ खोलें';
 
   @override
+  String get paywallSubtitleTrial => '₹3 में प्रीमियम आज़माएँ, फिर ₹199/महीना';
+
+  @override
+  String get paywallSubtitleReturn => 'प्रीमियम के लिए साप्ताहिक या मासिक योजना चुनें';
+
+  @override
   String get paywallCta => 'मासिक योजना शुरू करें';
+
+  @override
+  String get paywallTrialTitle => 'परिचय ट्रायल';
+
+  @override
+  String get paywallWeeklyTitle => 'साप्ताहिक';
+
+  @override
+  String get paywallMonthlyTitle => 'मासिक';
+
+  @override
+  String paywallTrialDetail(int price) {
+    return 'फिर ₹$price/महीना। कभी भी रद्द करें।';
+  }
+
+  @override
+  String get paywallTrialCta => '₹3 ट्रायल शुरू करें';
+
+  @override
+  String get paywallSubscribeCta => 'सब्सक्राइब करें';
+
+  @override
+  String get paywallPerWeek => 'प्रति सप्ताह';
+
+  @override
+  String get paywallPerMonth => 'प्रति महीना';
+
+  @override
+  String get paywallCancelAnytime => 'कभी भी रद्द करें';
 
   @override
   String get paywallNote => 'कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे। अभी मॉक चेकआउट।';
@@ -171,7 +206,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get premiumInactiveHint => 'कैलेंडर, मीडिया और अधिक खोलें';
 
   @override
-  String get posterHint => 'पोस्टर चुनें, नीचे बाएँ अपनी फोटो जोड़ें, फिर शेयर करें।';
+  String get posterHint => 'अपनी फोटो जोड़ें, नेम प्लेट संपादित करें, फिर शेयर करें।';
 
   @override
   String get posterEmpty => 'अभी कोई पोस्टर नहीं। जल्द वापस देखें।';
@@ -180,10 +215,46 @@ class AppLocalizationsHi extends AppLocalizations {
   String get posterAddPhoto => 'फोटो जोड़ें';
 
   @override
+  String get posterChangePhoto => 'फोटो बदलें';
+
+  @override
   String get posterAddPhotoFirst => 'पहले अपनी फोटो जोड़ें';
 
   @override
   String get posterShare => 'शेयर करें';
+
+  @override
+  String get posterShareWithPhoto => 'फोटो के साथ शेयर';
+
+  @override
+  String get posterShareWithoutPhoto => 'बिना फोटो शेयर';
+
+  @override
+  String get posterEditNamePlate => 'नेम प्लेट बदलें';
+
+  @override
+  String get posterNameHint => 'आपका नाम';
+
+  @override
+  String get posterSubtitleHint => 'नाम के नीचे की पंक्ति';
+
+  @override
+  String get posterSaveNamePlate => 'सेव करें';
+
+  @override
+  String get posterCropTitle => 'फोटो क्रॉप करें';
+
+  @override
+  String get posterRemovingBackground => 'बैकग्राउंड हटाया जा रहा है…';
+
+  @override
+  String get posterPreviewTitle => 'प्रीव्यू';
+
+  @override
+  String get posterUsePhoto => 'ठीक है';
+
+  @override
+  String get posterCancel => 'रद्द करें';
 
   @override
   String get useTemplate => 'चुनें';

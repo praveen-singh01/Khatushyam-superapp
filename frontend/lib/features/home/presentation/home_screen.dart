@@ -55,10 +55,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         false;
     final temple = ref.watch(templeStatusProvider);
     final liveAsync = ref.watch(liveStreamProvider);
-    final live = liveAsync.asData?.value ?? _cachedLive;
-    if (liveAsync.asData?.value != null) {
-      _cachedLive = liveAsync.asData!.value;
+    final liveData = liveAsync.asData?.value;
+    if (liveData != null) {
+      _cachedLive = liveData;
     }
+    final live = liveData ?? _cachedLive;
+    final liveVideoId = live?.youtubeVideoId;
     final isLiveNow = live?.canPlay ?? false;
     final name = user?.displayName?.split(' ').first ?? 'भक्त';
     final livePath = AppRoutes.featurePath(
@@ -185,9 +187,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
           const SizedBox(height: 18),
-          if (isLiveNow && live?.youtubeVideoId != null)
+          if (isLiveNow && live != null && liveVideoId != null)
             _HomeLiveHero(
-              videoId: live!.youtubeVideoId!,
+              videoId: liveVideoId,
               title:
                   Localizations.localeOf(context).languageCode == 'en'
                       ? live.titleEn

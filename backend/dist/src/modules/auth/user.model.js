@@ -17,6 +17,12 @@ const userSchema = new Schema({
         default: "inactive",
         index: true,
     },
+    trialUsed: { type: Boolean, default: false, index: true },
+    currentPlan: {
+        type: String,
+        enum: ["trial_monthly", "weekly", "monthly"],
+        required: false,
+    },
     razorpaySubscriptionId: { type: String, sparse: true, index: true },
 }, { timestamps: true });
 export const User = model("User", userSchema);

@@ -111,7 +111,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallSubtitle => 'Unlock devotion tools with a monthly plan';
 
   @override
+  String get paywallSubtitleTrial => 'Try premium for ₹3, then continue at ₹199/month';
+
+  @override
+  String get paywallSubtitleReturn => 'Choose a weekly or monthly plan to unlock premium';
+
+  @override
   String get paywallCta => 'Start monthly plan';
+
+  @override
+  String get paywallTrialTitle => 'Intro trial';
+
+  @override
+  String get paywallWeeklyTitle => 'Weekly';
+
+  @override
+  String get paywallMonthlyTitle => 'Monthly';
+
+  @override
+  String paywallTrialDetail(int price) {
+    return 'Then ₹$price/month. Cancel anytime.';
+  }
+
+  @override
+  String get paywallTrialCta => 'Start ₹3 trial';
+
+  @override
+  String get paywallSubscribeCta => 'Subscribe';
+
+  @override
+  String get paywallPerWeek => 'per week';
+
+  @override
+  String get paywallPerMonth => 'per month';
+
+  @override
+  String get paywallCancelAnytime => 'Cancel anytime';
 
   @override
   String get paywallNote => 'Story, Chamatkar and Live Darshan stay free. Mock checkout for now.';
@@ -171,7 +206,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumInactiveHint => 'Unlock calendar, media and more';
 
   @override
-  String get posterHint => 'Choose a poster, add your photo at the bottom left, then share.';
+  String get posterHint => 'Add your photo, edit the name plate, then share.';
 
   @override
   String get posterEmpty => 'No posters yet. Check back soon.';
@@ -180,10 +215,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get posterAddPhoto => 'Add photo';
 
   @override
+  String get posterChangePhoto => 'Change photo';
+
+  @override
   String get posterAddPhotoFirst => 'Add your photo first';
 
   @override
   String get posterShare => 'Share';
+
+  @override
+  String get posterShareWithPhoto => 'Share with photo';
+
+  @override
+  String get posterShareWithoutPhoto => 'Share without photo';
+
+  @override
+  String get posterEditNamePlate => 'Edit name plate';
+
+  @override
+  String get posterNameHint => 'Your name';
+
+  @override
+  String get posterSubtitleHint => 'Line under name';
+
+  @override
+  String get posterSaveNamePlate => 'Save';
+
+  @override
+  String get posterCropTitle => 'Crop photo';
+
+  @override
+  String get posterRemovingBackground => 'Removing background…';
+
+  @override
+  String get posterPreviewTitle => 'Preview';
+
+  @override
+  String get posterUsePhoto => 'OK';
+
+  @override
+  String get posterCancel => 'Cancel';
 
   @override
   String get useTemplate => 'Use';

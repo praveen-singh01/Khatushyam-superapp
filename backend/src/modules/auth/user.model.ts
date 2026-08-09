@@ -1,5 +1,9 @@
 import { Schema, model } from "mongoose";
-import type { SubscriptionStatus, UserRole } from "../../shared/types.js";
+import type {
+  SubscriptionPlanOffer,
+  SubscriptionStatus,
+  UserRole,
+} from "../../shared/types.js";
 
 export interface UserDocument {
   firebaseUid: string;
@@ -9,6 +13,9 @@ export interface UserDocument {
   role: UserRole;
   fcmTokens: string[];
   subscriptionStatus: SubscriptionStatus;
+  /** After first trial start/charge/cancel, never offer ₹3 trial again. */
+  trialUsed: boolean;
+  currentPlan?: SubscriptionPlanOffer | null;
   razorpaySubscriptionId?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -32,6 +39,12 @@ const userSchema = new Schema<UserDocument>(
       enum: ["inactive", "pending", "active", "halted", "cancelled"],
       default: "inactive",
       index: true,
+    },
+    trialUsed: { type: Boolean, default: false, index: true },
+    currentPlan: {
+      type: String,
+      enum: ["trial_monthly", "weekly", "monthly"],
+      required: false,
     },
     razorpaySubscriptionId: { type: String, sparse: true, index: true },
   },

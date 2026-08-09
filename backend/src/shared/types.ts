@@ -7,6 +7,8 @@ export type SubscriptionStatus =
 
 export type UserRole = "user" | "admin";
 
+export type SubscriptionPlanOffer = "trial_monthly" | "weekly" | "monthly";
+
 export interface AuthenticatedUser {
   id: string;
   firebaseUid: string;
@@ -15,6 +17,9 @@ export interface AuthenticatedUser {
   photoUrl?: string;
   role: UserRole;
   subscriptionStatus: SubscriptionStatus;
+  /** Once true, the ₹3 intro trial must never be offered again. */
+  trialUsed: boolean;
+  currentPlan?: SubscriptionPlanOffer | null;
 }
 
 export interface VerifiedIdentity {

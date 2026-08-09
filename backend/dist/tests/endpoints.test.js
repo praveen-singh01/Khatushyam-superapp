@@ -184,7 +184,17 @@ describe("auth and entitlement", () => {
             planId: null,
             source: "none",
             subscriptionStatus: "inactive",
+            trialUsed: false,
+            trialEligible: true,
         });
+        expect(response.body.offers).toEqual([
+            {
+                id: "trial_monthly",
+                trialPriceInr: 3,
+                priceInr: 199,
+                period: "month",
+            },
+        ]);
     });
     it("stores FCM tokens", async () => {
         await request(app)
@@ -316,15 +326,36 @@ describe("subscriptions and webhooks", () => {
         expect(response.status).toBe(201);
         expect(response.body).toMatchObject({
             isPremium: false,
-            planId: "plan_test",
+            planId: "trial_monthly",
             source: "razorpay",
             subscriptionStatus: "pending",
             subscriptionId: "sub_test_123",
             keyId: "rzp_test_key",
+            trialUsed: true,
+            trialEligible: false,
         });
         const user = await User.findOne({ firebaseUid: "free-user" });
         expect(user?.subscriptionStatus).toBe("pending");
         expect(user?.razorpaySubscriptionId).toBe("sub_test_123");
+        expect(user?.trialUsed).toBe(true);
+        expect(user?.currentPlan).toBe("trial_monthly");
+    });
+    it("offers weekly and monthly after trial was used", async () => {
+        await User.create({
+            firebaseUid: "free-user",
+            email: "free@example.com",
+            subscriptionStatus: "cancelled",
+            trialUsed: true,
+        });
+        const response = await request(app)
+            .get("/v1/entitlement")
+            .set("Authorization", "Bearer free");
+        expect(response.status).toBe(200);
+        expect(response.body.trialEligible).toBe(false);
+        expect(response.body.offers).toEqual([
+            { id: "weekly", priceInr: 49, period: "week" },
+            { id: "monthly", priceInr: 199, period: "month" },
+        ]);
     });
     it("rejects starting another plan when already active", async () => {
         await User.create({
@@ -512,6 +543,47 @@ describe("admin dashboard APIs", () => {
             .set("Authorization", "Bearer premium");
         expect(activeLibrary.status).toBe(200);
         expect(activeLibrary.body.items).toHaveLength(1);
+    });
+    it("serves paginated posters to signed-in free users", async () => {
+        await ContentAsset.create({
+            slug: "daily-poster-01",
+            type: "poster",
+            category: "daily",
+            title: { hi: "जय श्याम", en: "Jai Shyam" },
+            fileKey: "khatu-shyam/posters/daily/daily-poster-01.jpg",
+            format: "jpg",
+            width: 1080,
+            height: 1920,
+            premium: false,
+            status: "published",
+        });
+        await ContentAsset.create({
+            slug: "daily-poster-02",
+            type: "poster",
+            category: "daily",
+            title: { hi: "बाबा कृपा", en: "Baba Kripa" },
+            fileKey: "khatu-shyam/posters/daily/daily-poster-02.jpg",
+            format: "jpg",
+            premium: false,
+            status: "published",
+        });
+        const unauth = await request(app).get("/v1/content/posters");
+        expect(unauth.status).toBe(401);
+        const page = await request(app)
+            .get("/v1/content/posters?limit=1")
+            .set("Authorization", "Bearer free");
+        expect(page.status).toBe(200);
+        expect(page.body.items).toHaveLength(1);
+        expect(page.body.hasMore).toBe(true);
+        expect(page.body.nextCursor).toBeTruthy();
+        expect(page.body.items[0].url).toContain("khatu-shyam/posters/");
+        expect(page.headers["cache-control"]).toContain("max-age=30");
+        const next = await request(app)
+            .get(`/v1/content/posters?limit=1&cursor=${page.body.nextCursor}`)
+            .set("Authorization", "Bearer free");
+        expect(next.status).toBe(200);
+        expect(next.body.items).toHaveLength(1);
+        expect(next.body.items[0].id).not.toBe(page.body.items[0].id);
     });
     it("lets admins edit the public story content", async () => {
         await request(app)

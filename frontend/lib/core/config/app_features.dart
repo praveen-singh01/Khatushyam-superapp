@@ -4,7 +4,8 @@
 /// set [kAppFreeMode] to false so only story / chamatkar / live stay free.
 const bool kAppFreeMode = bool.fromEnvironment(
   'APP_FREE_MODE',
-  defaultValue: true,
+  // Billing on: only story / chamatkar / live / posters stay free.
+  defaultValue: false,
 );
 
 enum AppFeature {

@@ -31,10 +31,18 @@ class SubscriptionController extends AsyncNotifier<SubscriptionState> {
     );
   }
 
-  Future<void> subscribeMonthly() async {
+  /// Creates a Razorpay subscription on the backend and returns checkout ids.
+  Future<SubscriptionState?> prepareCheckout(SubscriptionPlanId plan) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(subscriptionRepositoryProvider).startMonthlyCheckout(),
+      () => ref.read(subscriptionRepositoryProvider).startCheckout(plan),
     );
+    return state.asData?.value;
   }
+
+  Future<void> startCheckout(SubscriptionPlanId plan) =>
+      prepareCheckout(plan).then((_) {});
+
+  Future<void> subscribeMonthly() =>
+      startCheckout(SubscriptionPlanId.monthly);
 }

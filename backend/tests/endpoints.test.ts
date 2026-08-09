@@ -204,7 +204,17 @@ describe("auth and entitlement", () => {
       planId: null,
       source: "none",
       subscriptionStatus: "inactive",
+      trialUsed: false,
+      trialEligible: true,
     });
+    expect(response.body.offers).toEqual([
+      {
+        id: "trial_monthly",
+        trialPriceInr: 3,
+        priceInr: 199,
+        period: "month",
+      },
+    ]);
   });
 
   it("stores FCM tokens", async () => {
@@ -353,15 +363,37 @@ describe("subscriptions and webhooks", () => {
     expect(response.status).toBe(201);
     expect(response.body).toMatchObject({
       isPremium: false,
-      planId: "plan_test",
+      planId: "trial_monthly",
       source: "razorpay",
       subscriptionStatus: "pending",
       subscriptionId: "sub_test_123",
       keyId: "rzp_test_key",
+      trialUsed: true,
+      trialEligible: false,
     });
     const user = await User.findOne({ firebaseUid: "free-user" });
     expect(user?.subscriptionStatus).toBe("pending");
     expect(user?.razorpaySubscriptionId).toBe("sub_test_123");
+    expect(user?.trialUsed).toBe(true);
+    expect(user?.currentPlan).toBe("trial_monthly");
+  });
+
+  it("offers weekly and monthly after trial was used", async () => {
+    await User.create({
+      firebaseUid: "free-user",
+      email: "free@example.com",
+      subscriptionStatus: "cancelled",
+      trialUsed: true,
+    });
+    const response = await request(app)
+      .get("/v1/entitlement")
+      .set("Authorization", "Bearer free");
+    expect(response.status).toBe(200);
+    expect(response.body.trialEligible).toBe(false);
+    expect(response.body.offers).toEqual([
+      { id: "weekly", priceInr: 49, period: "week" },
+      { id: "monthly", priceInr: 199, period: "month" },
+    ]);
   });
 
   it("rejects starting another plan when already active", async () => {

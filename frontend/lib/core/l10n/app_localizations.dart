@@ -299,11 +299,77 @@ abstract class AppLocalizations {
   /// **'मासिक योजना से भक्ति सेवाएँ खोलें'**
   String get paywallSubtitle;
 
+  /// No description provided for @paywallSubtitleTrial.
+  ///
+  /// In hi, this message translates to:
+  /// **'₹3 में प्रीमियम आज़माएँ, फिर ₹199/महीना'**
+  String get paywallSubtitleTrial;
+
+  /// No description provided for @paywallSubtitleReturn.
+  ///
+  /// In hi, this message translates to:
+  /// **'प्रीमियम के लिए साप्ताहिक या मासिक योजना चुनें'**
+  String get paywallSubtitleReturn;
+
   /// No description provided for @paywallCta.
   ///
   /// In hi, this message translates to:
   /// **'मासिक योजना शुरू करें'**
   String get paywallCta;
+
+  /// No description provided for @paywallTrialTitle.
+  ///
+  /// In hi, this message translates to:
+  /// **'परिचय ट्रायल'**
+  String get paywallTrialTitle;
+
+  /// No description provided for @paywallWeeklyTitle.
+  ///
+  /// In hi, this message translates to:
+  /// **'साप्ताहिक'**
+  String get paywallWeeklyTitle;
+
+  /// No description provided for @paywallMonthlyTitle.
+  ///
+  /// In hi, this message translates to:
+  /// **'मासिक'**
+  String get paywallMonthlyTitle;
+
+  /// No description provided for @paywallTrialDetail.
+  ///
+  /// In hi, this message translates to:
+  /// **'फिर ₹{price}/महीना। कभी भी रद्द करें।'**
+  String paywallTrialDetail(int price);
+
+  /// No description provided for @paywallTrialCta.
+  ///
+  /// In hi, this message translates to:
+  /// **'₹3 ट्रायल शुरू करें'**
+  String get paywallTrialCta;
+
+  /// No description provided for @paywallSubscribeCta.
+  ///
+  /// In hi, this message translates to:
+  /// **'सब्सक्राइब करें'**
+  String get paywallSubscribeCta;
+
+  /// No description provided for @paywallPerWeek.
+  ///
+  /// In hi, this message translates to:
+  /// **'प्रति सप्ताह'**
+  String get paywallPerWeek;
+
+  /// No description provided for @paywallPerMonth.
+  ///
+  /// In hi, this message translates to:
+  /// **'प्रति महीना'**
+  String get paywallPerMonth;
+
+  /// No description provided for @paywallCancelAnytime.
+  ///
+  /// In hi, this message translates to:
+  /// **'कभी भी रद्द करें'**
+  String get paywallCancelAnytime;
 
   /// No description provided for @paywallNote.
   ///
@@ -422,7 +488,7 @@ abstract class AppLocalizations {
   /// No description provided for @posterHint.
   ///
   /// In hi, this message translates to:
-  /// **'पोस्टर चुनें, नीचे बाएँ अपनी फोटो जोड़ें, फिर शेयर करें।'**
+  /// **'अपनी फोटो जोड़ें, नेम प्लेट संपादित करें, फिर शेयर करें।'**
   String get posterHint;
 
   /// No description provided for @posterEmpty.
@@ -437,6 +503,12 @@ abstract class AppLocalizations {
   /// **'फोटो जोड़ें'**
   String get posterAddPhoto;
 
+  /// No description provided for @posterChangePhoto.
+  ///
+  /// In hi, this message translates to:
+  /// **'फोटो बदलें'**
+  String get posterChangePhoto;
+
   /// No description provided for @posterAddPhotoFirst.
   ///
   /// In hi, this message translates to:
@@ -448,6 +520,72 @@ abstract class AppLocalizations {
   /// In hi, this message translates to:
   /// **'शेयर करें'**
   String get posterShare;
+
+  /// No description provided for @posterShareWithPhoto.
+  ///
+  /// In hi, this message translates to:
+  /// **'फोटो के साथ शेयर'**
+  String get posterShareWithPhoto;
+
+  /// No description provided for @posterShareWithoutPhoto.
+  ///
+  /// In hi, this message translates to:
+  /// **'बिना फोटो शेयर'**
+  String get posterShareWithoutPhoto;
+
+  /// No description provided for @posterEditNamePlate.
+  ///
+  /// In hi, this message translates to:
+  /// **'नेम प्लेट बदलें'**
+  String get posterEditNamePlate;
+
+  /// No description provided for @posterNameHint.
+  ///
+  /// In hi, this message translates to:
+  /// **'आपका नाम'**
+  String get posterNameHint;
+
+  /// No description provided for @posterSubtitleHint.
+  ///
+  /// In hi, this message translates to:
+  /// **'नाम के नीचे की पंक्ति'**
+  String get posterSubtitleHint;
+
+  /// No description provided for @posterSaveNamePlate.
+  ///
+  /// In hi, this message translates to:
+  /// **'सेव करें'**
+  String get posterSaveNamePlate;
+
+  /// No description provided for @posterCropTitle.
+  ///
+  /// In hi, this message translates to:
+  /// **'फोटो क्रॉप करें'**
+  String get posterCropTitle;
+
+  /// No description provided for @posterRemovingBackground.
+  ///
+  /// In hi, this message translates to:
+  /// **'बैकग्राउंड हटाया जा रहा है…'**
+  String get posterRemovingBackground;
+
+  /// No description provided for @posterPreviewTitle.
+  ///
+  /// In hi, this message translates to:
+  /// **'प्रीव्यू'**
+  String get posterPreviewTitle;
+
+  /// No description provided for @posterUsePhoto.
+  ///
+  /// In hi, this message translates to:
+  /// **'ठीक है'**
+  String get posterUsePhoto;
+
+  /// No description provided for @posterCancel.
+  ///
+  /// In hi, this message translates to:
+  /// **'रद्द करें'**
+  String get posterCancel;
 
   /// No description provided for @useTemplate.
   ///

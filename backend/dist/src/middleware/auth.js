@@ -35,6 +35,7 @@ async function resolveUser(verifier, token, adminEmails) {
         $set: setFields,
         $setOnInsert: {
             subscriptionStatus: "inactive",
+            trialUsed: false,
             ...(shouldBeAdmin ? {} : { role: "user" }),
         },
     }, { new: true, upsert: true }).lean();
@@ -46,6 +47,8 @@ async function resolveUser(verifier, token, adminEmails) {
         photoUrl: user.photoUrl,
         role: user.role ?? "user",
         subscriptionStatus: user.subscriptionStatus,
+        trialUsed: Boolean(user.trialUsed),
+        currentPlan: user.currentPlan ?? null,
     };
 }
 export function authenticate(verifier, options = {}) {

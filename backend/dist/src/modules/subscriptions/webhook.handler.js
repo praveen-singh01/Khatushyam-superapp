@@ -31,7 +31,11 @@ export function createRazorpayWebhookHandler(webhookSecret) {
                 "subscription.cancelled": "cancelled",
             }[payload.event];
             if (subscription?.id && mappedStatus) {
-                await User.findOneAndUpdate({ razorpaySubscriptionId: subscription.id }, { subscriptionStatus: mappedStatus });
+                await User.findOneAndUpdate({ razorpaySubscriptionId: subscription.id }, {
+                    subscriptionStatus: mappedStatus,
+                    // Any real subscription lifecycle means the intro trial is gone.
+                    trialUsed: true,
+                });
             }
             await WebhookEvent.create({
                 provider: "razorpay",

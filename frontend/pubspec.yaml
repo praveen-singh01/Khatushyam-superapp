@@ -29,6 +29,10 @@ dependencies:
   image_picker: ^1.1.2
   share_plus: ^11.0.0
   cached_network_image: ^3.4.1
+  google_mlkit_selfie_segmentation: ^0.10.0
+  image: ^4.8.0
+  image_cropper: ^12.2.1
+  razorpay_flutter: ^1.4.5
 
 dev_dependencies:
   flutter_test:

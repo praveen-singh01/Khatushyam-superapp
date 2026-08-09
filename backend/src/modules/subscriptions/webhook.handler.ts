@@ -56,7 +56,11 @@ export function createRazorpayWebhookHandler(
       if (subscription?.id && mappedStatus) {
         await User.findOneAndUpdate(
           { razorpaySubscriptionId: subscription.id },
-          { subscriptionStatus: mappedStatus },
+          {
+            subscriptionStatus: mappedStatus,
+            // Any real subscription lifecycle means the intro trial is gone.
+            trialUsed: true,
+          },
         );
       }
       await WebhookEvent.create({

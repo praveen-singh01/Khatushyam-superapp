@@ -12,8 +12,10 @@ void main() {
       expect(free.canAccess(AppFeature.story), isTrue);
       expect(free.canAccess(AppFeature.chamatkar), isTrue);
       expect(free.canAccess(AppFeature.liveDarshan), isTrue);
-      expect(free.canAccess(AppFeature.bhajans), isFalse);
-      expect(free.canAccess(AppFeature.calendar), isFalse);
+      if (!kAppFreeMode) {
+        expect(free.canAccess(AppFeature.bhajans), isFalse);
+        expect(free.canAccess(AppFeature.calendar), isFalse);
+      }
     });
 
     test('premium unlocks all paid features', () {
@@ -40,12 +42,27 @@ void main() {
   });
 
   group('FakeSubscriptionRepository', () {
-    test('checkout grants premium', () async {
+    test('trial checkout grants premium and consumes trial', () async {
       final repo = FakeSubscriptionRepository();
-      expect((await repo.fetchEntitlement()).isPremium, isFalse);
-      final next = await repo.startMonthlyCheckout();
+      expect((await repo.fetchEntitlement()).trialEligible, isTrue);
+      final next = await repo.startCheckout(SubscriptionPlanId.trialMonthly);
       expect(next.isPremium, isTrue);
+      expect(next.trialUsed, isTrue);
+      expect(next.trialEligible, isFalse);
       expect(next.source, SubscriptionSource.fake);
+    });
+
+    test('after cancel, offers weekly and monthly only', () async {
+      final repo = FakeSubscriptionRepository();
+      await repo.startCheckout(SubscriptionPlanId.trialMonthly);
+      repo.cancelSubscription();
+      final state = await repo.fetchEntitlement();
+      expect(state.isPremium, isFalse);
+      expect(state.trialEligible, isFalse);
+      expect(
+        state.displayOffers.map((o) => o.id),
+        [SubscriptionPlanId.weekly, SubscriptionPlanId.monthly],
+      );
     });
   });
 

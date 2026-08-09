@@ -1,15 +1,28 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { Router, type NextFunction, type Request, type RequestHandler, type Response } from "express";
+import {
+  Router,
+  type NextFunction,
+  type Request,
+  type RequestHandler,
+  type Response,
+} from "express";
+import { z } from "zod";
 import type { SubscriptionGateway } from "../../shared/ports.js";
 import { entitlementFromUser } from "../../shared/ports.js";
+import type { SubscriptionPlanOffer } from "../../shared/types.js";
 import { User } from "../auth/user.model.js";
 
 interface SubscriptionRouterOptions {
   authenticate: RequestHandler;
   keyId: string;
   planId: string;
+  weeklyPlanId?: string;
   gateway: SubscriptionGateway;
 }
+
+const startSchema = z.object({
+  plan: z.enum(["trial_monthly", "weekly", "monthly"]),
+});
 
 export function validWebhookSignature(
   rawBody: Buffer,
@@ -26,8 +39,19 @@ export function validWebhookSignature(
   );
 }
 
-async function startMonthlySubscription(
+function razorpayPlanIdFor(
+  plan: SubscriptionPlanOffer,
   options: SubscriptionRouterOptions,
+): string {
+  if (plan === "weekly" && options.weeklyPlanId) {
+    return options.weeklyPlanId;
+  }
+  return options.planId;
+}
+
+async function startSubscription(
+  options: SubscriptionRouterOptions,
+  plan: SubscriptionPlanOffer,
   req: Request,
   res: Response,
   next: NextFunction,
@@ -38,21 +62,39 @@ async function startMonthlySubscription(
       return;
     }
 
+    const trialUsed = Boolean(req.user!.trialUsed);
+    if (plan === "trial_monthly" && trialUsed) {
+      res.status(400).json({ error: "TRIAL_ALREADY_USED" });
+      return;
+    }
+    if (plan !== "trial_monthly" && !trialUsed) {
+      // First-time users must take the intro trial path.
+      res.status(400).json({ error: "TRIAL_REQUIRED" });
+      return;
+    }
+
     const subscription = await options.gateway.createMonthlySubscription({
-      planId: options.planId,
+      planId: razorpayPlanIdFor(plan, options),
       userId: req.user!.id,
     });
+
     await User.findByIdAndUpdate(req.user!.id, {
       subscriptionStatus: "pending",
       razorpaySubscriptionId: subscription.id,
+      currentPlan: plan,
+      // Starting trial permanently consumes eligibility.
+      ...(plan === "trial_monthly" ? { trialUsed: true } : {}),
     });
+
     res.status(201).json(
       entitlementFromUser(
         {
           ...req.user!,
           subscriptionStatus: "pending",
+          trialUsed: plan === "trial_monthly" ? true : trialUsed,
+          currentPlan: plan,
         },
-        options.planId,
+        plan,
         {
           subscriptionId: subscription.id,
           keyId: options.keyId,
@@ -69,16 +111,33 @@ export function createSubscriptionRouter(
 ): Router {
   const router = Router();
 
+  router.post("/razorpay/start", options.authenticate, (req, res, next) => {
+    const parsed = startSchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      res.status(400).json({ error: "INVALID_PLAN" });
+      return;
+    }
+    void startSubscription(options, parsed.data.plan, req, res, next);
+  });
+
+  // Backward-compatible aliases → monthly (post-trial) or trial if eligible.
   router.post(
     "/razorpay/monthly",
     options.authenticate,
-    (req, res, next) =>
-      void startMonthlySubscription(options, req, res, next),
+    (req, res, next) => {
+      const plan: SubscriptionPlanOffer = req.user!.trialUsed
+        ? "monthly"
+        : "trial_monthly";
+      void startSubscription(options, plan, req, res, next);
+    },
   );
 
-  router.post("/create", options.authenticate, (req, res, next) =>
-    void startMonthlySubscription(options, req, res, next),
-  );
+  router.post("/create", options.authenticate, (req, res, next) => {
+    const plan: SubscriptionPlanOffer = req.user!.trialUsed
+      ? "monthly"
+      : "trial_monthly";
+    void startSubscription(options, plan, req, res, next);
+  });
 
   return router;
 }

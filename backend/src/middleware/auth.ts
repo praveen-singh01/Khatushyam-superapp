@@ -55,6 +55,7 @@ async function resolveUser(
       $set: setFields,
       $setOnInsert: {
         subscriptionStatus: "inactive",
+        trialUsed: false,
         ...(shouldBeAdmin ? {} : { role: "user" as UserRole }),
       },
     },
@@ -69,6 +70,8 @@ async function resolveUser(
     photoUrl: user.photoUrl,
     role: (user.role as UserRole | undefined) ?? "user",
     subscriptionStatus: user.subscriptionStatus,
+    trialUsed: Boolean(user.trialUsed),
+    currentPlan: user.currentPlan ?? null,
   };
 }
 
