@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 const contentCategorySchema = new Schema({
     type: {
         type: String,
-        enum: ["wallpaper", "ringtone"],
+        enum: ["wallpaper", "ringtone", "poster"],
         required: true,
         index: true,
     },
@@ -60,12 +60,16 @@ const DEFAULT_CATEGORIES = [
         slug: "notification",
         label: { en: "Notification", hi: "सूचना" },
     },
+    {
+        type: "poster",
+        slug: "daily",
+        label: { en: "Daily Posters", hi: "दैनिक पोस्टर" },
+    },
 ];
 export async function ensureDefaultCategories() {
-    const count = await ContentCategory.countDocuments();
-    if (count > 0)
-        return;
-    await ContentCategory.insertMany(DEFAULT_CATEGORIES, { ordered: false });
+    for (const category of DEFAULT_CATEGORIES) {
+        await ContentCategory.updateOne({ type: category.type, slug: category.slug }, { $setOnInsert: category }, { upsert: true });
+    }
 }
 export function categoryResponse(doc) {
     return {
@@ -88,9 +92,12 @@ export async function listCategoriesByType() {
     const ringtone = items
         .filter((item) => item.type === "ringtone")
         .map((item) => item.slug);
+    const poster = items
+        .filter((item) => item.type === "poster")
+        .map((item) => item.slug);
     return {
         items: items.map(categoryResponse),
-        byType: { wallpaper, ringtone },
+        byType: { wallpaper, ringtone, poster },
     };
 }
 export async function categoryExists(type, slug) {

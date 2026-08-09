@@ -19,16 +19,35 @@ class LiveYoutubePlayer extends StatefulWidget {
   final String videoId;
   final bool autoPlay;
 
+  /// Pause every mounted player (tab change / push to another screen).
+  static void pauseAll() {
+    for (final controller in List<YoutubePlayerController>.from(_registry)) {
+      try {
+        controller.pause();
+      } catch (_) {
+        // Controller may already be disposed.
+      }
+    }
+  }
+
+  static final Set<YoutubePlayerController> _registry = {};
+
   @override
   State<LiveYoutubePlayer> createState() => _LiveYoutubePlayerState();
 }
 
-class _LiveYoutubePlayerState extends State<LiveYoutubePlayer> {
+class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
+    with WidgetsBindingObserver {
   late YoutubePlayerController _controller;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Only one audible player at a time when a new one mounts with autoplay.
+    if (widget.autoPlay) {
+      LiveYoutubePlayer.pauseAll();
+    }
     _controller = YoutubePlayerController(
       initialVideoId: widget.videoId,
       flags: YoutubePlayerFlags(
@@ -42,6 +61,7 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer> {
         hideControls: false,
       ),
     );
+    LiveYoutubePlayer._registry.add(_controller);
   }
 
   @override
@@ -49,11 +69,36 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.videoId != widget.videoId) {
       _controller.load(widget.videoId);
+      if (!widget.autoPlay) {
+        _controller.pause();
+      }
+    }
+  }
+
+  @override
+  void deactivate() {
+    // Leaving the tree (tab switch / route change) — stop audio/video.
+    try {
+      _controller.pause();
+    } catch (_) {}
+    super.deactivate();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      try {
+        _controller.pause();
+      } catch (_) {}
     }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    LiveYoutubePlayer._registry.remove(_controller);
     _controller.dispose();
     super.dispose();
   }

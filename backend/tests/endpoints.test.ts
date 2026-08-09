@@ -582,6 +582,51 @@ describe("admin dashboard APIs", () => {
     expect(activeLibrary.body.items).toHaveLength(1);
   });
 
+  it("serves paginated posters to signed-in free users", async () => {
+    await ContentAsset.create({
+      slug: "daily-poster-01",
+      type: "poster",
+      category: "daily",
+      title: { hi: "जय श्याम", en: "Jai Shyam" },
+      fileKey: "khatu-shyam/posters/daily/daily-poster-01.jpg",
+      format: "jpg",
+      width: 1080,
+      height: 1920,
+      premium: false,
+      status: "published",
+    });
+    await ContentAsset.create({
+      slug: "daily-poster-02",
+      type: "poster",
+      category: "daily",
+      title: { hi: "बाबा कृपा", en: "Baba Kripa" },
+      fileKey: "khatu-shyam/posters/daily/daily-poster-02.jpg",
+      format: "jpg",
+      premium: false,
+      status: "published",
+    });
+
+    const unauth = await request(app).get("/v1/content/posters");
+    expect(unauth.status).toBe(401);
+
+    const page = await request(app)
+      .get("/v1/content/posters?limit=1")
+      .set("Authorization", "Bearer free");
+    expect(page.status).toBe(200);
+    expect(page.body.items).toHaveLength(1);
+    expect(page.body.hasMore).toBe(true);
+    expect(page.body.nextCursor).toBeTruthy();
+    expect(page.body.items[0].url).toContain("khatu-shyam/posters/");
+    expect(page.headers["cache-control"]).toContain("max-age=30");
+
+    const next = await request(app)
+      .get(`/v1/content/posters?limit=1&cursor=${page.body.nextCursor}`)
+      .set("Authorization", "Bearer free");
+    expect(next.status).toBe(200);
+    expect(next.body.items).toHaveLength(1);
+    expect(next.body.items[0].id).not.toBe(page.body.items[0].id);
+  });
+
   it("lets admins edit the public story content", async () => {
     await request(app)
       .get("/v1/auth/me")

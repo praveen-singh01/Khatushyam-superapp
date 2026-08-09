@@ -16,7 +16,7 @@ const subscriptionStatusSchema = z.enum([
     "cancelled",
 ]);
 const roleSchema = z.enum(["user", "admin"]);
-const contentTypeSchema = z.enum(["wallpaper", "ringtone"]);
+const contentTypeSchema = z.enum(["wallpaper", "ringtone", "poster"]);
 const contentStatusSchema = z.enum(["draft", "published", "archived"]);
 const slugSchema = z
     .string()
@@ -180,13 +180,14 @@ export function createAdminRouter(options) {
     router.get("/stats", async (_req, res, next) => {
         try {
             const categories = await listCategoriesByType();
-            const [userCount, premiumCount, adminCount, contentCount, wallpaperCount, ringtoneCount, chamatkarCount,] = await Promise.all([
+            const [userCount, premiumCount, adminCount, contentCount, wallpaperCount, ringtoneCount, posterCount, chamatkarCount,] = await Promise.all([
                 User.countDocuments(),
                 User.countDocuments({ subscriptionStatus: "active" }),
                 User.countDocuments({ role: "admin" }),
                 ContentAsset.countDocuments(),
                 ContentAsset.countDocuments({ type: "wallpaper" }),
                 ContentAsset.countDocuments({ type: "ringtone" }),
+                ContentAsset.countDocuments({ type: "poster" }),
                 Chamatkar.countDocuments(),
             ]);
             res.json({
@@ -195,11 +196,13 @@ export function createAdminRouter(options) {
                     total: contentCount,
                     wallpapers: wallpaperCount,
                     ringtones: ringtoneCount,
+                    posters: posterCount,
                 },
                 categories: {
                     total: categories.items.length,
                     wallpapers: categories.byType.wallpaper.length,
                     ringtones: categories.byType.ringtone.length,
+                    posters: categories.byType.poster.length,
                 },
                 chamatkars: { total: chamatkarCount },
             });
@@ -212,7 +215,7 @@ export function createAdminRouter(options) {
         try {
             const type = typeof req.query.type === "string" ? req.query.type.trim() : "";
             const listed = await listCategoriesByType();
-            const items = type === "wallpaper" || type === "ringtone"
+            const items = type === "wallpaper" || type === "ringtone" || type === "poster"
                 ? listed.items.filter((item) => item.type === type)
                 : listed.items;
             res.json({
@@ -394,8 +397,11 @@ export function createAdminRouter(options) {
             const limit = Math.min(Math.max(Number(req.query.limit ?? 50) || 50, 1), 100);
             const page = Math.max(Number(req.query.page ?? 1) || 1, 1);
             const filter = {};
-            if (type === "wallpaper" || type === "ringtone")
+            if (type === "wallpaper" ||
+                type === "ringtone" ||
+                type === "poster") {
                 filter.type = type;
+            }
             if (category)
                 filter.category = category;
             if (status === "draft" || status === "published" || status === "archived") {
@@ -658,8 +664,13 @@ export function createAdminRouter(options) {
                 return;
             }
             const isImage = input.contentType.startsWith("image/");
-            if (input.type === "wallpaper" && !isImage) {
-                res.status(400).json({ error: "WALLPAPER_REQUIRES_IMAGE" });
+            if ((input.type === "wallpaper" || input.type === "poster") &&
+                !isImage) {
+                res.status(400).json({
+                    error: input.type === "poster"
+                        ? "POSTER_REQUIRES_IMAGE"
+                        : "WALLPAPER_REQUIRES_IMAGE",
+                });
                 return;
             }
             if (input.type === "ringtone" && isImage) {

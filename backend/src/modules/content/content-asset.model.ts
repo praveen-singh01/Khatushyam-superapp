@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-export type ContentAssetType = "wallpaper" | "ringtone";
+export type ContentAssetType = "wallpaper" | "ringtone" | "poster";
 export type ContentAssetStatus = "draft" | "published" | "archived";
 
 export interface ContentAssetDocument {
@@ -19,6 +19,8 @@ export interface ContentAssetDocument {
   source?: string;
   status: ContentAssetStatus;
   uploadedBy?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const contentAssetSchema = new Schema<ContentAssetDocument>(
@@ -26,7 +28,7 @@ const contentAssetSchema = new Schema<ContentAssetDocument>(
     slug: { type: String, required: true, unique: true, trim: true, index: true },
     type: {
       type: String,
-      enum: ["wallpaper", "ringtone"],
+      enum: ["wallpaper", "ringtone", "poster"],
       required: true,
       index: true,
     },
@@ -56,6 +58,8 @@ const contentAssetSchema = new Schema<ContentAssetDocument>(
 );
 
 contentAssetSchema.index({ type: 1, category: 1, status: 1, createdAt: -1 });
+/** Optimized list for paginated posters feed (newest first). */
+contentAssetSchema.index({ type: 1, status: 1, createdAt: -1, _id: -1 });
 
 export const ContentAsset = model<ContentAssetDocument>(
   "ContentAsset",

@@ -26,7 +26,8 @@ export function ContentPage() {
   const [categoryOptions, setCategoryOptions] = useState<{
     wallpaper: string[];
     ringtone: string[];
-  }>({ wallpaper: [], ringtone: [] });
+    poster: string[];
+  }>({ wallpaper: [], ringtone: [], poster: [] });
   const [q, setQ] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("published");
@@ -43,13 +44,16 @@ export function ContentPage() {
   const [premium, setPremium] = useState(true);
   const [file, setFile] = useState<File | null>(null);
 
-  const categories = useMemo(
-    () =>
-      type === "wallpaper"
-        ? categoryOptions.wallpaper
-        : categoryOptions.ringtone,
-    [type, categoryOptions],
-  );
+  useEffect(() => {
+    // Daily posters are free in the app; keep admin default aligned.
+    if (type === "poster") setPremium(false);
+  }, [type]);
+
+  const categories = useMemo(() => {
+    if (type === "wallpaper") return categoryOptions.wallpaper;
+    if (type === "ringtone") return categoryOptions.ringtone;
+    return categoryOptions.poster;
+  }, [type, categoryOptions]);
 
   useEffect(() => {
     if (!categories.includes(category)) {
@@ -149,7 +153,10 @@ export function ContentPage() {
       <div className="page-header">
         <div>
           <h1>Content library</h1>
-          <p>Upload wallpapers and ringtones to S3 and publish them in Mongo.</p>
+          <p>
+            Upload wallpapers, ringtones, and daily posters to S3 (
+            <code>khatu-shyam/</code>) and publish them in Mongo.
+          </p>
         </div>
         <Link className="btn secondary" to="/">
           Manage categories
@@ -170,6 +177,7 @@ export function ContentPage() {
             >
               <option value="wallpaper">Wallpaper</option>
               <option value="ringtone">Ringtone</option>
+              <option value="poster">Poster</option>
             </select>
           </div>
 
@@ -252,9 +260,9 @@ export function ContentPage() {
             <input
               type="file"
               accept={
-                type === "wallpaper"
-                  ? "image/jpeg,image/png,image/webp"
-                  : "audio/mpeg,audio/mp4,audio/x-m4a,.mp3,.m4a"
+                type === "ringtone"
+                  ? "audio/mpeg,audio/mp4,audio/x-m4a,.mp3,.m4a"
+                  : "image/jpeg,image/png,image/webp"
               }
               onChange={(event) => setFile(event.target.files?.[0] ?? null)}
               required
@@ -283,6 +291,7 @@ export function ContentPage() {
               <option value="">All types</option>
               <option value="wallpaper">Wallpaper</option>
               <option value="ringtone">Ringtone</option>
+              <option value="poster">Poster</option>
             </select>
             <select
               value={statusFilter}

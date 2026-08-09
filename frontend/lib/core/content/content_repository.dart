@@ -48,6 +48,38 @@ class ContentRepository {
     );
   }
 
+  Future<PosterPage> fetchPosters({String? cursor, int limit = 20}) async {
+    final response = await _api.get<Map<String, dynamic>>(
+      '/v1/content/posters',
+      queryParameters: {
+        'limit': limit,
+        if (cursor != null && cursor.isNotEmpty) 'cursor': cursor,
+      },
+    );
+    final items = response.data?['items'] as List<dynamic>? ?? const [];
+    return PosterPage(
+      items:
+          items.map((raw) {
+            final map = raw as Map<String, dynamic>;
+            final title = map['title'] as Map<String, dynamic>? ?? const {};
+            return PosterItem(
+              id: (map['id'] as String?) ?? '',
+              title:
+                  (title['hi'] as String?) ??
+                  (title['en'] as String?) ??
+                  (map['id'] as String?) ??
+                  '',
+              category: (map['category'] as String?) ?? '',
+              url: (map['url'] as String?) ?? '',
+              width: (map['width'] as num?)?.toInt(),
+              height: (map['height'] as num?)?.toInt(),
+            );
+          }).toList(),
+      nextCursor: response.data?['nextCursor'] as String?,
+      hasMore: response.data?['hasMore'] == true,
+    );
+  }
+
   Future<List<MediaAsset>> fetchLibrary({required String type}) async {
     final response = await _api.get<Map<String, dynamic>>(
       '/v1/content/library',

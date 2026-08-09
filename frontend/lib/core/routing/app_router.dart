@@ -6,6 +6,7 @@ import '../../features/auth/presentation/auth_providers.dart';
 import '../../features/auth/presentation/sign_in_screen.dart';
 import '../../features/chamatkar/presentation/chamatkar_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/posters/presentation/posters_screen.dart';
 import '../../features/premium/presentation/feature_screens.dart';
 import '../../features/shell/presentation/app_shell.dart';
 import '../../features/story/presentation/story_screen.dart';
@@ -68,6 +69,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.chamatkar,
                 builder: (context, state) => const ChamatkarScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.posters,
+                builder: (context, state) => const PostersScreen(),
               ),
             ],
           ),

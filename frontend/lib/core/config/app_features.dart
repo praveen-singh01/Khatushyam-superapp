@@ -29,7 +29,8 @@ extension AppFeatureAccess on AppFeature {
     if (kAppFreeMode) return true;
     return this == AppFeature.story ||
         this == AppFeature.chamatkar ||
-        this == AppFeature.liveDarshan;
+        this == AppFeature.liveDarshan ||
+        this == AppFeature.posters;
   }
 
   String get routeSegment => switch (this) {
@@ -66,7 +67,6 @@ const List<AppFeature> kPremiumFeatures = [
   AppFeature.templeStatus,
   AppFeature.travelGuides,
   AppFeature.bhajans,
-  AppFeature.posters,
   AppFeature.wallpapers,
   AppFeature.ringtones,
   AppFeature.callerTunes,

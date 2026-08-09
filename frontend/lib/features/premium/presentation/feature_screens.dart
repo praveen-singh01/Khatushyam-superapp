@@ -11,18 +11,33 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/async_body.dart';
 import '../../../core/widgets/soft_card.dart';
 import '../../live/presentation/live_darshan_screen.dart';
+import '../../live/presentation/live_youtube_player.dart';
+import '../../posters/presentation/posters_screen.dart';
 import '../../subscription/presentation/subscription_providers.dart';
 import 'calendar_screen.dart';
 import 'ringtone_actions.dart';
 import 'wallpaper_viewer.dart';
 
-class FeatureHostScreen extends ConsumerWidget {
+class FeatureHostScreen extends ConsumerStatefulWidget {
   const FeatureHostScreen({super.key, required this.feature});
 
   final AppFeature? feature;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FeatureHostScreen> createState() => _FeatureHostScreenState();
+}
+
+class _FeatureHostScreenState extends ConsumerState<FeatureHostScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Root-stack features cover the shell; pause any tab YouTube players.
+    LiveYoutubePlayer.pauseAll();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final feature = widget.feature;
     final l10n = AppLocalizations.of(context)!;
     final isPremium =
         ref.watch(subscriptionControllerProvider).asData?.value.isPremium ??
@@ -35,11 +50,11 @@ class FeatureHostScreen extends ConsumerWidget {
       );
     }
 
-    if (!feature!.isFree && !isPremium) {
-      return _PremiumGateScaffold(title: _title(l10n, feature!));
+    if (!feature.isFree && !isPremium) {
+      return _PremiumGateScaffold(title: _title(l10n, feature));
     }
 
-    return switch (feature!) {
+    return switch (feature) {
       AppFeature.liveDarshan => const LiveDarshanScreen(),
       AppFeature.calendar => const CalendarFeatureScreen(),
       AppFeature.aartiAlarms => const AartiAlarmsFeatureScreen(),
@@ -48,12 +63,12 @@ class FeatureHostScreen extends ConsumerWidget {
       AppFeature.templeStatus => const TempleStatusFeatureScreen(),
       AppFeature.travelGuides => const TravelGuidesFeatureScreen(),
       AppFeature.bhajans => const BhajansFeatureScreen(),
-      AppFeature.posters => const PostersFeatureScreen(),
+      AppFeature.posters => const PostersScreen(),
       AppFeature.wallpapers => const WallpapersFeatureScreen(),
       AppFeature.ringtones => const RingtonesFeatureScreen(),
       AppFeature.callerTunes => const CallerTunesFeatureScreen(),
       AppFeature.story || AppFeature.chamatkar => Scaffold(
-        appBar: AppBar(title: Text(_title(l10n, feature!))),
+        appBar: AppBar(title: Text(_title(l10n, feature))),
         body: const SizedBox.shrink(),
       ),
     };
@@ -629,78 +644,6 @@ class _CategoryChip extends StatelessWidget {
             fontSize: 13,
           ),
         ),
-      ),
-    );
-  }
-}
-
-class PostersFeatureScreen extends ConsumerWidget {
-  const PostersFeatureScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final templates = ref.watch(postersProvider);
-    return _FeatureScaffold(
-      title: l10n.featurePosters,
-      child: AsyncBody(
-        value: templates,
-        onRetry: () => ref.invalidate(postersProvider),
-        builder:
-            (items) => ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-              children: [
-                Text(
-                  l10n.posterHint,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 14),
-                ...items.map(
-                  (template) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: SoftCard(
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 64,
-                            height: 64,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFFFB347), AppColors.orange],
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.photo_camera_rounded,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  template.title,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
-                                ),
-                                Text(template.theme),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            l10n.useTemplate,
-                            style: Theme.of(context).textTheme.labelLarge
-                                ?.copyWith(color: AppColors.orange),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
       ),
     );
   }

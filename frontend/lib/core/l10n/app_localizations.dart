@@ -125,6 +125,12 @@ abstract class AppLocalizations {
   /// **'समुदाय'**
   String get navChamatkar;
 
+  /// No description provided for @navPosters.
+  ///
+  /// In hi, this message translates to:
+  /// **'पोस्टर'**
+  String get navPosters;
+
   /// No description provided for @navPremium.
   ///
   /// In hi, this message translates to:
@@ -416,8 +422,32 @@ abstract class AppLocalizations {
   /// No description provided for @posterHint.
   ///
   /// In hi, this message translates to:
-  /// **'टेम्पलेट चुनें, फिर अपनी फोटो जोड़ें (मॉक)।'**
+  /// **'पोस्टर चुनें, नीचे बाएँ अपनी फोटो जोड़ें, फिर शेयर करें।'**
   String get posterHint;
+
+  /// No description provided for @posterEmpty.
+  ///
+  /// In hi, this message translates to:
+  /// **'अभी कोई पोस्टर नहीं। जल्द वापस देखें।'**
+  String get posterEmpty;
+
+  /// No description provided for @posterAddPhoto.
+  ///
+  /// In hi, this message translates to:
+  /// **'फोटो जोड़ें'**
+  String get posterAddPhoto;
+
+  /// No description provided for @posterAddPhotoFirst.
+  ///
+  /// In hi, this message translates to:
+  /// **'पहले अपनी फोटो जोड़ें'**
+  String get posterAddPhotoFirst;
+
+  /// No description provided for @posterShare.
+  ///
+  /// In hi, this message translates to:
+  /// **'शेयर करें'**
+  String get posterShare;
 
   /// No description provided for @useTemplate.
   ///

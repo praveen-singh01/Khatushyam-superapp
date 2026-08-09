@@ -4,6 +4,7 @@ abstract final class AppRoutes {
   static const home = '/home';
   static const story = '/story';
   static const chamatkar = '/chamatkar';
+  static const posters = '/posters';
   static const paywall = '/premium';
   static const feature = '/feature/:id';
 

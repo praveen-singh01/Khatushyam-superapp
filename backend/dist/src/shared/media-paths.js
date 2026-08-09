@@ -4,7 +4,11 @@ export function isS3MediaKey(fileKey) {
     return fileKey.startsWith(`${S3_MEDIA_PREFIX}/`);
 }
 export function s3LibraryKey(type, category, fileName) {
-    const folder = type === "wallpaper" ? "wallpapers" : "ringtones";
+    const folder = type === "wallpaper"
+        ? "wallpapers"
+        : type === "ringtone"
+            ? "ringtones"
+            : "posters";
     return `${S3_MEDIA_PREFIX}/${folder}/${category}/${fileName}`;
 }
 export function s3UserUploadKey(userId, purpose, fileName) {

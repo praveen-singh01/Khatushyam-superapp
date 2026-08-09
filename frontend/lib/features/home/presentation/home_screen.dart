@@ -10,12 +10,22 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/circle_action.dart';
 import '../../../core/widgets/soft_card.dart';
 import '../../auth/presentation/auth_providers.dart';
+import '../../live/domain/live_stream_state.dart';
 import '../../live/presentation/live_providers.dart';
 import '../../live/presentation/live_youtube_player.dart';
 import '../../subscription/presentation/subscription_providers.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  /// Keep last live config while the provider reloads so the player is not
+  /// disposed/recreated (which would restart playback after a pause).
+  LiveStreamState? _cachedLive;
 
   String _label(AppLocalizations l10n, AppFeature feature) {
     return switch (feature) {
@@ -37,14 +47,18 @@ class HomeScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(authStateProvider).asData?.value;
     final isPremium =
         ref.watch(subscriptionControllerProvider).asData?.value.isPremium ??
         false;
     final temple = ref.watch(templeStatusProvider);
-    final live = ref.watch(liveStreamProvider).asData?.value;
+    final liveAsync = ref.watch(liveStreamProvider);
+    final live = liveAsync.asData?.value ?? _cachedLive;
+    if (liveAsync.asData?.value != null) {
+      _cachedLive = liveAsync.asData!.value;
+    }
     final isLiveNow = live?.canPlay ?? false;
     final name = user?.displayName?.split(' ').first ?? 'भक्त';
     final livePath = AppRoutes.featurePath(
@@ -94,6 +108,12 @@ class HomeScreen extends ConsumerWidget {
         AppRoutes.featurePath('travel-guides'),
         Icons.map_rounded,
         l10n.featureTravelGuides,
+      ),
+      (
+        AppFeature.posters,
+        AppRoutes.posters,
+        Icons.photo_camera_rounded,
+        l10n.featurePosters,
       ),
       (
         AppFeature.wallpapers,
@@ -325,8 +345,9 @@ class HomeScreen extends ConsumerWidget {
                 label: item.$4,
                 locked: locked,
                 onTap: () {
-                  if (item.$2 == AppRoutes.story) {
-                    context.go(AppRoutes.story);
+                  if (item.$2 == AppRoutes.story ||
+                      item.$2 == AppRoutes.posters) {
+                    context.go(item.$2);
                   } else {
                     context.push(item.$2);
                   }
@@ -424,6 +445,37 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          SoftCard(
+            onTap: () => context.go(AppRoutes.posters),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: AppColors.orangeSoft,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Icon(
+                    Icons.photo_camera_rounded,
+                    color: AppColors.orange,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.featurePosters,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppColors.inkMuted,
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 22),
           Text(
@@ -547,7 +599,8 @@ class _HomeLiveHero extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        LiveYoutubePlayer(videoId: videoId),
+        // Don't autoplay on Home — avoids restarting after tab switches / rebuilds.
+        LiveYoutubePlayer(videoId: videoId, autoPlay: false),
       ],
     );
   }

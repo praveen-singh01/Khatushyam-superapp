@@ -3,7 +3,7 @@ const contentAssetSchema = new Schema({
     slug: { type: String, required: true, unique: true, trim: true, index: true },
     type: {
         type: String,
-        enum: ["wallpaper", "ringtone"],
+        enum: ["wallpaper", "ringtone", "poster"],
         required: true,
         index: true,
     },
@@ -30,4 +30,6 @@ const contentAssetSchema = new Schema({
     uploadedBy: String,
 }, { timestamps: true });
 contentAssetSchema.index({ type: 1, category: 1, status: 1, createdAt: -1 });
+/** Optimized list for paginated posters feed (newest first). */
+contentAssetSchema.index({ type: 1, status: 1, createdAt: -1, _id: -1 });
 export const ContentAsset = model("ContentAsset", contentAssetSchema);

@@ -61,5 +61,9 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Add your photo to Khatu Shyam posters before sharing.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Save composed posters to your photo library when sharing.</string>
 </dict>
 </plist>

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "191548396096-el8h482fji7vpdhalcq53t3eh31t95gd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.khatushyam.khatushyam_app",
+            "certificate_hash": "773cf41c9eb54fa71f27fae55547e0775786dd8a"
+          }
+        },
+        {
           "client_id": "191548396096-lnpoiu6r0grakuua4j55an49rq05idee.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

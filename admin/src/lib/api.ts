@@ -78,7 +78,11 @@ export function fetchCategories(token: string, type?: ContentType) {
   const query = type ? `?type=${type}` : "";
   return request<{
     items: ContentCategory[];
-    byType: { wallpaper: string[]; ringtone: string[] };
+    byType: {
+      wallpaper: string[];
+      ringtone: string[];
+      poster: string[];
+    };
   }>(`/v1/admin/categories${query}`, token);
 }
 

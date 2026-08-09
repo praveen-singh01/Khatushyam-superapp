@@ -161,6 +161,7 @@ export function DashboardPage() {
   const ringtoneCategories = categories.filter(
     (item) => item.type === "ringtone",
   );
+  const posterCategories = categories.filter((item) => item.type === "poster");
 
   return (
     <div>
@@ -200,6 +201,10 @@ export function DashboardPage() {
             <div className="stat">
               <label>Ringtones</label>
               <strong>{stats.content.ringtones}</strong>
+            </div>
+            <div className="stat">
+              <label>Posters</label>
+              <strong>{stats.content.posters ?? 0}</strong>
             </div>
           </div>
         )}
@@ -325,6 +330,7 @@ export function DashboardPage() {
             >
               <option value="wallpaper">Wallpaper</option>
               <option value="ringtone">Ringtone</option>
+              <option value="poster">Poster</option>
             </select>
           </div>
 
@@ -450,6 +456,50 @@ export function DashboardPage() {
                     <tr>
                       <td colSpan={3}>
                         <div className="empty">No ringtone categories yet.</div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <strong>Posters</strong>
+            <div className="table-wrap" style={{ marginTop: 10 }}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Slug</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {posterCategories.map((category) => (
+                    <tr key={category.id}>
+                      <td>
+                        <strong>{category.label.en}</strong>
+                        <div className="muted">{category.label.hi}</div>
+                      </td>
+                      <td>
+                        <span className="badge">{category.slug}</span>
+                      </td>
+                      <td>
+                        <button
+                          className="btn danger"
+                          type="button"
+                          onClick={() => void onDeleteCategory(category)}
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {posterCategories.length === 0 && (
+                    <tr>
+                      <td colSpan={3}>
+                        <div className="empty">No poster categories yet.</div>
                       </td>
                     </tr>
                   )}

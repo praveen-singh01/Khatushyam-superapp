@@ -24,6 +24,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get navChamatkar => 'समुदाय';
 
   @override
+  String get navPosters => 'पोस्टर';
+
+  @override
   String get navPremium => 'प्रोफ़ाइल';
 
   @override
@@ -168,7 +171,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String get premiumInactiveHint => 'कैलेंडर, मीडिया और अधिक खोलें';
 
   @override
-  String get posterHint => 'टेम्पलेट चुनें, फिर अपनी फोटो जोड़ें (मॉक)।';
+  String get posterHint => 'पोस्टर चुनें, नीचे बाएँ अपनी फोटो जोड़ें, फिर शेयर करें।';
+
+  @override
+  String get posterEmpty => 'अभी कोई पोस्टर नहीं। जल्द वापस देखें।';
+
+  @override
+  String get posterAddPhoto => 'फोटो जोड़ें';
+
+  @override
+  String get posterAddPhotoFirst => 'पहले अपनी फोटो जोड़ें';
+
+  @override
+  String get posterShare => 'शेयर करें';
 
   @override
   String get useTemplate => 'चुनें';

@@ -6,7 +6,7 @@ export type SubscriptionStatus =
   | "cancelled";
 
 export type UserRole = "user" | "admin";
-export type ContentType = "wallpaper" | "ringtone";
+export type ContentType = "wallpaper" | "ringtone" | "poster";
 export type ContentStatus = "draft" | "published" | "archived";
 
 export interface AuthUser {
@@ -21,8 +21,18 @@ export interface AuthUser {
 
 export interface AdminStats {
   users: { total: number; premium: number; admins: number };
-  content: { total: number; wallpapers: number; ringtones: number };
-  categories: { total: number; wallpapers: number; ringtones: number };
+  content: {
+    total: number;
+    wallpapers: number;
+    ringtones: number;
+    posters: number;
+  };
+  categories: {
+    total: number;
+    wallpapers: number;
+    ringtones: number;
+    posters: number;
+  };
   chamatkars: { total: number };
 }
 

@@ -213,3 +213,33 @@ class PosterTemplate {
   final String title;
   final String theme;
 }
+
+class PosterItem {
+  const PosterItem({
+    required this.id,
+    required this.title,
+    required this.category,
+    required this.url,
+    this.width,
+    this.height,
+  });
+
+  final String id;
+  final String title;
+  final String category;
+  final String url;
+  final int? width;
+  final int? height;
+}
+
+class PosterPage {
+  const PosterPage({
+    required this.items,
+    this.nextCursor,
+    this.hasMore = false,
+  });
+
+  final List<PosterItem> items;
+  final String? nextCursor;
+  final bool hasMore;
+}

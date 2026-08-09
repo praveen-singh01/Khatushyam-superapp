@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../live/presentation/live_youtube_player.dart';
 
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.navigationShell});
@@ -29,7 +30,13 @@ class AppShell extends StatelessWidget {
         ),
         child: NavigationBar(
           selectedIndex: navigationShell.currentIndex,
-          onDestinationSelected: navigationShell.goBranch,
+          onDestinationSelected: (index) {
+            // IndexedStack keeps Home alive — pause YouTube when leaving a tab.
+            if (index != navigationShell.currentIndex) {
+              LiveYoutubePlayer.pauseAll();
+            }
+            navigationShell.goBranch(index);
+          },
           destinations: [
             NavigationDestination(
               icon: const Icon(Icons.home_outlined),
@@ -45,6 +52,11 @@ class AppShell extends StatelessWidget {
               icon: const Icon(Icons.groups_outlined),
               selectedIcon: const Icon(Icons.groups_rounded),
               label: l10n.navChamatkar,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.photo_outlined),
+              selectedIcon: const Icon(Icons.photo_rounded),
+              label: l10n.navPosters,
             ),
             NavigationDestination(
               icon: const Icon(Icons.person_outline_rounded),

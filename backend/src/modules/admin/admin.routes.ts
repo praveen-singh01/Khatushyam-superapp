@@ -36,7 +36,7 @@ const subscriptionStatusSchema = z.enum([
 
 const roleSchema = z.enum(["user", "admin"]);
 
-const contentTypeSchema = z.enum(["wallpaper", "ringtone"]);
+const contentTypeSchema = z.enum(["wallpaper", "ringtone", "poster"]);
 const contentStatusSchema = z.enum(["draft", "published", "archived"]);
 
 const slugSchema = z
@@ -256,6 +256,7 @@ export function createAdminRouter(options: AdminRouterOptions): Router {
         contentCount,
         wallpaperCount,
         ringtoneCount,
+        posterCount,
         chamatkarCount,
       ] = await Promise.all([
         User.countDocuments(),
@@ -264,6 +265,7 @@ export function createAdminRouter(options: AdminRouterOptions): Router {
         ContentAsset.countDocuments(),
         ContentAsset.countDocuments({ type: "wallpaper" }),
         ContentAsset.countDocuments({ type: "ringtone" }),
+        ContentAsset.countDocuments({ type: "poster" }),
         Chamatkar.countDocuments(),
       ]);
 
@@ -273,11 +275,13 @@ export function createAdminRouter(options: AdminRouterOptions): Router {
           total: contentCount,
           wallpapers: wallpaperCount,
           ringtones: ringtoneCount,
+          posters: posterCount,
         },
         categories: {
           total: categories.items.length,
           wallpapers: categories.byType.wallpaper.length,
           ringtones: categories.byType.ringtone.length,
+          posters: categories.byType.poster.length,
         },
         chamatkars: { total: chamatkarCount },
       });
@@ -292,7 +296,7 @@ export function createAdminRouter(options: AdminRouterOptions): Router {
         typeof req.query.type === "string" ? req.query.type.trim() : "";
       const listed = await listCategoriesByType();
       const items =
-        type === "wallpaper" || type === "ringtone"
+        type === "wallpaper" || type === "ringtone" || type === "poster"
           ? listed.items.filter((item) => item.type === type)
           : listed.items;
       res.json({
@@ -500,7 +504,13 @@ export function createAdminRouter(options: AdminRouterOptions): Router {
       const page = Math.max(Number(req.query.page ?? 1) || 1, 1);
 
       const filter: Record<string, unknown> = {};
-      if (type === "wallpaper" || type === "ringtone") filter.type = type;
+      if (
+        type === "wallpaper" ||
+        type === "ringtone" ||
+        type === "poster"
+      ) {
+        filter.type = type;
+      }
       if (category) filter.category = category;
       if (status === "draft" || status === "published" || status === "archived") {
         filter.status = status;
@@ -788,8 +798,16 @@ export function createAdminRouter(options: AdminRouterOptions): Router {
       }
 
       const isImage = input.contentType.startsWith("image/");
-      if (input.type === "wallpaper" && !isImage) {
-        res.status(400).json({ error: "WALLPAPER_REQUIRES_IMAGE" });
+      if (
+        (input.type === "wallpaper" || input.type === "poster") &&
+        !isImage
+      ) {
+        res.status(400).json({
+          error:
+            input.type === "poster"
+              ? "POSTER_REQUIRES_IMAGE"
+              : "WALLPAPER_REQUIRES_IMAGE",
+        });
         return;
       }
       if (input.type === "ringtone" && isImage) {
