@@ -148,7 +148,9 @@ export function createContentRouter(authenticate, requirePremium, cloudFrontBase
             next(error);
         }
     });
-    router.get("/library", authenticate, requirePremium, async (req, res, next) => {
+    // Browse is free (wallpapers/ringtones/etc). Premium is enforced on
+    // set/share actions in the app, not on listing media.
+    router.get("/library", authenticate, async (req, res, next) => {
         try {
             const type = typeof req.query.type === "string" ? req.query.type.trim() : "";
             const category = typeof req.query.category === "string"
