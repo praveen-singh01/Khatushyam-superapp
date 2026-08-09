@@ -163,90 +163,117 @@ export function ContentPage() {
         </Link>
       </div>
 
-      <div className="upload-grid">
-        <form className="panel stack" onSubmit={onUpload}>
-          <h2 style={{ margin: 0, fontFamily: "var(--font-display)" }}>
-            Upload asset
-          </h2>
-
-          <div className="field">
-            <label>Type</label>
-            <select
-              value={type}
-              onChange={(event) => setType(event.target.value as ContentType)}
-            >
-              <option value="wallpaper">Wallpaper</option>
-              <option value="ringtone">Ringtone</option>
-              <option value="poster">Poster</option>
-            </select>
+      <div className="content-library">
+        <form className="panel stack upload-panel" onSubmit={onUpload}>
+          <div className="section-heading">
+            <h2 style={{ margin: 0, fontFamily: "var(--font-display)" }}>
+              Upload asset
+            </h2>
+            <p className="muted" style={{ margin: 0 }}>
+              Choose Poster for daily share images. Wallpaper / ringtone stay
+              the same.
+            </p>
           </div>
 
-          <div className="field">
-            <label>Category</label>
-            <select
-              value={category}
-              onChange={(event) => setCategory(event.target.value)}
-              required
-              disabled={categories.length === 0}
-            >
-              {categories.length === 0 ? (
-                <option value="">Add a category on Dashboard first</option>
-              ) : (
-                categories.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))
+          <div className="form-grid">
+            <div className="field">
+              <label>Type</label>
+              <select
+                value={type}
+                onChange={(event) => setType(event.target.value as ContentType)}
+              >
+                <option value="wallpaper">Wallpaper</option>
+                <option value="ringtone">Ringtone</option>
+                <option value="poster">Poster</option>
+              </select>
+            </div>
+
+            <div className="field">
+              <label>Category</label>
+              <select
+                value={category}
+                onChange={(event) => setCategory(event.target.value)}
+                required
+                disabled={categories.length === 0}
+              >
+                {categories.length === 0 ? (
+                  <option value="">Add a category on Dashboard first</option>
+                ) : (
+                  categories.map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+
+            <div className="field">
+              <label>Title (English)</label>
+              <input
+                value={titleEn}
+                onChange={(event) => {
+                  setTitleEn(event.target.value);
+                  if (!slug) setSlug(slugify(event.target.value));
+                }}
+                required
+              />
+            </div>
+
+            <div className="field">
+              <label>Title (Hindi)</label>
+              <input
+                value={titleHi}
+                onChange={(event) => setTitleHi(event.target.value)}
+                placeholder="Optional"
+              />
+            </div>
+
+            <div className="field">
+              <label>Slug</label>
+              <input
+                value={slug}
+                onChange={(event) => setSlug(slugify(event.target.value))}
+                placeholder="auto-from-title"
+                required
+              />
+            </div>
+
+            <div className="field">
+              <label>Status</label>
+              <select
+                value={status}
+                onChange={(event) =>
+                  setStatus(event.target.value as ContentStatus)
+                }
+              >
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+
+            <div className="field form-grid-span">
+              <label>File</label>
+              <input
+                type="file"
+                accept={
+                  type === "ringtone"
+                    ? "audio/mpeg,audio/mp4,audio/x-m4a,.mp3,.m4a"
+                    : "image/jpeg,image/png,image/webp"
+                }
+                onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+                required
+              />
+              {file && (
+                <span className="muted" style={{ fontSize: "0.92rem" }}>
+                  Selected: {file.name}
+                </span>
               )}
-            </select>
+            </div>
           </div>
 
-          <div className="field">
-            <label>Title (English)</label>
-            <input
-              value={titleEn}
-              onChange={(event) => {
-                setTitleEn(event.target.value);
-                if (!slug) setSlug(slugify(event.target.value));
-              }}
-              required
-            />
-          </div>
-
-          <div className="field">
-            <label>Title (Hindi)</label>
-            <input
-              value={titleHi}
-              onChange={(event) => setTitleHi(event.target.value)}
-              placeholder="Optional"
-            />
-          </div>
-
-          <div className="field">
-            <label>Slug</label>
-            <input
-              value={slug}
-              onChange={(event) => setSlug(slugify(event.target.value))}
-              placeholder="auto-from-title"
-              required
-            />
-          </div>
-
-          <div className="field">
-            <label>Status</label>
-            <select
-              value={status}
-              onChange={(event) =>
-                setStatus(event.target.value as ContentStatus)
-              }
-            >
-              <option value="published">Published</option>
-              <option value="draft">Draft</option>
-              <option value="archived">Archived</option>
-            </select>
-          </div>
-
-          <label className="field" style={{ gridTemplateColumns: "auto 1fr" }}>
+          <label className="checkbox-row">
             <input
               type="checkbox"
               checked={premium}
@@ -255,29 +282,23 @@ export function ContentPage() {
             <span>Premium content</span>
           </label>
 
-          <div className="field">
-            <label>File</label>
-            <input
-              type="file"
-              accept={
-                type === "ringtone"
-                  ? "audio/mpeg,audio/mp4,audio/x-m4a,.mp3,.m4a"
-                  : "image/jpeg,image/png,image/webp"
-              }
-              onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-              required
-            />
-          </div>
-
           {error && <div className="error">{error}</div>}
           {message && <div className="badge success">{message}</div>}
 
-          <button className="btn" type="submit" disabled={uploading}>
-            {uploading ? "Uploading…" : "Upload & publish"}
-          </button>
+          <div className="form-actions">
+            <button className="btn" type="submit" disabled={uploading}>
+              {uploading ? "Uploading…" : "Upload & publish"}
+            </button>
+          </div>
         </form>
 
-        <div className="panel">
+        <div className="panel stack">
+          <div className="section-heading">
+            <h2 style={{ margin: 0, fontFamily: "var(--font-display)" }}>
+              Library
+            </h2>
+          </div>
+
           <form className="toolbar" onSubmit={onFilter}>
             <input
               value={q}
