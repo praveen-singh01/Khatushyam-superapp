@@ -34,7 +34,7 @@
   "liveDarshanWatchCta": "लाइव देखें",
   "paywallTitle": "प्रीमियम सदस्यता",
   "paywallSubtitle": "मासिक योजना से भक्ति सेवाएँ खोलें",
-  "paywallSubtitleTrial": "₹3 में प्रीमियम आज़माएँ, फिर ₹199/महीना",
+  "paywallSubtitleTrial": "साप्ताहिक या मासिक चुनें। ऑटोपे के लिए एक बार ₹3 लगेगा।",
   "paywallSubtitleReturn": "प्रीमियम के लिए साप्ताहिक या मासिक योजना चुनें",
   "paywallCta": "मासिक योजना शुरू करें",
   "paywallTrialTitle": "परिचय ट्रायल",
@@ -48,10 +48,17 @@
   },
   "paywallTrialCta": "₹3 ट्रायल शुरू करें",
   "paywallSubscribeCta": "सब्सक्राइब करें",
+  "paywallMandateNote": "पहला भुगतान: ऑटोपे मेंडेट सेट करने के लिए ₹3। उसके बाद चुनी योजना अपने आप रिन्यू होगी।",
+  "paywallMandateAddon": "आज ₹{amount} मेंडेट सेटअप",
+  "@paywallMandateAddon": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
   "paywallPerWeek": "प्रति सप्ताह",
   "paywallPerMonth": "प्रति महीना",
   "paywallCancelAnytime": "कभी भी रद्द करें",
-  "paywallNote": "कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे। अभी मॉक चेकआउट।",
+  "paywallNote": "कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे।",
   "lockedTitle": "सदस्यता आवश्यक",
   "lockedMessage": "यह सुविधा मासिक सदस्यता से खुलती है।",
   "unlockCta": "योजना देखें",

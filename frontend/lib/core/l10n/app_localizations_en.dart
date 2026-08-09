@@ -111,7 +111,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallSubtitle => 'Unlock devotion tools with a monthly plan';
 
   @override
-  String get paywallSubtitleTrial => 'Try premium for ₹3, then continue at ₹199/month';
+  String get paywallSubtitleTrial => 'Choose weekly or monthly. ₹3 sets up autopay once.';
 
   @override
   String get paywallSubtitleReturn => 'Choose a weekly or monthly plan to unlock premium';
@@ -140,6 +140,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallSubscribeCta => 'Subscribe';
 
   @override
+  String get paywallMandateNote => 'First payment: ₹3 to set up autopay mandate. Then your chosen plan renews automatically.';
+
+  @override
+  String paywallMandateAddon(int amount) {
+    return '₹$amount mandate setup today';
+  }
+
+  @override
   String get paywallPerWeek => 'per week';
 
   @override
@@ -149,7 +157,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallCancelAnytime => 'Cancel anytime';
 
   @override
-  String get paywallNote => 'Story, Chamatkar and Live Darshan stay free. Mock checkout for now.';
+  String get paywallNote => 'Story, Chamatkar and Live Darshan stay free.';
 
   @override
   String get lockedTitle => 'Membership needed';

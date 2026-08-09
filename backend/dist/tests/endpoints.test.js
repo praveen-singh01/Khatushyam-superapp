@@ -189,10 +189,16 @@ describe("auth and entitlement", () => {
         });
         expect(response.body.offers).toEqual([
             {
-                id: "trial_monthly",
-                trialPriceInr: 3,
+                id: "weekly",
+                priceInr: 49,
+                period: "week",
+                mandateAddonInr: 3,
+            },
+            {
+                id: "monthly",
                 priceInr: 199,
                 period: "month",
+                mandateAddonInr: 3,
             },
         ]);
     });
@@ -326,7 +332,7 @@ describe("subscriptions and webhooks", () => {
         expect(response.status).toBe(201);
         expect(response.body).toMatchObject({
             isPremium: false,
-            planId: "trial_monthly",
+            planId: "monthly",
             source: "razorpay",
             subscriptionStatus: "pending",
             subscriptionId: "sub_test_123",
@@ -338,7 +344,7 @@ describe("subscriptions and webhooks", () => {
         expect(user?.subscriptionStatus).toBe("pending");
         expect(user?.razorpaySubscriptionId).toBe("sub_test_123");
         expect(user?.trialUsed).toBe(true);
-        expect(user?.currentPlan).toBe("trial_monthly");
+        expect(user?.currentPlan).toBe("monthly");
     });
     it("offers weekly and monthly after trial was used", async () => {
         await User.create({

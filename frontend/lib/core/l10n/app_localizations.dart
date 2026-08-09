@@ -302,7 +302,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallSubtitleTrial.
   ///
   /// In hi, this message translates to:
-  /// **'₹3 में प्रीमियम आज़माएँ, फिर ₹199/महीना'**
+  /// **'साप्ताहिक या मासिक चुनें। ऑटोपे के लिए एक बार ₹3 लगेगा।'**
   String get paywallSubtitleTrial;
 
   /// No description provided for @paywallSubtitleReturn.
@@ -353,6 +353,18 @@ abstract class AppLocalizations {
   /// **'सब्सक्राइब करें'**
   String get paywallSubscribeCta;
 
+  /// No description provided for @paywallMandateNote.
+  ///
+  /// In hi, this message translates to:
+  /// **'पहला भुगतान: ऑटोपे मेंडेट सेट करने के लिए ₹3। उसके बाद चुनी योजना अपने आप रिन्यू होगी।'**
+  String get paywallMandateNote;
+
+  /// No description provided for @paywallMandateAddon.
+  ///
+  /// In hi, this message translates to:
+  /// **'आज ₹{amount} मेंडेट सेटअप'**
+  String paywallMandateAddon(int amount);
+
   /// No description provided for @paywallPerWeek.
   ///
   /// In hi, this message translates to:
@@ -374,7 +386,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallNote.
   ///
   /// In hi, this message translates to:
-  /// **'कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे। अभी मॉक चेकआउट।'**
+  /// **'कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे।'**
   String get paywallNote;
 
   /// No description provided for @lockedTitle.

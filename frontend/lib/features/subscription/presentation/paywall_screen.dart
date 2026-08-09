@@ -9,7 +9,6 @@ import '../domain/subscription_state.dart';
 import 'razorpay_checkout.dart';
 import 'subscription_providers.dart';
 
-
 class PaywallScreen extends ConsumerWidget {
   const PaywallScreen({super.key});
 
@@ -51,24 +50,20 @@ class PaywallScreen extends ConsumerWidget {
 
     final asyncState = ref.read(subscriptionControllerProvider);
     if (asyncState.hasError || prepared == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.errorGeneric)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.errorGeneric)));
       await ref.read(subscriptionControllerProvider.notifier).refresh();
       return;
     }
 
     final subId = prepared.checkoutSubscriptionId;
     final keyId = prepared.checkoutKeyId;
-    if (subId == null ||
-        subId.isEmpty ||
-        keyId == null ||
-        keyId.isEmpty) {
-      // Fake/local checkout already granted premium.
+    if (subId == null || subId.isEmpty || keyId == null || keyId.isEmpty) {
       if (prepared.isPremium) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.errorGeneric)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.errorGeneric)));
       return;
     }
 
@@ -77,9 +72,7 @@ class PaywallScreen extends ConsumerWidget {
       subscriptionId: subId,
       name: l10n.paywallTitle,
       description:
-          plan == SubscriptionPlanId.trialMonthly
-              ? l10n.paywallTrialTitle
-              : plan == SubscriptionPlanId.weekly
+          plan == SubscriptionPlanId.weekly
               ? l10n.paywallWeeklyTitle
               : l10n.paywallMonthlyTitle,
     );
@@ -89,11 +82,7 @@ class PaywallScreen extends ConsumerWidget {
     if (!context.mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          paid ? l10n.premiumActive : l10n.errorGeneric,
-        ),
-      ),
+      SnackBar(content: Text(paid ? l10n.premiumActive : l10n.errorGeneric)),
     );
   }
 
@@ -104,7 +93,8 @@ class PaywallScreen extends ConsumerWidget {
     final state = subscription.asData?.value;
     final isPremium = state?.isPremium ?? false;
     final loading = subscription.isLoading;
-    final offers = state?.displayOffers ?? const SubscriptionState.free().displayOffers;
+    final offers =
+        state?.displayOffers ?? const SubscriptionState.free().displayOffers;
     final trialEligible = state?.trialEligible ?? true;
 
     return SafeArea(
@@ -162,25 +152,32 @@ class PaywallScreen extends ConsumerWidget {
                 ),
               )
             else ...[
+              if (trialEligible) ...[
+                SoftCard(
+                  color: AppColors.orangeSoft,
+                  padding: const EdgeInsets.all(14),
+                  child: Text(
+                    l10n.paywallMandateNote,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.ink,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
               ...offers.map((offer) {
-                final isTrial = offer.isTrial;
+                final highlighted = offer.id == SubscriptionPlanId.monthly;
                 final title =
-                    isTrial
-                        ? l10n.paywallTrialTitle
-                        : offer.period == SubscriptionOfferPeriod.week
+                    offer.period == SubscriptionOfferPeriod.week
                         ? l10n.paywallWeeklyTitle
                         : l10n.paywallMonthlyTitle;
-                final priceText =
-                    isTrial
-                        ? '₹${offer.trialPriceInr ?? 3}'
-                        : '₹${offer.priceInr}';
-                final detail =
-                    isTrial
-                        ? l10n.paywallTrialDetail(offer.priceInr)
-                        : '${_periodLabel(l10n, offer.period)} · ${l10n.paywallCancelAnytime}';
-
-                final highlighted =
-                    isTrial || offer.id == SubscriptionPlanId.monthly;
+                final detail = [
+                  _periodLabel(l10n, offer.period),
+                  l10n.paywallCancelAnytime,
+                  if (offer.hasMandateAddon)
+                    l10n.paywallMandateAddon(offer.mandateAddonInr!),
+                ].join(' · ');
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -189,7 +186,9 @@ class PaywallScreen extends ConsumerWidget {
                     child: SoftCard(
                       padding: EdgeInsets.zero,
                       color:
-                          highlighted ? Colors.transparent : AppColors.orangeSoft,
+                          highlighted
+                              ? Colors.transparent
+                              : AppColors.orangeSoft,
                       onTap:
                           loading
                               ? null
@@ -224,7 +223,7 @@ class PaywallScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              priceText,
+                              '₹${offer.priceInr}',
                               style: Theme.of(
                                 context,
                               ).textTheme.headlineMedium?.copyWith(
@@ -274,11 +273,7 @@ class PaywallScreen extends ConsumerWidget {
                                             strokeWidth: 2,
                                           ),
                                         )
-                                        : Text(
-                                          isTrial
-                                              ? l10n.paywallTrialCta
-                                              : l10n.paywallSubscribeCta,
-                                        ),
+                                        : Text(l10n.paywallSubscribeCta),
                               ),
                             ),
                           ],
@@ -290,9 +285,9 @@ class PaywallScreen extends ConsumerWidget {
               }),
               Text(
                 l10n.paywallNote,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.inkMuted,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
               ),
             ],
             const SizedBox(height: 16),

@@ -27,56 +27,24 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
 
   @override
   Future<SubscriptionState> startCheckout(SubscriptionPlanId plan) async {
-    if (plan == SubscriptionPlanId.trialMonthly && _state.trialUsed) {
-      throw StateError('TRIAL_ALREADY_USED');
-    }
-
-    final trialUsed =
-        plan == SubscriptionPlanId.trialMonthly ? true : _state.trialUsed;
-
     _state = SubscriptionState(
       isPremium: true,
-      planId: switch (plan) {
-        SubscriptionPlanId.trialMonthly => 'trial_monthly',
-        SubscriptionPlanId.weekly => 'weekly',
-        SubscriptionPlanId.monthly => 'monthly',
-      },
+      planId: plan == SubscriptionPlanId.weekly ? 'weekly' : 'monthly',
       expiresAt: DateTime.now().add(
         plan == SubscriptionPlanId.weekly
             ? const Duration(days: 7)
             : const Duration(days: 30),
       ),
       source: SubscriptionSource.fake,
-      trialUsed: trialUsed,
-      trialEligible: !trialUsed,
+      trialUsed: true,
+      trialEligible: false,
       subscriptionStatus: 'active',
-      offers:
-          trialUsed
-              ? const [
-                SubscriptionOffer(
-                  id: SubscriptionPlanId.weekly,
-                  priceInr: 49,
-                  period: SubscriptionOfferPeriod.week,
-                ),
-                SubscriptionOffer(
-                  id: SubscriptionPlanId.monthly,
-                  priceInr: 199,
-                  period: SubscriptionOfferPeriod.month,
-                ),
-              ]
-              : const [
-                SubscriptionOffer(
-                  id: SubscriptionPlanId.trialMonthly,
-                  priceInr: 199,
-                  period: SubscriptionOfferPeriod.month,
-                  trialPriceInr: 3,
-                ),
-              ],
+      offers: kDefaultOffersReturning,
     );
     return _state;
   }
 
-  /// Simulates cancel after trial — next paywall shows weekly + monthly.
+  /// Simulates cancel — next paywall still shows weekly + monthly (no ₹3).
   void cancelSubscription() {
     _state = _state.copyWith(
       isPremium: false,
@@ -85,18 +53,7 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
       trialUsed: true,
       trialEligible: false,
       subscriptionStatus: 'cancelled',
-      offers: const [
-        SubscriptionOffer(
-          id: SubscriptionPlanId.weekly,
-          priceInr: 49,
-          period: SubscriptionOfferPeriod.week,
-        ),
-        SubscriptionOffer(
-          id: SubscriptionPlanId.monthly,
-          priceInr: 199,
-          period: SubscriptionOfferPeriod.month,
-        ),
-      ],
+      offers: kDefaultOffersReturning,
     );
   }
 

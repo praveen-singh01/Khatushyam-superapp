@@ -111,7 +111,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get paywallSubtitle => 'मासिक योजना से भक्ति सेवाएँ खोलें';
 
   @override
-  String get paywallSubtitleTrial => '₹3 में प्रीमियम आज़माएँ, फिर ₹199/महीना';
+  String get paywallSubtitleTrial => 'साप्ताहिक या मासिक चुनें। ऑटोपे के लिए एक बार ₹3 लगेगा।';
 
   @override
   String get paywallSubtitleReturn => 'प्रीमियम के लिए साप्ताहिक या मासिक योजना चुनें';
@@ -140,6 +140,14 @@ class AppLocalizationsHi extends AppLocalizations {
   String get paywallSubscribeCta => 'सब्सक्राइब करें';
 
   @override
+  String get paywallMandateNote => 'पहला भुगतान: ऑटोपे मेंडेट सेट करने के लिए ₹3। उसके बाद चुनी योजना अपने आप रिन्यू होगी।';
+
+  @override
+  String paywallMandateAddon(int amount) {
+    return 'आज ₹$amount मेंडेट सेटअप';
+  }
+
+  @override
   String get paywallPerWeek => 'प्रति सप्ताह';
 
   @override
@@ -149,7 +157,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get paywallCancelAnytime => 'कभी भी रद्द करें';
 
   @override
-  String get paywallNote => 'कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे। अभी मॉक चेकआउट।';
+  String get paywallNote => 'कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे।';
 
   @override
   String get lockedTitle => 'सदस्यता आवश्यक';

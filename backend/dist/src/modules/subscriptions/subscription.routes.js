@@ -4,6 +4,7 @@ import { z } from "zod";
 import { entitlementFromUser } from "../../shared/ports.js";
 import { User } from "../auth/user.model.js";
 const startSchema = z.object({
+    // trial_monthly kept as alias → monthly + ₹3 mandate addon
     plan: z.enum(["trial_monthly", "weekly", "monthly"]),
 });
 export function validWebhookSignature(rawBody, signature, secret) {
@@ -15,44 +16,41 @@ export function validWebhookSignature(rawBody, signature, secret) {
     return (actualBuffer.length === expectedBuffer.length &&
         timingSafeEqual(actualBuffer, expectedBuffer));
 }
+function resolvePlan(plan) {
+    return plan === "weekly" ? "weekly" : "monthly";
+}
 function razorpayPlanIdFor(plan, options) {
     if (plan === "weekly" && options.weeklyPlanId) {
         return options.weeklyPlanId;
     }
     return options.planId;
 }
-async function startSubscription(options, plan, req, res, next) {
+async function startSubscription(options, requestedPlan, req, res, next) {
     try {
         if (req.user.subscriptionStatus === "active") {
             res.status(409).json({ error: "SUBSCRIPTION_ALREADY_ACTIVE" });
             return;
         }
+        const plan = resolvePlan(requestedPlan);
         const trialUsed = Boolean(req.user.trialUsed);
-        if (plan === "trial_monthly" && trialUsed) {
-            res.status(400).json({ error: "TRIAL_ALREADY_USED" });
-            return;
-        }
-        if (plan !== "trial_monthly" && !trialUsed) {
-            // First-time users must take the intro trial path.
-            res.status(400).json({ error: "TRIAL_REQUIRED" });
-            return;
-        }
+        // First checkout: ₹3 addon sets up UPI/card autopay mandate.
+        const mandateAddonInr = trialUsed ? undefined : 3;
         const subscription = await options.gateway.createMonthlySubscription({
             planId: razorpayPlanIdFor(plan, options),
             userId: req.user.id,
-            trialAddonInr: plan === "trial_monthly" ? 3 : undefined,
+            trialAddonInr: mandateAddonInr,
         });
         await User.findByIdAndUpdate(req.user.id, {
             subscriptionStatus: "pending",
             razorpaySubscriptionId: subscription.id,
             currentPlan: plan,
-            // Starting trial permanently consumes eligibility.
-            ...(plan === "trial_monthly" ? { trialUsed: true } : {}),
+            // First mandate checkout permanently consumes the ₹3 intro.
+            ...(!trialUsed ? { trialUsed: true } : {}),
         });
         res.status(201).json(entitlementFromUser({
             ...req.user,
             subscriptionStatus: "pending",
-            trialUsed: plan === "trial_monthly" ? true : trialUsed,
+            trialUsed: true,
             currentPlan: plan,
         }, plan, {
             subscriptionId: subscription.id,
@@ -82,18 +80,11 @@ export function createSubscriptionRouter(options) {
         }
         void startSubscription(options, parsed.data.plan, req, res, next);
     });
-    // Backward-compatible aliases → monthly (post-trial) or trial if eligible.
     router.post("/razorpay/monthly", options.authenticate, (req, res, next) => {
-        const plan = req.user.trialUsed
-            ? "monthly"
-            : "trial_monthly";
-        void startSubscription(options, plan, req, res, next);
+        void startSubscription(options, "monthly", req, res, next);
     });
     router.post("/create", options.authenticate, (req, res, next) => {
-        const plan = req.user.trialUsed
-            ? "monthly"
-            : "trial_monthly";
-        void startSubscription(options, plan, req, res, next);
+        void startSubscription(options, "monthly", req, res, next);
     });
     return router;
 }
