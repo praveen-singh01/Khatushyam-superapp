@@ -50,6 +50,10 @@ class ApiClient {
   Future<Response<T>> post<T>(String path, {Object? data}) {
     return _dio.post<T>(path, data: data);
   }
+
+  Future<Response<T>> patch<T>(String path, {Object? data}) {
+    return _dio.patch<T>(path, data: data);
+  }
 }
 
 /// Production subscription repo backed by `/v1/entitlement` and checkout APIs.

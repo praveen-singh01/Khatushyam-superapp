@@ -72,6 +72,9 @@ async function resolveUser(
     subscriptionStatus: user.subscriptionStatus,
     trialUsed: Boolean(user.trialUsed),
     currentPlan: user.currentPlan ?? null,
+    subscriptionExpiresAt: user.subscriptionExpiresAt
+      ? new Date(user.subscriptionExpiresAt).toISOString()
+      : null,
   };
 }
 

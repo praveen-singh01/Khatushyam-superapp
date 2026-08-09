@@ -54,6 +54,19 @@ class FakeAuthService implements AuthService {
   }
 
   @override
+  Future<void> updateProfile({String? displayName, String? photoUrl}) async {
+    final current = _user;
+    if (current == null) throw StateError('Not signed in');
+    _user = AuthUser(
+      uid: current.uid,
+      email: current.email,
+      displayName: displayName ?? current.displayName,
+      photoUrl: photoUrl ?? current.photoUrl,
+    );
+    _controller.add(_user);
+  }
+
+  @override
   Future<void> signOut() async {
     _user = null;
     _controller.add(null);

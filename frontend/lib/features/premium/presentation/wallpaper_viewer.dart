@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/media/device_media_service.dart';
 import '../../../core/mock/mock_models.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../subscription/presentation/premium_gate.dart';
 
 Future<void> openWallpaperViewer(
   BuildContext context, {
@@ -17,20 +19,23 @@ Future<void> openWallpaperViewer(
   );
 }
 
-class WallpaperViewerPage extends StatefulWidget {
+class WallpaperViewerPage extends ConsumerStatefulWidget {
   const WallpaperViewerPage({super.key, required this.asset});
 
   final MediaAsset asset;
 
   @override
-  State<WallpaperViewerPage> createState() => _WallpaperViewerPageState();
+  ConsumerState<WallpaperViewerPage> createState() =>
+      _WallpaperViewerPageState();
 }
 
-class _WallpaperViewerPageState extends State<WallpaperViewerPage> {
+class _WallpaperViewerPageState extends ConsumerState<WallpaperViewerPage> {
   final _media = DeviceMediaService();
   bool _busy = false;
 
   Future<void> _set(WallpaperTargetChoice target) async {
+    if (!requirePremiumOrOpenPaywall(context, ref)) return;
+
     final url = widget.asset.url;
     if (url == null || url.isEmpty) {
       _toast('वॉलपेपर लिंक उपलब्ध नहीं');
@@ -64,6 +69,8 @@ class _WallpaperViewerPageState extends State<WallpaperViewerPage> {
   }
 
   Future<void> _pickTarget() async {
+    if (!requirePremiumOrOpenPaywall(context, ref)) return;
+
     final choice = await showModalBottomSheet<WallpaperTargetChoice>(
       context: context,
       backgroundColor: AppColors.surface,

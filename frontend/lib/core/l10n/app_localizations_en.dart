@@ -42,6 +42,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOut => 'Sign out';
 
   @override
+  String get profileEditName => 'Edit name';
+
+  @override
+  String get profileNameHint => 'Your name';
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profilePolicies => 'Policies';
+
+  @override
+  String profileDaysRemaining(int days) {
+    return '$days days remaining';
+  }
+
+  @override
   String get homeGreeting => 'Jai Shyam';
 
   @override

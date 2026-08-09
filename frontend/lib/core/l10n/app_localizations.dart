@@ -161,6 +161,36 @@ abstract class AppLocalizations {
   /// **'साइन आउट'**
   String get signOut;
 
+  /// No description provided for @profileEditName.
+  ///
+  /// In hi, this message translates to:
+  /// **'नाम बदलें'**
+  String get profileEditName;
+
+  /// No description provided for @profileNameHint.
+  ///
+  /// In hi, this message translates to:
+  /// **'आपका नाम'**
+  String get profileNameHint;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In hi, this message translates to:
+  /// **'सेव करें'**
+  String get profileSave;
+
+  /// No description provided for @profilePolicies.
+  ///
+  /// In hi, this message translates to:
+  /// **'नीतियाँ'**
+  String get profilePolicies;
+
+  /// No description provided for @profileDaysRemaining.
+  ///
+  /// In hi, this message translates to:
+  /// **'{days} दिन शेष'**
+  String profileDaysRemaining(int days);
+
   /// No description provided for @homeGreeting.
   ///
   /// In hi, this message translates to:

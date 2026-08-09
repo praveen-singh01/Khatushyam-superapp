@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/media/device_media_service.dart';
 import '../../../core/mock/mock_models.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../subscription/presentation/premium_gate.dart';
 
 Future<void> openRingtoneActions(
   BuildContext context, {
@@ -20,16 +22,16 @@ Future<void> openRingtoneActions(
   );
 }
 
-class _RingtoneSheet extends StatefulWidget {
+class _RingtoneSheet extends ConsumerStatefulWidget {
   const _RingtoneSheet({required this.asset});
 
   final MediaAsset asset;
 
   @override
-  State<_RingtoneSheet> createState() => _RingtoneSheetState();
+  ConsumerState<_RingtoneSheet> createState() => _RingtoneSheetState();
 }
 
-class _RingtoneSheetState extends State<_RingtoneSheet> {
+class _RingtoneSheetState extends ConsumerState<_RingtoneSheet> {
   final _media = DeviceMediaService();
   bool _busy = false;
   bool _playing = false;
@@ -92,6 +94,8 @@ class _RingtoneSheetState extends State<_RingtoneSheet> {
   }
 
   Future<void> _set(RingtoneTargetChoice target) async {
+    if (!requirePremiumOrOpenPaywall(context, ref)) return;
+
     final url = widget.asset.url;
     if (url == null || url.isEmpty) {
       _toast('ऑडियो लिंक उपलब्ध नहीं');

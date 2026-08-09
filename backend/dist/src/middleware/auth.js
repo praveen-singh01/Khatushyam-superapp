@@ -49,6 +49,9 @@ async function resolveUser(verifier, token, adminEmails) {
         subscriptionStatus: user.subscriptionStatus,
         trialUsed: Boolean(user.trialUsed),
         currentPlan: user.currentPlan ?? null,
+        subscriptionExpiresAt: user.subscriptionExpiresAt
+            ? new Date(user.subscriptionExpiresAt).toISOString()
+            : null,
     };
 }
 export function authenticate(verifier, options = {}) {

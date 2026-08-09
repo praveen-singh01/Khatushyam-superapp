@@ -42,6 +42,23 @@ class AppLocalizationsHi extends AppLocalizations {
   String get signOut => 'साइन आउट';
 
   @override
+  String get profileEditName => 'नाम बदलें';
+
+  @override
+  String get profileNameHint => 'आपका नाम';
+
+  @override
+  String get profileSave => 'सेव करें';
+
+  @override
+  String get profilePolicies => 'नीतियाँ';
+
+  @override
+  String profileDaysRemaining(int days) {
+    return '$days दिन शेष';
+  }
+
+  @override
   String get homeGreeting => 'जय श्याम';
 
   @override

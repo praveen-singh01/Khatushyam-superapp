@@ -16,6 +16,7 @@ export interface UserDocument {
   /** After first trial start/charge/cancel, never offer ₹3 trial again. */
   trialUsed: boolean;
   currentPlan?: SubscriptionPlanOffer | null;
+  subscriptionExpiresAt?: Date | null;
   razorpaySubscriptionId?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -46,6 +47,7 @@ const userSchema = new Schema<UserDocument>(
       enum: ["trial_monthly", "weekly", "monthly"],
       required: false,
     },
+    subscriptionExpiresAt: { type: Date, default: null, index: true },
     razorpaySubscriptionId: { type: String, sparse: true, index: true },
   },
   { timestamps: true },

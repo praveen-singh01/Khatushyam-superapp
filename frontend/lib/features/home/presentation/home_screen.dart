@@ -284,7 +284,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           const SizedBox(height: 12),
           SoftCard(
-            onTap: () => context.go(AppRoutes.paywall),
+            onTap: () => context.go(AppRoutes.profile),
             child: Row(
               children: [
                 Container(
@@ -340,12 +340,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             itemBuilder: (context, index) {
               final item = quickActions[index];
-              final feature = item.$1;
-              final locked = feature != null && !feature.isFree && !isPremium;
               return CircleAction(
                 icon: item.$3,
                 label: item.$4,
-                locked: locked,
                 onTap: () {
                   if (item.$2 == AppRoutes.story ||
                       item.$2 == AppRoutes.posters) {
@@ -511,17 +508,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
-                    if (!isPremium)
-                      const Icon(
-                        Icons.lock_outline_rounded,
-                        size: 18,
-                        color: AppColors.inkMuted,
-                      )
-                    else
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        color: AppColors.inkMuted,
-                      ),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      color: AppColors.inkMuted,
+                    ),
                   ],
                 ),
               ),

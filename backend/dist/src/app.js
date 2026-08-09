@@ -9,6 +9,7 @@ import { createAdminRouter } from "./modules/admin/admin.routes.js";
 import { createAuthRouter } from "./modules/auth/auth.routes.js";
 import { createChamatkarRouter } from "./modules/chamatkars/chamatkar.routes.js";
 import { createContentRouter } from "./modules/content/content.routes.js";
+import { createLegalRouter } from "./modules/legal/legal.routes.js";
 import { createEntitlementRouter } from "./modules/subscriptions/entitlement.routes.js";
 import { createSubscriptionRouter } from "./modules/subscriptions/subscription.routes.js";
 import { createRazorpayWebhookHandler } from "./modules/subscriptions/webhook.handler.js";
@@ -70,7 +71,12 @@ export function createApp({ env, identityVerifier, subscriptionGateway, uploadPr
         authenticate: auth,
         requirePremium: premiumGate,
         bucket: env.S3_MEDIA_BUCKET,
+        cloudFrontBaseUrl: env.CLOUDFRONT_BASE_URL,
         presigner: uploadPresigner,
+    });
+    const legalRouter = createLegalRouter({
+        authenticate: auth,
+        requireAdmin,
     });
     const adminRouter = createAdminRouter({
         authenticate: auth,
@@ -91,6 +97,8 @@ export function createApp({ env, identityVerifier, subscriptionGateway, uploadPr
     app.use("/api/v1/content", contentRouter);
     app.use("/v1/uploads", uploadRouter);
     app.use("/api/v1/uploads", uploadRouter);
+    app.use("/v1/legal", legalRouter);
+    app.use("/api/v1/legal", legalRouter);
     app.use("/v1/admin", adminRouter);
     app.use("/api/v1/admin", adminRouter);
     app.use((_req, res) => {

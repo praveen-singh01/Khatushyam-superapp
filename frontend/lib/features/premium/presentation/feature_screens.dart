@@ -13,7 +13,6 @@ import '../../../core/widgets/soft_card.dart';
 import '../../live/presentation/live_darshan_screen.dart';
 import '../../live/presentation/live_youtube_player.dart';
 import '../../posters/presentation/posters_screen.dart';
-import '../../subscription/presentation/subscription_providers.dart';
 import 'calendar_screen.dart';
 import 'ringtone_actions.dart';
 import 'wallpaper_viewer.dart';
@@ -39,9 +38,6 @@ class _FeatureHostScreenState extends ConsumerState<FeatureHostScreen> {
   Widget build(BuildContext context) {
     final feature = widget.feature;
     final l10n = AppLocalizations.of(context)!;
-    final isPremium =
-        ref.watch(subscriptionControllerProvider).asData?.value.isPremium ??
-        false;
 
     if (feature == null) {
       return Scaffold(
@@ -50,10 +46,8 @@ class _FeatureHostScreenState extends ConsumerState<FeatureHostScreen> {
       );
     }
 
-    if (!feature.isFree && !isPremium) {
-      return _PremiumGateScaffold(title: _title(l10n, feature));
-    }
-
+    // Browse is free — paywall opens only on premium actions
+    // (share poster / set wallpaper / set ringtone).
     return switch (feature) {
       AppFeature.liveDarshan => const LiveDarshanScreen(),
       AppFeature.calendar => const CalendarFeatureScreen(),
@@ -91,66 +85,6 @@ class _FeatureHostScreenState extends ConsumerState<FeatureHostScreen> {
       AppFeature.story => l10n.storyTitle,
       AppFeature.chamatkar => l10n.chamatkarTitle,
     };
-  }
-}
-
-class _PremiumGateScaffold extends StatelessWidget {
-  const _PremiumGateScaffold({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          onPressed:
-              () =>
-                  context.canPop() ? context.pop() : context.go(AppRoutes.home),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const Spacer(),
-            Container(
-              width: 84,
-              height: 84,
-              decoration: const BoxDecoration(
-                color: AppColors.orangeSoft,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.lock_rounded,
-                size: 36,
-                color: AppColors.orange,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              l10n.lockedTitle,
-              style: Theme.of(context).textTheme.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              l10n.lockedMessage,
-              style: Theme.of(context).textTheme.bodyLarge,
-              textAlign: TextAlign.center,
-            ),
-            const Spacer(),
-            FilledButton(
-              onPressed: () => context.go(AppRoutes.paywall),
-              child: Text(l10n.unlockCta),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

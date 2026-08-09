@@ -4,6 +4,10 @@ import { User } from "../auth/user.model.js";
 import { validWebhookSignature } from "./subscription.routes.js";
 import { WebhookEvent } from "./webhook-event.model.js";
 
+function periodDaysForPlan(plan?: string | null): number {
+  return plan === "weekly" ? 7 : 30;
+}
+
 export function createRazorpayWebhookHandler(
   webhookSecret: string,
 ): RequestHandler {
@@ -54,14 +58,25 @@ export function createRazorpayWebhookHandler(
       }[payload.event];
 
       if (subscription?.id && mappedStatus) {
-        await User.findOneAndUpdate(
-          { razorpaySubscriptionId: subscription.id },
-          {
-            subscriptionStatus: mappedStatus,
-            // Any real subscription lifecycle means the intro trial is gone.
-            trialUsed: true,
-          },
-        );
+        const user = await User.findOne({
+          razorpaySubscriptionId: subscription.id,
+        });
+        if (user) {
+          user.subscriptionStatus = mappedStatus as typeof user.subscriptionStatus;
+          user.trialUsed = true;
+          if (mappedStatus === "active") {
+            const days = periodDaysForPlan(user.currentPlan);
+            const base =
+              user.subscriptionExpiresAt &&
+              user.subscriptionExpiresAt.getTime() > Date.now()
+                ? user.subscriptionExpiresAt
+                : new Date();
+            user.subscriptionExpiresAt = new Date(
+              base.getTime() + days * 24 * 60 * 60 * 1000,
+            );
+          }
+          await user.save();
+        }
       }
       await WebhookEvent.create({
         provider: "razorpay",

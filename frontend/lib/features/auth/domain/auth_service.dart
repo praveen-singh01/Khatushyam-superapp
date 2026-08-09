@@ -14,5 +14,8 @@ abstract class AuthService {
   /// Required sign-in path: Google → Firebase credential.
   Future<AuthUser> signInWithGoogle();
 
+  Future<void> updateProfile({String? displayName, String? photoUrl});
+
   Future<void> signOut();
 }
+

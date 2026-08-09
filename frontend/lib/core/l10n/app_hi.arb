@@ -11,6 +11,17 @@
   "signInSubtitle": "जारी रखने के लिए Google से साइन इन करें",
   "signInWithGoogle": "Google से साइन इन करें",
   "signOut": "साइन आउट",
+  "profileEditName": "नाम बदलें",
+  "profileNameHint": "आपका नाम",
+  "profileSave": "सेव करें",
+  "profilePolicies": "नीतियाँ",
+  "profileDaysRemaining": "{days} दिन शेष",
+  "@profileDaysRemaining": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+
   "homeGreeting": "जय श्याम",
   "homeFreeFeatures": "सभी के लिए मुफ़्त",
   "homePremiumFeatures": "सदस्यता के साथ",

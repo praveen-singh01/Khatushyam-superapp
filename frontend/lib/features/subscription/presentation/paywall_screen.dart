@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/config/app_features.dart';
 import '../../../core/l10n/app_localizations.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/soft_card.dart';
 import '../domain/subscription_state.dart';
@@ -97,227 +99,245 @@ class PaywallScreen extends ConsumerWidget {
         state?.displayOffers ?? const SubscriptionState.free().displayOffers;
     final trialEligible = state?.trialEligible ?? true;
 
-    return SafeArea(
-      child: RefreshIndicator(
-        color: AppColors.orange,
-        onRefresh:
-            () => ref.read(subscriptionControllerProvider.notifier).refresh(),
-        child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-          children: [
-            Text(
-              l10n.paywallTitle,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              isPremium
-                  ? l10n.premiumActiveHint
-                  : trialEligible
-                  ? l10n.paywallSubtitleTrial
-                  : l10n.paywallSubtitleReturn,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 18),
-            if (isPremium)
-              SoftCard(
-                padding: EdgeInsets.zero,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFFB347), AppColors.orange],
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.premiumActive,
-                        style: Theme.of(context).textTheme.headlineMedium
-                            ?.copyWith(color: Colors.white),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        l10n.premiumActiveHint,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.92),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            else ...[
-              if (trialEligible) ...[
+    return Scaffold(
+      backgroundColor: AppColors.canvas,
+      appBar: AppBar(
+        title: Text(l10n.paywallTitle),
+        leading: IconButton(
+          icon: const Icon(Icons.close_rounded),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.profile);
+            }
+          },
+        ),
+      ),
+      body: SafeArea(
+        child: RefreshIndicator(
+          color: AppColors.orange,
+          onRefresh:
+              () => ref.read(subscriptionControllerProvider.notifier).refresh(),
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+            children: [
+              Text(
+                isPremium
+                    ? l10n.premiumActiveHint
+                    : trialEligible
+                    ? l10n.paywallSubtitleTrial
+                    : l10n.paywallSubtitleReturn,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 18),
+              if (isPremium)
                 SoftCard(
-                  color: AppColors.orangeSoft,
-                  padding: const EdgeInsets.all(14),
-                  child: Text(
-                    l10n.paywallMandateNote,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.ink,
-                      fontWeight: FontWeight.w600,
+                  padding: EdgeInsets.zero,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(18),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFFB347), AppColors.orange],
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.premiumActive,
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(color: Colors.white),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.premiumActiveHint,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(
+                            color: Colors.white.withValues(alpha: 0.92),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-              ],
-              ...offers.map((offer) {
-                final highlighted = offer.id == SubscriptionPlanId.monthly;
-                final title =
-                    offer.period == SubscriptionOfferPeriod.week
-                        ? l10n.paywallWeeklyTitle
-                        : l10n.paywallMonthlyTitle;
-                final detail = [
-                  _periodLabel(l10n, offer.period),
-                  l10n.paywallCancelAnytime,
-                  if (offer.hasMandateAddon)
-                    l10n.paywallMandateAddon(offer.mandateAddonInr!),
-                ].join(' · ');
+                )
+              else ...[
+                if (trialEligible) ...[
+                  SoftCard(
+                    color: AppColors.orangeSoft,
+                    padding: const EdgeInsets.all(14),
+                    child: Text(
+                      l10n.paywallMandateNote,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.ink,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                ...offers.map((offer) {
+                  final highlighted = offer.id == SubscriptionPlanId.monthly;
+                  final title =
+                      offer.period == SubscriptionOfferPeriod.week
+                          ? l10n.paywallWeeklyTitle
+                          : l10n.paywallMonthlyTitle;
+                  final detail = [
+                    _periodLabel(l10n, offer.period),
+                    l10n.paywallCancelAnytime,
+                    if (offer.hasMandateAddon)
+                      l10n.paywallMandateAddon(offer.mandateAddonInr!),
+                  ].join(' · ');
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: SoftCard(
-                      padding: EdgeInsets.zero,
-                      color:
-                          highlighted
-                              ? Colors.transparent
-                              : AppColors.orangeSoft,
-                      onTap:
-                          loading
-                              ? null
-                              : () => _startPlan(context, ref, offer.id),
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(18),
-                          gradient:
-                              highlighted
-                                  ? const LinearGradient(
-                                    colors: [
-                                      Color(0xFFFFB347),
-                                      AppColors.orange,
-                                    ],
-                                  )
-                                  : null,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              title,
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleMedium?.copyWith(
-                                color:
-                                    highlighted ? Colors.white : AppColors.ink,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              '₹${offer.priceInr}',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.headlineMedium?.copyWith(
-                                color:
-                                    highlighted
-                                        ? Colors.white
-                                        : AppColors.orangeDeep,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              detail,
-                              style: Theme.of(
-                                context,
-                              ).textTheme.bodyMedium?.copyWith(
-                                color:
-                                    highlighted
-                                        ? Colors.white.withValues(alpha: 0.92)
-                                        : AppColors.inkMuted,
-                              ),
-                            ),
-                            const SizedBox(height: 14),
-                            SizedBox(
-                              width: double.infinity,
-                              child: FilledButton(
-                                style: FilledButton.styleFrom(
-                                  backgroundColor:
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: SoftCard(
+                        padding: EdgeInsets.zero,
+                        color:
+                            highlighted
+                                ? Colors.transparent
+                                : AppColors.orangeSoft,
+                        onTap:
+                            loading
+                                ? null
+                                : () => _startPlan(context, ref, offer.id),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18),
+                            gradient:
+                                highlighted
+                                    ? const LinearGradient(
+                                      colors: [
+                                        Color(0xFFFFB347),
+                                        AppColors.orange,
+                                      ],
+                                    )
+                                    : null,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.titleMedium?.copyWith(
+                                  color:
                                       highlighted
                                           ? Colors.white
-                                          : AppColors.orange,
-                                  foregroundColor:
-                                      highlighted
-                                          ? AppColors.orangeDeep
-                                          : Colors.white,
+                                          : AppColors.ink,
+                                  fontWeight: FontWeight.w700,
                                 ),
-                                onPressed:
-                                    loading
-                                        ? null
-                                        : () =>
-                                            _startPlan(context, ref, offer.id),
-                                child:
-                                    loading
-                                        ? const SizedBox(
-                                          height: 22,
-                                          width: 22,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                        : Text(l10n.paywallSubscribeCta),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 6),
+                              Text(
+                                '₹${offer.priceInr}',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineMedium?.copyWith(
+                                  color:
+                                      highlighted
+                                          ? Colors.white
+                                          : AppColors.orangeDeep,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                detail,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium?.copyWith(
+                                  color:
+                                      highlighted
+                                          ? Colors.white.withValues(alpha: 0.92)
+                                          : AppColors.inkMuted,
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              SizedBox(
+                                width: double.infinity,
+                                child: FilledButton(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor:
+                                        highlighted
+                                            ? Colors.white
+                                            : AppColors.orange,
+                                    foregroundColor:
+                                        highlighted
+                                            ? AppColors.orangeDeep
+                                            : Colors.white,
+                                  ),
+                                  onPressed:
+                                      loading
+                                          ? null
+                                          : () => _startPlan(
+                                            context,
+                                            ref,
+                                            offer.id,
+                                          ),
+                                  child:
+                                      loading
+                                          ? const SizedBox(
+                                            height: 22,
+                                            width: 22,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                          : Text(l10n.paywallSubscribeCta),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
-              Text(
-                l10n.paywallNote,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
-              ),
-            ],
-            const SizedBox(height: 16),
-            ...kPremiumFeatures.map(
-              (feature) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: SoftCard(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.check_circle_rounded,
-                        color: AppColors.success,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _label(l10n, feature),
-                          style: Theme.of(context).textTheme.titleMedium,
+                  );
+                }),
+                Text(
+                  l10n.paywallNote,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
+                ),
+              ],
+              const SizedBox(height: 16),
+              ...kPremiumFeatures.map(
+                (feature) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: SoftCard(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.check_circle_rounded,
+                          color: AppColors.success,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            _label(l10n, feature),
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

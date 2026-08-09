@@ -9,6 +9,7 @@ import '../../features/chamatkar/presentation/chamatkar_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/posters/presentation/posters_screen.dart';
 import '../../features/premium/presentation/feature_screens.dart';
+import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/shell/presentation/app_shell.dart';
 import '../../features/story/presentation/story_screen.dart';
 import '../../features/subscription/presentation/paywall_screen.dart';
@@ -25,7 +26,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     debugLabel: 'chamatkar',
   );
   final postersNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'posters');
-  final paywallNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'paywall');
+  final profileNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'profile');
 
   final authListenable = _AuthRefreshListenable(ref);
   ref.onDispose(authListenable.dispose);
@@ -110,15 +111,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: paywallNavigatorKey,
+            navigatorKey: profileNavigatorKey,
             routes: [
               GoRoute(
-                path: AppRoutes.paywall,
-                builder: (context, state) => const PaywallScreen(),
+                path: AppRoutes.profile,
+                builder: (context, state) => const ProfileScreen(),
               ),
             ],
           ),
         ],
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: AppRoutes.paywall,
+        builder: (context, state) => const PaywallScreen(),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,

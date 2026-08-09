@@ -20,6 +20,7 @@ export interface AuthenticatedUser {
   /** Once true, the ₹3 intro trial must never be offered again. */
   trialUsed: boolean;
   currentPlan?: SubscriptionPlanOffer | null;
+  subscriptionExpiresAt?: string | null;
 }
 
 export interface VerifiedIdentity {

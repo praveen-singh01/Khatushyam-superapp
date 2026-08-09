@@ -11,6 +11,17 @@
   "signInSubtitle": "Sign in with Google to continue",
   "signInWithGoogle": "Sign in with Google",
   "signOut": "Sign out",
+  "profileEditName": "Edit name",
+  "profileNameHint": "Your name",
+  "profileSave": "Save",
+  "profilePolicies": "Policies",
+  "profileDaysRemaining": "{days} days remaining",
+  "@profileDaysRemaining": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+
   "homeGreeting": "Jai Shyam",
   "homeFreeFeatures": "Free for everyone",
   "homePremiumFeatures": "With membership",

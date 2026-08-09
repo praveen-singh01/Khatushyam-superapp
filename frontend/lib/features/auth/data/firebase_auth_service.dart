@@ -70,6 +70,15 @@ class FirebaseAuthService implements AuthService {
   }
 
   @override
+  Future<void> updateProfile({String? displayName, String? photoUrl}) async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) throw StateError('Not signed in');
+    if (displayName != null) await user.updateDisplayName(displayName);
+    if (photoUrl != null) await user.updatePhotoURL(photoUrl);
+    await user.reload();
+  }
+
+  @override
   Future<void> signOut() async {
     await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
   }

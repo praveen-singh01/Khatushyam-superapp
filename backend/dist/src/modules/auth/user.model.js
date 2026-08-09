@@ -23,6 +23,7 @@ const userSchema = new Schema({
         enum: ["trial_monthly", "weekly", "monthly"],
         required: false,
     },
+    subscriptionExpiresAt: { type: Date, default: null, index: true },
     razorpaySubscriptionId: { type: String, sparse: true, index: true },
 }, { timestamps: true });
 export const User = model("User", userSchema);

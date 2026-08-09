@@ -63,13 +63,23 @@ export function entitlementFromUser(
     (user.currentPlan as SubscriptionPlanOffer | null | undefined) ??
     (isPremium || user.subscriptionStatus === "pending" ? "monthly" : null);
 
+  const expiresAt = user.subscriptionExpiresAt ?? null;
+  let daysRemaining: number | null = null;
+  if (isPremium && expiresAt) {
+    const ms = new Date(expiresAt).getTime() - Date.now();
+    daysRemaining = Math.max(0, Math.ceil(ms / (24 * 60 * 60 * 1000)));
+  } else if (isPremium && freeMode) {
+    daysRemaining = null;
+  }
+
   return {
     isPremium,
     planId:
       isPremium || user.subscriptionStatus === "pending"
         ? activePlan ?? planId
         : null,
-    expiresAt: null as string | null,
+    expiresAt,
+    daysRemaining,
     source: freeMode
       ? ("manual" as const)
       : user.subscriptionStatus === "inactive" ||

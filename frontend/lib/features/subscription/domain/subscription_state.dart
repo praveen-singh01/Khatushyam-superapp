@@ -89,6 +89,7 @@ class SubscriptionState extends Equatable {
     required this.isPremium,
     this.planId,
     this.expiresAt,
+    this.daysRemaining,
     this.source = SubscriptionSource.none,
     this.trialUsed = false,
     this.trialEligible = true,
@@ -110,6 +111,7 @@ class SubscriptionState extends Equatable {
   final bool isPremium;
   final String? planId;
   final DateTime? expiresAt;
+  final int? daysRemaining;
   final SubscriptionSource source;
   final bool trialUsed;
   final bool trialEligible;
@@ -129,6 +131,7 @@ class SubscriptionState extends Equatable {
     bool? isPremium,
     String? planId,
     DateTime? expiresAt,
+    int? daysRemaining,
     SubscriptionSource? source,
     bool? trialUsed,
     bool? trialEligible,
@@ -142,6 +145,7 @@ class SubscriptionState extends Equatable {
       isPremium: isPremium ?? this.isPremium,
       planId: planId ?? this.planId,
       expiresAt: expiresAt ?? this.expiresAt,
+      daysRemaining: daysRemaining ?? this.daysRemaining,
       source: source ?? this.source,
       trialUsed: trialUsed ?? this.trialUsed,
       trialEligible: trialEligible ?? this.trialEligible,
@@ -179,6 +183,7 @@ class SubscriptionState extends Equatable {
           json['expiresAt'] != null
               ? DateTime.tryParse(json['expiresAt'] as String)
               : null,
+      daysRemaining: (json['daysRemaining'] as num?)?.toInt(),
       source: SubscriptionSource.values.firstWhere(
         (s) => s.name == (json['source'] as String? ?? 'none'),
         orElse: () => SubscriptionSource.none,
@@ -196,6 +201,7 @@ class SubscriptionState extends Equatable {
     'isPremium': isPremium,
     'planId': planId,
     'expiresAt': expiresAt?.toIso8601String(),
+    'daysRemaining': daysRemaining,
     'source': source.name,
     'trialUsed': trialUsed,
     'trialEligible': trialEligible,
@@ -211,6 +217,7 @@ class SubscriptionState extends Equatable {
     isPremium,
     planId,
     expiresAt,
+    daysRemaining,
     source,
     trialUsed,
     trialEligible,

@@ -19,37 +19,49 @@ interface UploadRouterOptions {
   authenticate: RequestHandler;
   requirePremium: RequestHandler;
   bucket: string;
+  cloudFrontBaseUrl: string;
   presigner: UploadPresigner;
 }
 
 export function createUploadRouter(options: UploadRouterOptions): Router {
   const router = Router();
 
-  router.post(
-    "/presign",
-    options.authenticate,
-    options.requirePremium,
-    async (req, res, next) => {
-      try {
-        const input = uploadSchema.parse(req.body);
-        const key = s3UserUploadKey(
-          req.user!.id,
-          input.purpose,
-          `${randomUUID()}.${extensionByType[input.contentType]}`,
-        );
-        const uploadUrl = await options.presigner.createUploadUrl({
-          bucket: options.bucket,
-          key,
-          contentType: input.contentType,
-          metadata: { owner: req.user!.id, purpose: input.purpose },
-          expiresInSeconds: 300,
+  router.post("/presign", options.authenticate, async (req, res, next) => {
+    try {
+      const input = uploadSchema.parse(req.body);
+
+      // Poster uploads stay premium; profile photo is for all signed-in users.
+      if (input.purpose === "poster_photo") {
+        let allowed = false;
+        options.requirePremium(req, res, () => {
+          allowed = true;
         });
-        res.json({ key, uploadUrl, expiresInSeconds: 300 });
-      } catch (error) {
-        next(error);
+        if (!allowed) return;
       }
-    },
-  );
+
+      const key = s3UserUploadKey(
+        req.user!.id,
+        input.purpose,
+        `${randomUUID()}.${extensionByType[input.contentType]}`,
+      );
+      const uploadUrl = await options.presigner.createUploadUrl({
+        bucket: options.bucket,
+        key,
+        contentType: input.contentType,
+        metadata: { owner: req.user!.id, purpose: input.purpose },
+        expiresInSeconds: 300,
+      });
+      const base = options.cloudFrontBaseUrl.replace(/\/$/, "");
+      res.json({
+        key,
+        uploadUrl,
+        publicUrl: `${base}/${key}`,
+        expiresInSeconds: 300,
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 
   return router;
 }

@@ -4,15 +4,17 @@ import 'dart:ui' as ui;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/mock/mock_models.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../subscription/presentation/premium_gate.dart';
 
 /// One poster row on the main Posters tab — same look as the share preview.
-class PosterComposeCard extends StatefulWidget {
+class PosterComposeCard extends ConsumerStatefulWidget {
   const PosterComposeCard({
     super.key,
     required this.poster,
@@ -31,15 +33,17 @@ class PosterComposeCard extends StatefulWidget {
   final VoidCallback onEditNamePlate;
 
   @override
-  State<PosterComposeCard> createState() => _PosterComposeCardState();
+  ConsumerState<PosterComposeCard> createState() => _PosterComposeCardState();
 }
 
-class _PosterComposeCardState extends State<PosterComposeCard> {
+class _PosterComposeCardState extends ConsumerState<PosterComposeCard> {
   final _boundaryKey = GlobalKey();
   bool _includePhoto = true;
   bool _busy = false;
 
   Future<void> _share({required bool withPhoto}) async {
+    if (!requirePremiumOrOpenPaywall(context, ref)) return;
+
     final l10n = AppLocalizations.of(context)!;
     if (withPhoto && widget.userPhoto == null) {
       ScaffoldMessenger.of(context).showSnackBar(
