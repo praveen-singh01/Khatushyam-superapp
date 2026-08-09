@@ -29,7 +29,11 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
   Future<SubscriptionState> startCheckout(SubscriptionPlanId plan) async {
     _state = SubscriptionState(
       isPremium: true,
-      planId: plan == SubscriptionPlanId.weekly ? 'weekly' : 'monthly',
+      planId: switch (plan) {
+        SubscriptionPlanId.weekly => 'weekly',
+        SubscriptionPlanId.trialMonthly || SubscriptionPlanId.monthly =>
+          'monthly',
+      },
       expiresAt: DateTime.now().add(
         plan == SubscriptionPlanId.weekly
             ? const Duration(days: 7)
@@ -44,7 +48,7 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
     return _state;
   }
 
-  /// Simulates cancel — next paywall still shows weekly + monthly (no ₹3).
+  /// Simulates cancel — next paywall shows weekly + monthly (no ₹3 trial).
   void cancelSubscription() {
     _state = _state.copyWith(
       isPremium: false,

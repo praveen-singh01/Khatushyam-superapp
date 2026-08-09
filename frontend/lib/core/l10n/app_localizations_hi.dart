@@ -128,7 +128,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get paywallSubtitle => 'मासिक योजना से भक्ति सेवाएँ खोलें';
 
   @override
-  String get paywallSubtitleTrial => 'साप्ताहिक या मासिक चुनें। ऑटोपे के लिए एक बार ₹3 लगेगा।';
+  String get paywallSubtitleTrial => '₹3 ट्रायल से शुरू करें, फिर ₹199/महीना। कभी भी रद्द करें।';
 
   @override
   String get paywallSubtitleReturn => 'प्रीमियम के लिए साप्ताहिक या मासिक योजना चुनें';

@@ -42,15 +42,15 @@ void main() {
   });
 
   group('FakeSubscriptionRepository', () {
-    test('first checkout grants premium and consumes mandate addon', () async {
+    test('first checkout grants premium and consumes trial', () async {
       final repo = FakeSubscriptionRepository();
       final before = await repo.fetchEntitlement();
       expect(before.trialEligible, isTrue);
       expect(
         before.displayOffers.map((o) => o.id),
-        [SubscriptionPlanId.weekly, SubscriptionPlanId.monthly],
+        [SubscriptionPlanId.trialMonthly],
       );
-      final next = await repo.startCheckout(SubscriptionPlanId.monthly);
+      final next = await repo.startCheckout(SubscriptionPlanId.trialMonthly);
       expect(next.isPremium, isTrue);
       expect(next.trialUsed, isTrue);
       expect(next.trialEligible, isFalse);
@@ -68,7 +68,7 @@ void main() {
         state.displayOffers.map((o) => o.id),
         [SubscriptionPlanId.weekly, SubscriptionPlanId.monthly],
       );
-      expect(state.displayOffers.every((o) => !o.hasMandateAddon), isTrue);
+      expect(state.displayOffers.every((o) => !o.isTrial), isTrue);
     });
   });
 

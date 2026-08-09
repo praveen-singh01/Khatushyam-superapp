@@ -7,9 +7,13 @@ import '../../../core/l10n/app_localizations.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/soft_card.dart';
+import '../../live/presentation/live_youtube_player.dart';
 import '../domain/subscription_state.dart';
 import 'razorpay_checkout.dart';
 import 'subscription_providers.dart';
+
+/// Promo video shown on paywall for trial-eligible users.
+const _kTrialPaywallVideoId = 'QfoBOzqSCLw';
 
 class PaywallScreen extends ConsumerWidget {
   const PaywallScreen({super.key});
@@ -37,6 +41,14 @@ class PaywallScreen extends ConsumerWidget {
     return period == SubscriptionOfferPeriod.week
         ? l10n.paywallPerWeek
         : l10n.paywallPerMonth;
+  }
+
+  String _planDescription(AppLocalizations l10n, SubscriptionPlanId plan) {
+    return switch (plan) {
+      SubscriptionPlanId.trialMonthly => l10n.paywallTrialCta,
+      SubscriptionPlanId.weekly => l10n.paywallWeeklyTitle,
+      SubscriptionPlanId.monthly => l10n.paywallMonthlyTitle,
+    };
   }
 
   Future<void> _startPlan(
@@ -73,10 +85,7 @@ class PaywallScreen extends ConsumerWidget {
       keyId: keyId,
       subscriptionId: subId,
       name: l10n.paywallTitle,
-      description:
-          plan == SubscriptionPlanId.weekly
-              ? l10n.paywallWeeklyTitle
-              : l10n.paywallMonthlyTitle,
+      description: _planDescription(l10n, plan),
     );
     if (!context.mounted) return;
 
@@ -85,6 +94,111 @@ class PaywallScreen extends ConsumerWidget {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(paid ? l10n.premiumActive : l10n.errorGeneric)),
+    );
+  }
+
+  Widget _offerCard({
+    required BuildContext context,
+    required AppLocalizations l10n,
+    required SubscriptionOffer offer,
+    required bool loading,
+    required WidgetRef ref,
+    required bool highlighted,
+  }) {
+    final isTrial = offer.isTrial;
+    final title =
+        isTrial
+            ? l10n.paywallTrialTitle
+            : offer.period == SubscriptionOfferPeriod.week
+            ? l10n.paywallWeeklyTitle
+            : l10n.paywallMonthlyTitle;
+    final priceText =
+        isTrial ? '₹${offer.trialPriceInr ?? 3}' : '₹${offer.priceInr}';
+    final detail =
+        isTrial
+            ? l10n.paywallTrialDetail(offer.priceInr)
+            : [
+              _periodLabel(l10n, offer.period),
+              l10n.paywallCancelAnytime,
+            ].join(' · ');
+    final cta = isTrial ? l10n.paywallTrialCta : l10n.paywallSubscribeCta;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: SoftCard(
+          padding: EdgeInsets.zero,
+          color: highlighted ? Colors.transparent : AppColors.orangeSoft,
+          onTap: loading ? null : () => _startPlan(context, ref, offer.id),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              gradient:
+                  highlighted
+                      ? const LinearGradient(
+                        colors: [Color(0xFFFFB347), AppColors.orange],
+                      )
+                      : null,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: highlighted ? Colors.white : AppColors.ink,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  priceText,
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: highlighted ? Colors.white : AppColors.orangeDeep,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  detail,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color:
+                        highlighted
+                            ? Colors.white.withValues(alpha: 0.92)
+                            : AppColors.inkMuted,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor:
+                          highlighted ? Colors.white : AppColors.orange,
+                      foregroundColor:
+                          highlighted ? AppColors.orangeDeep : Colors.white,
+                    ),
+                    onPressed:
+                        loading
+                            ? null
+                            : () => _startPlan(context, ref, offer.id),
+                    child:
+                        loading
+                            ? const SizedBox(
+                              height: 22,
+                              width: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                            : Text(cta),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -123,6 +237,14 @@ class PaywallScreen extends ConsumerWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
             children: [
+              if (!isPremium && trialEligible) ...[
+                const LiveYoutubePlayer(
+                  videoId: _kTrialPaywallVideoId,
+                  autoPlay: true,
+                  showLiveBadge: false,
+                ),
+                const SizedBox(height: 16),
+              ],
               Text(
                 isPremium
                     ? l10n.premiumActiveHint
@@ -166,142 +288,18 @@ class PaywallScreen extends ConsumerWidget {
                   ),
                 )
               else ...[
-                if (trialEligible) ...[
-                  SoftCard(
-                    color: AppColors.orangeSoft,
-                    padding: const EdgeInsets.all(14),
-                    child: Text(
-                      l10n.paywallMandateNote,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.ink,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                ...offers.map(
+                  (offer) => _offerCard(
+                    context: context,
+                    l10n: l10n,
+                    offer: offer,
+                    loading: loading,
+                    ref: ref,
+                    highlighted:
+                        offer.isTrial ||
+                        offer.id == SubscriptionPlanId.monthly,
                   ),
-                  const SizedBox(height: 12),
-                ],
-                ...offers.map((offer) {
-                  final highlighted = offer.id == SubscriptionPlanId.monthly;
-                  final title =
-                      offer.period == SubscriptionOfferPeriod.week
-                          ? l10n.paywallWeeklyTitle
-                          : l10n.paywallMonthlyTitle;
-                  final detail = [
-                    _periodLabel(l10n, offer.period),
-                    l10n.paywallCancelAnytime,
-                    if (offer.hasMandateAddon)
-                      l10n.paywallMandateAddon(offer.mandateAddonInr!),
-                  ].join(' · ');
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: SoftCard(
-                        padding: EdgeInsets.zero,
-                        color:
-                            highlighted
-                                ? Colors.transparent
-                                : AppColors.orangeSoft,
-                        onTap:
-                            loading
-                                ? null
-                                : () => _startPlan(context, ref, offer.id),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
-                            gradient:
-                                highlighted
-                                    ? const LinearGradient(
-                                      colors: [
-                                        Color(0xFFFFB347),
-                                        AppColors.orange,
-                                      ],
-                                    )
-                                    : null,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                title,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.titleMedium?.copyWith(
-                                  color:
-                                      highlighted
-                                          ? Colors.white
-                                          : AppColors.ink,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                '₹${offer.priceInr}',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.headlineMedium?.copyWith(
-                                  color:
-                                      highlighted
-                                          ? Colors.white
-                                          : AppColors.orangeDeep,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                detail,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium?.copyWith(
-                                  color:
-                                      highlighted
-                                          ? Colors.white.withValues(alpha: 0.92)
-                                          : AppColors.inkMuted,
-                                ),
-                              ),
-                              const SizedBox(height: 14),
-                              SizedBox(
-                                width: double.infinity,
-                                child: FilledButton(
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor:
-                                        highlighted
-                                            ? Colors.white
-                                            : AppColors.orange,
-                                    foregroundColor:
-                                        highlighted
-                                            ? AppColors.orangeDeep
-                                            : Colors.white,
-                                  ),
-                                  onPressed:
-                                      loading
-                                          ? null
-                                          : () => _startPlan(
-                                            context,
-                                            ref,
-                                            offer.id,
-                                          ),
-                                  child:
-                                      loading
-                                          ? const SizedBox(
-                                            height: 22,
-                                            width: 22,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          )
-                                          : Text(l10n.paywallSubscribeCta),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }),
+                ),
                 Text(
                   l10n.paywallNote,
                   style: Theme.of(

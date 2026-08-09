@@ -44,13 +44,12 @@ async function startSubscription(options, requestedPlan, req, res, next) {
             subscriptionStatus: "pending",
             razorpaySubscriptionId: subscription.id,
             currentPlan: plan,
-            // First mandate checkout permanently consumes the ₹3 intro.
-            ...(!trialUsed ? { trialUsed: true } : {}),
+            // trialUsed is set on successful webhook charge — not on checkout start.
         });
         res.status(201).json(entitlementFromUser({
             ...req.user,
             subscriptionStatus: "pending",
-            trialUsed: true,
+            trialUsed,
             currentPlan: plan,
         }, plan, {
             subscriptionId: subscription.id,

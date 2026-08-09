@@ -27,20 +27,28 @@ export interface UploadPresigner {
 }
 
 export function offersForUser(user: AuthenticatedUser) {
-  // Always show ₹49 / ₹199. ₹3 is only a first-time Razorpay mandate addon.
-  const mandateAddonInr = user.trialUsed ? undefined : 3;
+  // First-time: ₹3 intro trial → then ₹199/month.
+  // After trial used (cancel/expiry): ₹49/week + ₹199/month only.
+  if (!user.trialUsed) {
+    return [
+      {
+        id: "trial_monthly" as const,
+        priceInr: 199,
+        period: "month" as const,
+        trialPriceInr: 3,
+      },
+    ];
+  }
   return [
     {
       id: "weekly" as const,
       priceInr: 49,
       period: "week" as const,
-      ...(mandateAddonInr !== undefined ? { mandateAddonInr } : {}),
     },
     {
       id: "monthly" as const,
       priceInr: 199,
       period: "month" as const,
-      ...(mandateAddonInr !== undefined ? { mandateAddonInr } : {}),
     },
   ];
 }

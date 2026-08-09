@@ -71,8 +71,11 @@ class ApiSubscriptionRepository implements SubscriptionRepository {
 
   @override
   Future<SubscriptionState> startCheckout(SubscriptionPlanId plan) async {
-    final planId =
-        plan == SubscriptionPlanId.weekly ? 'weekly' : 'monthly';
+    final planId = switch (plan) {
+      SubscriptionPlanId.trialMonthly => 'trial_monthly',
+      SubscriptionPlanId.weekly => 'weekly',
+      SubscriptionPlanId.monthly => 'monthly',
+    };
     final response = await _api.post<Map<String, dynamic>>(
       '/v1/subscriptions/razorpay/start',
       data: {'plan': planId},

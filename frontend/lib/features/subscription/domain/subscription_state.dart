@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../core/config/app_features.dart';
 
-enum SubscriptionPlanId { weekly, monthly }
+enum SubscriptionPlanId { trialMonthly, weekly, monthly }
 
 enum SubscriptionOfferPeriod { week, month }
 
@@ -11,62 +11,62 @@ class SubscriptionOffer extends Equatable {
     required this.id,
     required this.priceInr,
     required this.period,
-    this.mandateAddonInr,
+    this.trialPriceInr,
   });
 
   final SubscriptionPlanId id;
   final int priceInr;
   final SubscriptionOfferPeriod period;
-  /// ₹3 first-time Razorpay mandate setup (not the plan price).
-  final int? mandateAddonInr;
+  /// First charge for intro trial (₹3); then [priceInr] renews.
+  final int? trialPriceInr;
 
-  bool get hasMandateAddon =>
-      mandateAddonInr != null && mandateAddonInr! > 0;
+  bool get isTrial =>
+      id == SubscriptionPlanId.trialMonthly ||
+      (trialPriceInr != null && trialPriceInr! > 0);
 
   factory SubscriptionOffer.fromJson(Map<String, dynamic> json) {
     final rawId = json['id'] as String? ?? 'monthly';
-    final id =
-        rawId == 'weekly'
-            ? SubscriptionPlanId.weekly
-            : SubscriptionPlanId.monthly;
+    final id = switch (rawId) {
+      'trial_monthly' => SubscriptionPlanId.trialMonthly,
+      'weekly' => SubscriptionPlanId.weekly,
+      _ => SubscriptionPlanId.monthly,
+    };
     final period =
         (json['period'] as String?) == 'week'
             ? SubscriptionOfferPeriod.week
             : SubscriptionOfferPeriod.month;
-    final addon =
-        (json['mandateAddonInr'] as num?)?.toInt() ??
-        (json['trialPriceInr'] as num?)?.toInt();
+    final trial =
+        (json['trialPriceInr'] as num?)?.toInt() ??
+        (json['mandateAddonInr'] as num?)?.toInt();
     return SubscriptionOffer(
       id: id,
       priceInr: (json['priceInr'] as num?)?.toInt() ?? 199,
       period: period,
-      mandateAddonInr: addon,
+      trialPriceInr: trial,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id == SubscriptionPlanId.weekly ? 'weekly' : 'monthly',
+    'id': switch (id) {
+      SubscriptionPlanId.trialMonthly => 'trial_monthly',
+      SubscriptionPlanId.weekly => 'weekly',
+      SubscriptionPlanId.monthly => 'monthly',
+    },
     'priceInr': priceInr,
     'period': period == SubscriptionOfferPeriod.week ? 'week' : 'month',
-    if (mandateAddonInr != null) 'mandateAddonInr': mandateAddonInr,
+    if (trialPriceInr != null) 'trialPriceInr': trialPriceInr,
   };
 
   @override
-  List<Object?> get props => [id, priceInr, period, mandateAddonInr];
+  List<Object?> get props => [id, priceInr, period, trialPriceInr];
 }
 
-const kDefaultOffersWithMandate = [
+const kDefaultTrialOffers = [
   SubscriptionOffer(
-    id: SubscriptionPlanId.weekly,
-    priceInr: 49,
-    period: SubscriptionOfferPeriod.week,
-    mandateAddonInr: 3,
-  ),
-  SubscriptionOffer(
-    id: SubscriptionPlanId.monthly,
+    id: SubscriptionPlanId.trialMonthly,
     priceInr: 199,
     period: SubscriptionOfferPeriod.month,
-    mandateAddonInr: 3,
+    trialPriceInr: 3,
   ),
 ];
 
@@ -105,7 +105,7 @@ class SubscriptionState extends Equatable {
         source: SubscriptionSource.none,
         trialUsed: false,
         trialEligible: true,
-        offers: kDefaultOffersWithMandate,
+        offers: kDefaultTrialOffers,
       );
 
   final bool isPremium;
@@ -124,7 +124,7 @@ class SubscriptionState extends Equatable {
 
   List<SubscriptionOffer> get displayOffers {
     if (offers.isNotEmpty) return offers;
-    return trialEligible ? kDefaultOffersWithMandate : kDefaultOffersReturning;
+    return trialEligible ? kDefaultTrialOffers : kDefaultOffersReturning;
   }
 
   SubscriptionState copyWith({

@@ -128,7 +128,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallSubtitle => 'Unlock devotion tools with a monthly plan';
 
   @override
-  String get paywallSubtitleTrial => 'Choose weekly or monthly. ₹3 sets up autopay once.';
+  String get paywallSubtitleTrial => 'Start with ₹3 trial, then ₹199/month. Cancel anytime.';
 
   @override
   String get paywallSubtitleReturn => 'Choose a weekly or monthly plan to unlock premium';

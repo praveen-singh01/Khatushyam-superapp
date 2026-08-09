@@ -189,16 +189,10 @@ describe("auth and entitlement", () => {
         });
         expect(response.body.offers).toEqual([
             {
-                id: "weekly",
-                priceInr: 49,
-                period: "week",
-                mandateAddonInr: 3,
-            },
-            {
-                id: "monthly",
+                id: "trial_monthly",
                 priceInr: 199,
                 period: "month",
-                mandateAddonInr: 3,
+                trialPriceInr: 3,
             },
         ]);
     });
@@ -337,13 +331,13 @@ describe("subscriptions and webhooks", () => {
             subscriptionStatus: "pending",
             subscriptionId: "sub_test_123",
             keyId: "rzp_test_key",
-            trialUsed: true,
-            trialEligible: false,
+            trialUsed: false,
+            trialEligible: true,
         });
         const user = await User.findOne({ firebaseUid: "free-user" });
         expect(user?.subscriptionStatus).toBe("pending");
         expect(user?.razorpaySubscriptionId).toBe("sub_test_123");
-        expect(user?.trialUsed).toBe(true);
+        expect(user?.trialUsed).toBe(false);
         expect(user?.currentPlan).toBe("monthly");
     });
     it("offers weekly and monthly after trial was used", async () => {
@@ -533,22 +527,12 @@ describe("admin dashboard APIs", () => {
         expect(created.status).toBe(201);
         expect(created.body.item.slug).toBe("test-baba-darshan-01");
         expect(created.body.item.url).toContain(presign.body.key);
+        // Browse is free; premium is enforced on set/share actions in the app.
         const library = await request(app)
-            .get("/v1/content/library")
-            .set("Authorization", "Bearer premium");
-        // premium user is not active yet
-        expect(library.status).toBe(402);
-        await User.findOneAndUpdate({ firebaseUid: "premium-user" }, {
-            $set: {
-                email: "premium@example.com",
-                subscriptionStatus: "active",
-            },
-        }, { upsert: true });
-        const activeLibrary = await request(app)
             .get("/v1/content/library?type=wallpaper")
             .set("Authorization", "Bearer premium");
-        expect(activeLibrary.status).toBe(200);
-        expect(activeLibrary.body.items).toHaveLength(1);
+        expect(library.status).toBe(200);
+        expect(library.body.items).toHaveLength(1);
     });
     it("serves paginated posters to signed-in free users", async () => {
         await ContentAsset.create({

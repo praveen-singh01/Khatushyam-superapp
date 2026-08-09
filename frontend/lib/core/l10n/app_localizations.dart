@@ -332,7 +332,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallSubtitleTrial.
   ///
   /// In hi, this message translates to:
-  /// **'साप्ताहिक या मासिक चुनें। ऑटोपे के लिए एक बार ₹3 लगेगा।'**
+  /// **'₹3 ट्रायल से शुरू करें, फिर ₹199/महीना। कभी भी रद्द करें।'**
   String get paywallSubtitleTrial;
 
   /// No description provided for @paywallSubtitleReturn.
