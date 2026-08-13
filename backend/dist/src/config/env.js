@@ -12,6 +12,10 @@ const envSchema = z.object({
     /** Weekly plan (₹49) for returning users. */
     RAZORPAY_PLAN_ID_WEEKLY: z.string().min(1).optional(),
     RAZORPAY_WEBHOOK_SECRET: z.string().min(1),
+    /** Hours of premium after ₹3 trial payment before first recurring charge. */
+    TRIAL_DURATION_HOURS: z.coerce.number().int().positive().default(24),
+    /** Upfront trial/mandate addon in INR (Razorpay addon amount). */
+    TRIAL_AMOUNT_INR: z.coerce.number().positive().default(3),
     AWS_REGION: z.string().default("ap-south-1"),
     S3_MEDIA_BUCKET: z.string().min(1),
     CLOUDFRONT_BASE_URL: z.string().url(),

@@ -9,6 +9,16 @@ abstract class SubscriptionRepository {
 
   /// Backward-compatible monthly path.
   Future<SubscriptionState> startMonthlyCheckout();
+
+  /// Verify Razorpay checkout signature (Mitro-style immediate unlock).
+  Future<SubscriptionState> verifyPayment({
+    required String razorpaySubscriptionId,
+    required String razorpayPaymentId,
+    required String razorpaySignature,
+    String? mongoSubscriptionId,
+  });
+
+  Future<SubscriptionState> cancelSubscription({String? reason});
 }
 
 class FakeSubscriptionRepository implements SubscriptionRepository {
@@ -28,28 +38,45 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
   @override
   Future<SubscriptionState> startCheckout(SubscriptionPlanId plan) async {
     _state = SubscriptionState(
-      isPremium: true,
+      isPremium: false,
       planId: switch (plan) {
         SubscriptionPlanId.weekly => 'weekly',
         SubscriptionPlanId.trialMonthly || SubscriptionPlanId.monthly =>
           'monthly',
       },
-      expiresAt: DateTime.now().add(
-        plan == SubscriptionPlanId.weekly
-            ? const Duration(days: 7)
-            : const Duration(days: 30),
-      ),
+      source: SubscriptionSource.fake,
+      trialUsed: false,
+      trialEligible: true,
+      subscriptionStatus: 'pending',
+      offers: kDefaultTrialOffers,
+      checkoutSubscriptionId: 'sub_fake',
+      checkoutKeyId: 'rzp_test_fake',
+    );
+    return _state;
+  }
+
+  @override
+  Future<SubscriptionState> verifyPayment({
+    required String razorpaySubscriptionId,
+    required String razorpayPaymentId,
+    required String razorpaySignature,
+    String? mongoSubscriptionId,
+  }) async {
+    _state = SubscriptionState(
+      isPremium: true,
+      planId: 'monthly',
+      expiresAt: DateTime.now().add(const Duration(hours: 24)),
       source: SubscriptionSource.fake,
       trialUsed: true,
       trialEligible: false,
-      subscriptionStatus: 'active',
+      subscriptionStatus: 'authenticated',
       offers: kDefaultOffersReturning,
     );
     return _state;
   }
 
-  /// Simulates cancel — next paywall shows weekly + monthly (no ₹3 trial).
-  void cancelSubscription() {
+  @override
+  Future<SubscriptionState> cancelSubscription({String? reason}) async {
     _state = _state.copyWith(
       isPremium: false,
       planId: null,
@@ -59,6 +86,7 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
       subscriptionStatus: 'cancelled',
       offers: kDefaultOffersReturning,
     );
+    return _state;
   }
 
   void setState(SubscriptionState state) => _state = state;

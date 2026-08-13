@@ -42,7 +42,7 @@ void main() {
   });
 
   group('FakeSubscriptionRepository', () {
-    test('first checkout grants premium and consumes trial', () async {
+    test('verify after checkout grants premium and consumes trial', () async {
       final repo = FakeSubscriptionRepository();
       final before = await repo.fetchEntitlement();
       expect(before.trialEligible, isTrue);
@@ -50,7 +50,14 @@ void main() {
         before.displayOffers.map((o) => o.id),
         [SubscriptionPlanId.trialMonthly],
       );
-      final next = await repo.startCheckout(SubscriptionPlanId.trialMonthly);
+      final started = await repo.startCheckout(SubscriptionPlanId.trialMonthly);
+      expect(started.isPremium, isFalse);
+      expect(started.checkoutSubscriptionId, isNotNull);
+      final next = await repo.verifyPayment(
+        razorpaySubscriptionId: started.checkoutSubscriptionId!,
+        razorpayPaymentId: 'pay_fake',
+        razorpaySignature: 'sig_fake',
+      );
       expect(next.isPremium, isTrue);
       expect(next.trialUsed, isTrue);
       expect(next.trialEligible, isFalse);
@@ -60,7 +67,12 @@ void main() {
     test('after cancel, still offers weekly and monthly', () async {
       final repo = FakeSubscriptionRepository();
       await repo.startCheckout(SubscriptionPlanId.weekly);
-      repo.cancelSubscription();
+      await repo.verifyPayment(
+        razorpaySubscriptionId: 'sub_fake',
+        razorpayPaymentId: 'pay_fake',
+        razorpaySignature: 'sig_fake',
+      );
+      await repo.cancelSubscription();
       final state = await repo.fetchEntitlement();
       expect(state.isPremium, isFalse);
       expect(state.trialEligible, isFalse);

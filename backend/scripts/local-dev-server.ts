@@ -115,8 +115,9 @@ const app = createApp({
       })
     : {
         async createMonthlySubscription() {
-          return { id: `sub_local_${Date.now()}` };
+          return { id: `sub_local_${Date.now()}`, shortUrl: null };
         },
+        async cancelSubscription() {},
       },
   uploadPresigner: useRealGateways
     ? createS3UploadPresigner(env.AWS_REGION)

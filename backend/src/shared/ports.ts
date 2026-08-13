@@ -1,3 +1,4 @@
+import { userIsPremium } from "../modules/subscriptions/premium.js";
 import type {
   AuthenticatedUser,
   SubscriptionPlanOffer,
@@ -5,15 +6,26 @@ import type {
 
 export interface SubscriptionCreateResult {
   id: string;
+  shortUrl?: string | null;
 }
 
 export interface SubscriptionGateway {
   createMonthlySubscription(input: {
     planId: string;
     userId: string;
-    /** Optional one-time addon in INR (e.g. ₹3 intro trial). */
+    planOffer: SubscriptionPlanOffer | "weekly" | "monthly";
+    isTrial: boolean;
+    /** One-time addon in INR (e.g. ₹3 intro trial). */
     trialAddonInr?: number;
+    /** Unix seconds — first recurring charge after trial window. */
+    startAtUnix?: number;
+    totalCount?: number;
   }): Promise<SubscriptionCreateResult>;
+
+  cancelSubscription(input: {
+    razorpaySubscriptionId: string;
+    cancelAtCycleEnd?: boolean;
+  }): Promise<void>;
 }
 
 export interface UploadPresigner {
@@ -60,10 +72,11 @@ export function entitlementFromUser(
     subscriptionId?: string;
     keyId?: string;
     freeMode?: boolean;
+    mongoSubscriptionId?: string;
   } = {},
 ) {
   const freeMode = extras.freeMode === true;
-  const isPremium = freeMode || user.subscriptionStatus === "active";
+  const isPremium = userIsPremium(user, freeMode);
   const trialUsed = Boolean(user.trialUsed);
   const trialEligible = !trialUsed;
   const { freeMode: _freeMode, ...rest } = extras;
@@ -84,14 +97,14 @@ export function entitlementFromUser(
     isPremium,
     planId:
       isPremium || user.subscriptionStatus === "pending"
-        ? activePlan ?? planId
+        ? (activePlan ?? planId)
         : null,
     expiresAt,
     daysRemaining,
     source: freeMode
       ? ("manual" as const)
       : user.subscriptionStatus === "inactive" ||
-          user.subscriptionStatus === "cancelled"
+          (user.subscriptionStatus === "cancelled" && !isPremium)
         ? ("none" as const)
         : ("razorpay" as const),
     subscriptionStatus: freeMode ? ("active" as const) : user.subscriptionStatus,

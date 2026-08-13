@@ -1,6 +1,7 @@
 import type { NextFunction, Request, RequestHandler, Response } from "express";
 import type { IdentityVerifier, UserRole } from "../shared/types.js";
 import { User } from "../modules/auth/user.model.js";
+import { computeIsPremium } from "../modules/subscriptions/premium.js";
 
 function parseAdminEmails(raw?: string): Set<string> {
   if (!raw) return new Set();
@@ -135,10 +136,17 @@ export function optionalAuthenticate(
 }
 
 export const requirePremium: RequestHandler = (req, res, next) => {
-  if (req.user?.subscriptionStatus !== "active") {
+  const user = req.user;
+  const premium = user
+    ? computeIsPremium({
+        subscriptionStatus: user.subscriptionStatus,
+        subscriptionExpiresAt: user.subscriptionExpiresAt,
+      })
+    : false;
+  if (!premium) {
     res.status(402).json({
       error: "PREMIUM_REQUIRED",
-      subscriptionStatus: req.user?.subscriptionStatus ?? "inactive",
+      subscriptionStatus: user?.subscriptionStatus ?? "inactive",
     });
     return;
   }

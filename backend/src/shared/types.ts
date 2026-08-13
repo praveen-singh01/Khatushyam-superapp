@@ -1,6 +1,7 @@
 export type SubscriptionStatus =
   | "inactive"
   | "pending"
+  | "authenticated"
   | "active"
   | "halted"
   | "cancelled";

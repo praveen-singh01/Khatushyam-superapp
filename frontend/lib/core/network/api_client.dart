@@ -87,4 +87,35 @@ class ApiSubscriptionRepository implements SubscriptionRepository {
   @override
   Future<SubscriptionState> startMonthlyCheckout() =>
       startCheckout(SubscriptionPlanId.monthly);
+
+  @override
+  Future<SubscriptionState> verifyPayment({
+    required String razorpaySubscriptionId,
+    required String razorpayPaymentId,
+    required String razorpaySignature,
+    String? mongoSubscriptionId,
+  }) async {
+    final response = await _api.post<Map<String, dynamic>>(
+      '/v1/subscriptions/verify',
+      data: {
+        'razorpaySubscriptionId': razorpaySubscriptionId,
+        'razorpayPaymentId': razorpayPaymentId,
+        'razorpaySignature': razorpaySignature,
+        if (mongoSubscriptionId != null && mongoSubscriptionId.isNotEmpty)
+          'subscriptionId': mongoSubscriptionId,
+      },
+    );
+    final data = response.data ?? const <String, dynamic>{};
+    return SubscriptionState.fromJson(data);
+  }
+
+  @override
+  Future<SubscriptionState> cancelSubscription({String? reason}) async {
+    final response = await _api.post<Map<String, dynamic>>(
+      '/v1/subscriptions/cancel',
+      data: {if (reason != null && reason.isNotEmpty) 'reason': reason},
+    );
+    final data = response.data ?? const <String, dynamic>{};
+    return SubscriptionState.fromJson(data);
+  }
 }

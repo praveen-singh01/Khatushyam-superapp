@@ -10,20 +10,30 @@ import { ContentAsset } from "../src/modules/content/content-asset.model.js";
 import { ContentCategory } from "../src/modules/content/content-category.model.js";
 import { LiveStream } from "../src/modules/content/live-stream.model.js";
 import { Story } from "../src/modules/content/story.model.js";
-import { validWebhookSignature } from "../src/modules/subscriptions/subscription.routes.js";
+import { Subscription } from "../src/modules/subscriptions/subscription.model.js";
+import {
+  validPaymentSignature,
+  validWebhookSignature,
+} from "../src/modules/subscriptions/subscription.routes.js";
 import { WebhookEvent } from "../src/modules/subscriptions/webhook-event.model.js";
 import type { IdentityVerifier } from "../src/shared/types.js";
 
 const env: AppEnv = {
   NODE_ENV: "test",
   PORT: 4000,
-  MONGODB_URI: "mongodb://127.0.0.1:27017/khatu_shyam_test",
+  MONGODB_URI:
+    process.env.MONGODB_URI?.replace(
+      /\/[^/?]+(\?|$)/,
+      "/khatu_shyam_test$1",
+    ) ?? "mongodb://127.0.0.1:27017/khatu_shyam_test",
   APP_ORIGIN: "*",
   FIREBASE_PROJECT_ID: "test-project",
   RAZORPAY_KEY_ID: "rzp_test_key",
   RAZORPAY_KEY_SECRET: "test_secret",
   RAZORPAY_PLAN_ID: "plan_test",
   RAZORPAY_WEBHOOK_SECRET: "webhook_test",
+  TRIAL_DURATION_HOURS: 24,
+  TRIAL_AMOUNT_INR: 3,
   AWS_REGION: "ap-south-1",
   S3_MEDIA_BUCKET: "test-bucket",
   CLOUDFRONT_BASE_URL: "https://cdn.example.com",
@@ -79,8 +89,9 @@ function identityFor(token: string): IdentityVerifier {
 
 const fakeGateway = {
   async createMonthlySubscription() {
-    return { id: "sub_test_123" };
+    return { id: "sub_test_123", shortUrl: null };
   },
+  async cancelSubscription() {},
 };
 
 const fakePresigner = {
@@ -98,7 +109,7 @@ const app = createApp({
 
 beforeAll(async () => {
   await mongoose.connect(env.MONGODB_URI);
-});
+}, 60000);
 
 beforeEach(async () => {
   await Promise.all([
@@ -109,6 +120,7 @@ beforeEach(async () => {
     LiveStream.deleteMany({}),
     Story.deleteMany({}),
     WebhookEvent.deleteMany({}),
+    Subscription.deleteMany({}),
   ]);
 });
 
@@ -426,10 +438,18 @@ describe("subscriptions and webhooks", () => {
       razorpaySubscriptionId: "sub_webhook_1",
     });
 
+    const currentEnd = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60;
     const payload = {
       event: "subscription.activated",
       payload: {
-        subscription: { entity: { id: "sub_webhook_1", status: "active" } },
+        subscription: {
+          entity: {
+            id: "sub_webhook_1",
+            status: "active",
+            current_end: currentEnd,
+            notes: { user_id: "not-a-valid-objectid" },
+          },
+        },
       },
     };
     const raw = JSON.stringify(payload);
@@ -447,6 +467,12 @@ describe("subscriptions and webhooks", () => {
 
     const user = await User.findOne({ razorpaySubscriptionId: "sub_webhook_1" });
     expect(user?.subscriptionStatus).toBe("active");
+    expect(user?.subscriptionExpiresAt?.getTime()).toBeGreaterThan(Date.now());
+
+    const entitlement = await request(app)
+      .get("/v1/entitlement")
+      .set("Authorization", "Bearer free");
+    expect(entitlement.body.isPremium).toBe(true);
 
     const second = await request(app)
       .post("/v1/subscriptions/webhook")
@@ -457,6 +483,98 @@ describe("subscriptions and webhooks", () => {
     expect(second.body.duplicate).toBe(true);
     expect(await WebhookEvent.countDocuments()).toBe(1);
   });
+
+  it("verifies checkout payment signature and unlocks premium", async () => {
+    const start = await request(app)
+      .post("/v1/subscriptions/razorpay/start")
+      .set("Authorization", "Bearer free")
+      .send({ plan: "trial_monthly" });
+    expect(start.status).toBe(201);
+    const subId = start.body.subscriptionId as string;
+
+    const paymentId = "pay_test_1";
+    const signature = createHmac("sha256", env.RAZORPAY_KEY_SECRET)
+      .update(`${paymentId}|${subId}`)
+      .digest("hex");
+
+    const verified = await request(app)
+      .post("/v1/subscriptions/verify")
+      .set("Authorization", "Bearer free")
+      .send({
+        razorpaySubscriptionId: subId,
+        razorpayPaymentId: paymentId,
+        razorpaySignature: signature,
+      });
+    expect(verified.status).toBe(200);
+    expect(verified.body.isPremium).toBe(true);
+    expect(verified.body.subscriptionStatus).toBe("authenticated");
+    expect(verified.body.trialUsed).toBe(true);
+  });
+
+  it("keeps premium until expiry after cancel; halt revokes immediately", async () => {
+    const future = new Date(Date.now() + 7 * 86400000);
+    const user = await User.create({
+      firebaseUid: "free-user",
+      email: "free@example.com",
+      subscriptionStatus: "active",
+      trialUsed: true,
+      currentPlan: "monthly",
+      subscriptionExpiresAt: future,
+      razorpaySubscriptionId: "sub_cancel_1",
+    });
+    await Subscription.create({
+      userId: user._id,
+      plan: "monthly",
+      isActive: true,
+      isTrial: false,
+      isTrialPeriod: false,
+      startDate: new Date(),
+      endDate: future,
+      currentEnd: future,
+      razorpaySubscriptionId: "sub_cancel_1",
+      razorpayPlanId: "plan_test",
+      paymentStatus: "completed",
+      subscriptionStatus: "active",
+      version: 1,
+    });
+
+    const cancelled = await request(app)
+      .post("/v1/subscriptions/cancel")
+      .set("Authorization", "Bearer free")
+      .send({ reason: "testing" });
+    expect(cancelled.status).toBe(200);
+    expect(cancelled.body.subscriptionStatus).toBe("cancelled");
+    expect(cancelled.body.isPremium).toBe(true);
+
+    const haltPayload = {
+      event: "subscription.halted",
+      payload: {
+        subscription: {
+          entity: {
+            id: "sub_cancel_1",
+            status: "halted",
+            notes: { user_id: user._id.toString() },
+          },
+        },
+      },
+    };
+    const raw = JSON.stringify(haltPayload);
+    const signature = createHmac("sha256", env.RAZORPAY_WEBHOOK_SECRET)
+      .update(raw)
+      .digest("hex");
+    await request(app)
+      .post("/v1/subscriptions/webhook")
+      .set("Content-Type", "application/json")
+      .set("x-razorpay-signature", signature)
+      .set("x-razorpay-event-id", "evt_halt_1")
+      .send(raw);
+
+    const afterHalt = await request(app)
+      .get("/v1/entitlement")
+      .set("Authorization", "Bearer free");
+    expect(afterHalt.body.isPremium).toBe(false);
+    expect(afterHalt.body.subscriptionStatus).toBe("halted");
+  });
 });
 
 describe("webhook signature helper", () => {
@@ -465,6 +583,16 @@ describe("webhook signature helper", () => {
     const signature = createHmac("sha256", "secret").update(raw).digest("hex");
     expect(validWebhookSignature(raw, signature, "secret")).toBe(true);
     expect(validWebhookSignature(raw, "bad", "secret")).toBe(false);
+    expect(
+      validPaymentSignature({
+        paymentId: "pay_1",
+        subscriptionId: "sub_1",
+        signature: createHmac("sha256", "secret")
+          .update("pay_1|sub_1")
+          .digest("hex"),
+        keySecret: "secret",
+      }),
+    ).toBe(true);
   });
 });
 

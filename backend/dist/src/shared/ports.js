@@ -1,3 +1,4 @@
+import { userIsPremium } from "../modules/subscriptions/premium.js";
 export function offersForUser(user) {
     // First-time: ₹3 intro trial → then ₹199/month.
     // After trial used (cancel/expiry): ₹49/week + ₹199/month only.
@@ -26,7 +27,7 @@ export function offersForUser(user) {
 }
 export function entitlementFromUser(user, planId, extras = {}) {
     const freeMode = extras.freeMode === true;
-    const isPremium = freeMode || user.subscriptionStatus === "active";
+    const isPremium = userIsPremium(user, freeMode);
     const trialUsed = Boolean(user.trialUsed);
     const trialEligible = !trialUsed;
     const { freeMode: _freeMode, ...rest } = extras;
@@ -44,14 +45,14 @@ export function entitlementFromUser(user, planId, extras = {}) {
     return {
         isPremium,
         planId: isPremium || user.subscriptionStatus === "pending"
-            ? activePlan ?? planId
+            ? (activePlan ?? planId)
             : null,
         expiresAt,
         daysRemaining,
         source: freeMode
             ? "manual"
             : user.subscriptionStatus === "inactive" ||
-                user.subscriptionStatus === "cancelled"
+                (user.subscriptionStatus === "cancelled" && !isPremium)
                 ? "none"
                 : "razorpay",
         subscriptionStatus: freeMode ? "active" : user.subscriptionStatus,

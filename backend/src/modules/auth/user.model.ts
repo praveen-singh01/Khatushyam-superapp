@@ -37,7 +37,14 @@ const userSchema = new Schema<UserDocument>(
     fcmTokens: { type: [String], default: [] },
     subscriptionStatus: {
       type: String,
-      enum: ["inactive", "pending", "active", "halted", "cancelled"],
+      enum: [
+        "inactive",
+        "pending",
+        "authenticated",
+        "active",
+        "halted",
+        "cancelled",
+      ],
       default: "inactive",
       index: true,
     },

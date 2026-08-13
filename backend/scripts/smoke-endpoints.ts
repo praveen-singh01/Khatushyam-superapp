@@ -45,8 +45,9 @@ const app = createApp({
   },
   subscriptionGateway: {
     async createMonthlySubscription() {
-      return { id: "sub_smoke_1" };
+      return { id: "sub_smoke_1", shortUrl: null };
     },
+    async cancelSubscription() {},
   },
   uploadPresigner: {
     async createUploadUrl() {

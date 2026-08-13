@@ -22,9 +22,13 @@ export function createApp({ env, identityVerifier, subscriptionGateway, uploadPr
     const subscriptionRouter = createSubscriptionRouter({
         authenticate: auth,
         keyId: env.RAZORPAY_KEY_ID,
+        keySecret: env.RAZORPAY_KEY_SECRET,
         planId: env.RAZORPAY_PLAN_ID,
         weeklyPlanId: env.RAZORPAY_PLAN_ID_WEEKLY,
         gateway: subscriptionGateway,
+        trialDurationHours: env.TRIAL_DURATION_HOURS,
+        trialAmountInr: env.TRIAL_AMOUNT_INR,
+        freeMode: env.APP_FREE_MODE,
     });
     const webhookHandler = createRazorpayWebhookHandler(env.RAZORPAY_WEBHOOK_SECRET);
     app.disable("x-powered-by");

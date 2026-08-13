@@ -40,6 +40,24 @@ class SubscriptionController extends AsyncNotifier<SubscriptionState> {
     return state.asData?.value;
   }
 
+  Future<SubscriptionState?> verifyCheckout({
+    required String razorpaySubscriptionId,
+    required String razorpayPaymentId,
+    required String razorpaySignature,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => ref
+          .read(subscriptionRepositoryProvider)
+          .verifyPayment(
+            razorpaySubscriptionId: razorpaySubscriptionId,
+            razorpayPaymentId: razorpayPaymentId,
+            razorpaySignature: razorpaySignature,
+          ),
+    );
+    return state.asData?.value;
+  }
+
   Future<void> startCheckout(SubscriptionPlanId plan) =>
       prepareCheckout(plan).then((_) {});
 

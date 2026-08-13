@@ -79,7 +79,7 @@ class PaywallScreen extends ConsumerWidget {
       return;
     }
 
-    final paid = await openRazorpaySubscriptionCheckout(
+    final checkout = await openRazorpaySubscriptionCheckout(
       keyId: keyId,
       subscriptionId: subId,
       name: l10n.paywallTitle,
@@ -87,11 +87,36 @@ class PaywallScreen extends ConsumerWidget {
     );
     if (!context.mounted) return;
 
-    await ref.read(subscriptionControllerProvider.notifier).refresh();
+    var unlocked = false;
+    if (checkout.success &&
+        checkout.paymentId != null &&
+        checkout.signature != null) {
+      final verified = await ref
+          .read(subscriptionControllerProvider.notifier)
+          .verifyCheckout(
+            razorpaySubscriptionId: checkout.subscriptionId ?? subId,
+            razorpayPaymentId: checkout.paymentId!,
+            razorpaySignature: checkout.signature!,
+          );
+      unlocked = verified?.isPremium ?? false;
+    }
+
+    if (!unlocked) {
+      await ref.read(subscriptionControllerProvider.notifier).refresh();
+      unlocked =
+          ref.read(subscriptionControllerProvider).asData?.value.isPremium ??
+          false;
+    }
     if (!context.mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(paid ? l10n.premiumActive : l10n.errorGeneric)),
+      SnackBar(
+        content: Text(
+          unlocked
+              ? l10n.premiumActive
+              : (checkout.success ? l10n.premiumActive : l10n.errorGeneric),
+        ),
+      ),
     );
   }
 
