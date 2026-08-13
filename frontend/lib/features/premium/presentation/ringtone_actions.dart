@@ -45,11 +45,11 @@ class _RingtoneSheetState extends ConsumerState<_RingtoneSheet> {
   Future<void> _togglePreview() async {
     final url = widget.asset.url;
     if (url == null || url.isEmpty) {
-      _toast('ऑडियो लिंक उपलब्ध नहीं');
+      _toast('Audio link uplabdh nahi');
       return;
     }
     if (!_media.isAndroid) {
-      _toast('प्रीव्यू Android पर उपलब्ध है');
+      _toast('Preview Android par uplabdh hai');
       return;
     }
     try {
@@ -65,14 +65,14 @@ class _RingtoneSheetState extends ConsumerState<_RingtoneSheet> {
         _busy = false;
         _playing = ok;
       });
-      if (!ok) _toast('प्ले नहीं हो सका');
+      if (!ok) _toast('Play nahi ho saka');
     } on MissingPluginException {
       if (mounted) {
         setState(() {
           _busy = false;
           _playing = false;
         });
-        _toast('ऐप पूरी तरह रीस्टार्ट करें और फिर कोशिश करें');
+        _toast('App poori tarah restart karein aur phir koshish karein');
       }
     } on PlatformException catch (e) {
       if (mounted) {
@@ -80,7 +80,7 @@ class _RingtoneSheetState extends ConsumerState<_RingtoneSheet> {
           _busy = false;
           _playing = false;
         });
-        _toast(e.message ?? 'प्ले नहीं हो सका');
+        _toast(e.message ?? 'Play nahi ho saka');
       }
     } catch (_) {
       if (mounted) {
@@ -88,7 +88,7 @@ class _RingtoneSheetState extends ConsumerState<_RingtoneSheet> {
           _busy = false;
           _playing = false;
         });
-        _toast('प्ले नहीं हो सका');
+        _toast('Play nahi ho saka');
       }
     }
   }
@@ -98,11 +98,11 @@ class _RingtoneSheetState extends ConsumerState<_RingtoneSheet> {
 
     final url = widget.asset.url;
     if (url == null || url.isEmpty) {
-      _toast('ऑडियो लिंक उपलब्ध नहीं');
+      _toast('Audio link uplabdh nahi');
       return;
     }
     if (!_media.isAndroid) {
-      _toast('रिंगटोन सेट करना Android पर उपलब्ध है');
+      _toast('Ringtone set karna Android par uplabdh hai');
       return;
     }
     setState(() => _busy = true);
@@ -116,18 +116,18 @@ class _RingtoneSheetState extends ConsumerState<_RingtoneSheet> {
           context: context,
           builder:
               (context) => AlertDialog(
-                title: const Text('अनुमति चाहिए'),
+                title: const Text('Anumati chahiye'),
                 content: const Text(
-                  'रिंगटोन सेट करने के लिए सिस्टम सेटिंग्स बदलने की अनुमति चालू करें।',
+                  'Ringtone set karne ke liye system settings badalne ki anumati on karein.',
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: const Text('बाद में'),
+                    child: const Text('Baad mein'),
                   ),
                   FilledButton(
                     onPressed: () => Navigator.pop(context, true),
-                    child: const Text('सेटिंग्स खोलें'),
+                    child: const Text('Settings kholen'),
                   ),
                 ],
               ),
@@ -141,18 +141,18 @@ class _RingtoneSheetState extends ConsumerState<_RingtoneSheet> {
         title: widget.asset.title,
       );
       if (!mounted) return;
-      _toast(ok ? 'सेट हो गया 🙏' : 'सेट नहीं हो सका');
+      _toast(ok ? 'Set ho gaya 🙏' : 'Set nahi ho saka');
     } on MissingPluginException {
       if (!mounted) return;
-      _toast('ऐप पूरी तरह रीस्टार्ट करें और फिर कोशिश करें');
+      _toast('App poori tarah restart karein aur phir koshish karein');
     } catch (e) {
       if (!mounted) return;
       final msg = e.toString();
       if (msg.contains('no_permission')) {
         await _media.openWriteSettings();
-        _toast('कृपया अनुमति चालू करके फिर सेट करें');
+        _toast('Kripya anumati on karke phir set karein');
       } else {
-        _toast('त्रुटि: $e');
+        _toast('Truti: $e');
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -185,7 +185,7 @@ class _RingtoneSheetState extends ConsumerState<_RingtoneSheet> {
             OutlinedButton.icon(
               onPressed: _busy ? null : _togglePreview,
               icon: Icon(_playing ? Icons.stop_rounded : Icons.play_arrow_rounded),
-              label: Text(_playing ? 'रोकें' : 'सुनें'),
+              label: Text(_playing ? 'Rokein' : 'Sunein'),
             ),
             const SizedBox(height: 8),
             if (_busy)
@@ -196,17 +196,17 @@ class _RingtoneSheetState extends ConsumerState<_RingtoneSheet> {
             else ...[
               ListTile(
                 leading: const Icon(Icons.ring_volume_rounded, color: AppColors.orange),
-                title: const Text('फोन रिंगटोन'),
+                title: const Text('Phone ringtone'),
                 onTap: () => _set(RingtoneTargetChoice.ringtone),
               ),
               ListTile(
                 leading: const Icon(Icons.notifications_active_rounded, color: AppColors.orange),
-                title: const Text('नोटिफिकेशन टोन'),
+                title: const Text('Notification tone'),
                 onTap: () => _set(RingtoneTargetChoice.notification),
               ),
               ListTile(
                 leading: const Icon(Icons.alarm_rounded, color: AppColors.orange),
-                title: const Text('अलार्म टोन'),
+                title: const Text('Alarm tone'),
                 onTap: () => _set(RingtoneTargetChoice.alarm),
               ),
             ],

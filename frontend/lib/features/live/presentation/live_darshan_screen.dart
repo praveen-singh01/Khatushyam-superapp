@@ -15,15 +15,14 @@ class LiveDarshanScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final live = ref.watch(liveStreamProvider);
-    final locale = Localizations.localeOf(context).languageCode;
-
     return Scaffold(
       appBar: AppBar(title: Text(l10n.featureLiveDarshan)),
       body: AsyncBody(
         value: live,
         onRetry: () => ref.invalidate(liveStreamProvider),
         builder: (state) {
-          final title = locale == 'en' ? state.titleEn : state.titleHi;
+          final title =
+              state.titleEn.isNotEmpty ? state.titleEn : state.titleHi;
           return RefreshIndicator(
             color: AppColors.orange,
             onRefresh: () async {

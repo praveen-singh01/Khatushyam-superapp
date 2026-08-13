@@ -1,8 +1,11 @@
 package com.khatushyam.khatushyam_app
 
+import android.Manifest
+import android.app.AlarmManager
 import android.app.WallpaperManager
 import android.content.ContentValues
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
@@ -14,6 +17,8 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.DisplayMetrics
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -22,6 +27,7 @@ import java.io.FileInputStream
 
 class MainActivity : FlutterActivity() {
     private val channelName = "khatushyam/device_media"
+    private val alarmPermissionRequestCode = 2401
     private var previewPlayer: MediaPlayer? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -29,6 +35,10 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, channelName)
             .setMethodCallHandler { call, result ->
                 when (call.method) {
+                    "requestAlarmPermissions" -> {
+                        requestAlarmPermissions()
+                        result.success(true)
+                    }
                     "canWriteSettings" -> {
                         result.success(
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -142,6 +152,38 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    private fun requestAlarmPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val granted =
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                ) == PackageManager.PERMISSION_GRANTED
+            if (!granted) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    alarmPermissionRequestCode,
+                )
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(AlarmManager::class.java)
+            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
+                try {
+                    startActivity(
+                        Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                            data = Uri.parse("package:$packageName")
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        },
+                    )
+                } catch (_: Exception) {
+                    // Ignore — USE_EXACT_ALARM may already cover this device.
+                }
+            }
+        }
     }
 
     override fun onDestroy() {

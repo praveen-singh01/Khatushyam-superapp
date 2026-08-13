@@ -16,6 +16,7 @@ export function AppLayout() {
             Dashboard
           </NavLink>
           <NavLink to="/story">Story</NavLink>
+          <NavLink to="/travel-guides">Travel</NavLink>
           <NavLink to="/content">Content</NavLink>
           <NavLink to="/users">Users</NavLink>
         </nav>

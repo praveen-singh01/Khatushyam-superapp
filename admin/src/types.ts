@@ -67,6 +67,18 @@ export interface StoryConfig {
   updatedAt?: string | null;
 }
 
+export interface TravelGuideItem {
+  id: string;
+  fromCity: { hi: string; en: string };
+  title: { hi: string; en: string };
+  steps: { hi: string; en: string }[];
+}
+
+export interface TravelGuidesConfig {
+  guides: TravelGuideItem[];
+  updatedAt?: string | null;
+}
+
 export interface ManagedUser {
   id: string;
   firebaseUid: string;

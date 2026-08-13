@@ -22,7 +22,8 @@ class StoryScreen extends ConsumerWidget {
       MaterialPageRoute<void>(
         builder:
             (_) => _ChapterReaderPage(
-              storyTitle: story.titleHi,
+              storyTitle:
+                  story.titleEn.isNotEmpty ? story.titleEn : story.titleHi,
               chapterNumber: index + 1,
               chapter: chapter,
               totalChapters: story.chapters.length,
@@ -114,17 +115,19 @@ class StoryScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      data.titleHi,
+                      data.titleEn.isNotEmpty ? data.titleEn : data.titleHi,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      data.summaryHi,
+                      data.summaryEn.isNotEmpty
+                          ? data.summaryEn
+                          : data.summaryHi,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '${data.chapters.length} अध्याय · पढ़ने के लिए टैप करें',
+                      '${data.chapters.length} adhyay · padhne ke liye tap karein',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.orange,
                         fontWeight: FontWeight.w600,
@@ -182,7 +185,7 @@ class StoryScreen extends ConsumerWidget {
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
-                                      'पूरा अध्याय पढ़ें →',
+                                      'Poora adhyay padhein →',
                                       style: Theme.of(
                                         context,
                                       ).textTheme.bodySmall?.copyWith(
@@ -227,7 +230,7 @@ class _ChapterReaderPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('अध्याय $chapterNumber / $totalChapters'),
+        title: Text('Adhyay $chapterNumber / $totalChapters'),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
@@ -254,7 +257,7 @@ class _ChapterReaderPage extends StatelessWidget {
           ),
           const SizedBox(height: 28),
           Text(
-            'जय श्री श्याम 🙏',
+            'Jai Shree Shyam 🙏',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: AppColors.orange,

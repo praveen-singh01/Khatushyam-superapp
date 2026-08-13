@@ -98,577 +98,565 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In hi, this message translates to:
-  /// **'खाटू श्याम बाबा'**
+  /// **'Khatu Shyam Baba'**
   String get appName;
 
   /// No description provided for @appTagline.
   ///
   /// In hi, this message translates to:
-  /// **'शांत भक्ति, हर दिन'**
+  /// **'Shaant bhakti, har din'**
   String get appTagline;
 
   /// No description provided for @navHome.
   ///
   /// In hi, this message translates to:
-  /// **'होम'**
+  /// **'Home'**
   String get navHome;
 
   /// No description provided for @navStory.
   ///
   /// In hi, this message translates to:
-  /// **'खोजें'**
+  /// **'Khojein'**
   String get navStory;
 
   /// No description provided for @navChamatkar.
   ///
   /// In hi, this message translates to:
-  /// **'समुदाय'**
+  /// **'Samuday'**
   String get navChamatkar;
 
   /// No description provided for @navPosters.
   ///
   /// In hi, this message translates to:
-  /// **'पोस्टर'**
+  /// **'Poster'**
   String get navPosters;
 
   /// No description provided for @navPremium.
   ///
   /// In hi, this message translates to:
-  /// **'प्रोफ़ाइल'**
+  /// **'Profile'**
   String get navPremium;
 
   /// No description provided for @signInTitle.
   ///
   /// In hi, this message translates to:
-  /// **'स्वागत है'**
+  /// **'Swagat hai'**
   String get signInTitle;
 
   /// No description provided for @signInSubtitle.
   ///
   /// In hi, this message translates to:
-  /// **'जारी रखने के लिए Google से साइन इन करें'**
+  /// **'Aage badhne ke liye Google se sign in karein'**
   String get signInSubtitle;
 
   /// No description provided for @signInWithGoogle.
   ///
   /// In hi, this message translates to:
-  /// **'Google से साइन इन करें'**
+  /// **'Google se sign in karein'**
   String get signInWithGoogle;
 
   /// No description provided for @signOut.
   ///
   /// In hi, this message translates to:
-  /// **'साइन आउट'**
+  /// **'Sign out'**
   String get signOut;
 
   /// No description provided for @profileEditName.
   ///
   /// In hi, this message translates to:
-  /// **'नाम बदलें'**
+  /// **'Naam badlein'**
   String get profileEditName;
 
   /// No description provided for @profileNameHint.
   ///
   /// In hi, this message translates to:
-  /// **'आपका नाम'**
+  /// **'Aapka naam'**
   String get profileNameHint;
 
   /// No description provided for @profileSave.
   ///
   /// In hi, this message translates to:
-  /// **'सेव करें'**
+  /// **'Save karein'**
   String get profileSave;
 
   /// No description provided for @profilePolicies.
   ///
   /// In hi, this message translates to:
-  /// **'नीतियाँ'**
+  /// **'Neetiyan'**
   String get profilePolicies;
 
   /// No description provided for @profileDaysRemaining.
   ///
   /// In hi, this message translates to:
-  /// **'{days} दिन शेष'**
+  /// **'{days} din shesh'**
   String profileDaysRemaining(int days);
 
   /// No description provided for @homeGreeting.
   ///
   /// In hi, this message translates to:
-  /// **'जय श्याम'**
+  /// **'Jai Shyam'**
   String get homeGreeting;
 
   /// No description provided for @homeFreeFeatures.
   ///
   /// In hi, this message translates to:
-  /// **'सभी के लिए मुफ़्त'**
+  /// **'Sabhi ke liye muft'**
   String get homeFreeFeatures;
 
   /// No description provided for @homePremiumFeatures.
   ///
   /// In hi, this message translates to:
-  /// **'सदस्यता के साथ'**
+  /// **'Sadasyata ke saath'**
   String get homePremiumFeatures;
 
   /// No description provided for @storyTitle.
   ///
   /// In hi, this message translates to:
-  /// **'श्याम कथा'**
+  /// **'Shyam Katha'**
   String get storyTitle;
 
   /// No description provided for @storySubtitle.
   ///
   /// In hi, this message translates to:
-  /// **'सरल अध्याय — मुफ़्त'**
+  /// **'Saral adhyay — muft'**
   String get storySubtitle;
 
   /// No description provided for @storyPlaceholder.
   ///
   /// In hi, this message translates to:
-  /// **'कथा वीडियो जल्द यहाँ आएगा।'**
+  /// **'Katha video jald yahan aayega.'**
   String get storyPlaceholder;
 
   /// No description provided for @chamatkarTitle.
   ///
   /// In hi, this message translates to:
-  /// **'चमत्कार'**
+  /// **'Chamatkar'**
   String get chamatkarTitle;
 
   /// No description provided for @chamatkarSubtitle.
   ///
   /// In hi, this message translates to:
-  /// **'भक्तों के अनुभव — मुफ़्त'**
+  /// **'Bhakton ke anubhav — muft'**
   String get chamatkarSubtitle;
 
   /// No description provided for @chamatkarPlaceholder.
   ///
   /// In hi, this message translates to:
-  /// **'समुदाय फ़ीड जल्द यहाँ आएगा।'**
+  /// **'Samuday feed jald yahan aayega.'**
   String get chamatkarPlaceholder;
 
   /// No description provided for @chamatkarShareCta.
   ///
   /// In hi, this message translates to:
-  /// **'अनुभव लिखें'**
+  /// **'Anubhav likhein'**
   String get chamatkarShareCta;
 
   /// No description provided for @chamatkarTitleHint.
   ///
   /// In hi, this message translates to:
-  /// **'शीर्षक'**
+  /// **'Shirshak'**
   String get chamatkarTitleHint;
 
   /// No description provided for @chamatkarStoryHint.
   ///
   /// In hi, this message translates to:
-  /// **'अपना अनुभव लिखें...'**
+  /// **'Apna anubhav likhein...'**
   String get chamatkarStoryHint;
 
   /// No description provided for @chamatkarPublish.
   ///
   /// In hi, this message translates to:
-  /// **'प्रकाशित करें'**
+  /// **'Prakashit karein'**
   String get chamatkarPublish;
 
   /// No description provided for @chamatkarEmpty.
   ///
   /// In hi, this message translates to:
-  /// **'अभी कोई अनुभव नहीं। पहले आप लिखें।'**
+  /// **'Abhi koi anubhav nahi. Pehle aap likhein.'**
   String get chamatkarEmpty;
 
   /// No description provided for @featureLiveDarshan.
   ///
   /// In hi, this message translates to:
-  /// **'लाइव दर्शन'**
+  /// **'Live Darshan'**
   String get featureLiveDarshan;
 
   /// No description provided for @liveDarshanSubtitle.
   ///
   /// In hi, this message translates to:
-  /// **'खाटू श्याम को YouTube पर लाइव देखें — मुफ़्त'**
+  /// **'Khatu Shyam ko YouTube par live dekhein — muft'**
   String get liveDarshanSubtitle;
 
   /// No description provided for @liveDarshanOfflineTitle.
   ///
   /// In hi, this message translates to:
-  /// **'लाइव दर्शन अभी बंद है'**
+  /// **'Live Darshan abhi band hai'**
   String get liveDarshanOfflineTitle;
 
   /// No description provided for @liveDarshanOfflineMessage.
   ///
   /// In hi, this message translates to:
-  /// **'जब आरती शुरू होगी, बाबा का लाइव यहाँ दिखेगा।'**
+  /// **'Jab aarti shuru hogi, Baba ka live yahan dikhega.'**
   String get liveDarshanOfflineMessage;
 
   /// No description provided for @liveDarshanLiveBadge.
   ///
   /// In hi, this message translates to:
-  /// **'अभी लाइव'**
+  /// **'Abhi live'**
   String get liveDarshanLiveBadge;
 
   /// No description provided for @liveDarshanOfflineBadge.
   ///
   /// In hi, this message translates to:
-  /// **'अभी लाइव नहीं'**
+  /// **'Abhi live nahi'**
   String get liveDarshanOfflineBadge;
 
   /// No description provided for @liveDarshanWatchCta.
   ///
   /// In hi, this message translates to:
-  /// **'लाइव देखें'**
+  /// **'Live dekhein'**
   String get liveDarshanWatchCta;
 
   /// No description provided for @paywallTitle.
   ///
   /// In hi, this message translates to:
-  /// **'प्रीमियम सदस्यता'**
+  /// **'Premium sadasyata'**
   String get paywallTitle;
 
   /// No description provided for @paywallSubtitle.
   ///
   /// In hi, this message translates to:
-  /// **'मासिक योजना से भक्ति सेवाएँ खोलें'**
+  /// **'Masik yojana se bhakti sevayein kholen'**
   String get paywallSubtitle;
 
   /// No description provided for @paywallSubtitleTrial.
   ///
   /// In hi, this message translates to:
-  /// **'₹3 ट्रायल से शुरू करें, फिर ₹199/महीना। कभी भी रद्द करें।'**
+  /// **'₹3 trial se shuru karein, phir ₹199/mahina. Kabhi bhi radd karein.'**
   String get paywallSubtitleTrial;
 
   /// No description provided for @paywallSubtitleReturn.
   ///
   /// In hi, this message translates to:
-  /// **'प्रीमियम के लिए साप्ताहिक या मासिक योजना चुनें'**
+  /// **'Premium ke liye saptahik ya masik yojana chunein'**
   String get paywallSubtitleReturn;
 
   /// No description provided for @paywallCta.
   ///
   /// In hi, this message translates to:
-  /// **'मासिक योजना शुरू करें'**
+  /// **'Masik yojana shuru karein'**
   String get paywallCta;
 
   /// No description provided for @paywallTrialTitle.
   ///
   /// In hi, this message translates to:
-  /// **'परिचय ट्रायल'**
+  /// **'Parichay trial'**
   String get paywallTrialTitle;
 
   /// No description provided for @paywallWeeklyTitle.
   ///
   /// In hi, this message translates to:
-  /// **'साप्ताहिक'**
+  /// **'Saptahik'**
   String get paywallWeeklyTitle;
 
   /// No description provided for @paywallMonthlyTitle.
   ///
   /// In hi, this message translates to:
-  /// **'मासिक'**
+  /// **'Masik'**
   String get paywallMonthlyTitle;
 
   /// No description provided for @paywallTrialDetail.
   ///
   /// In hi, this message translates to:
-  /// **'फिर ₹{price}/महीना। कभी भी रद्द करें।'**
+  /// **'Phir ₹{price}/mahina. Kabhi bhi radd karein.'**
   String paywallTrialDetail(int price);
 
   /// No description provided for @paywallTrialCta.
   ///
   /// In hi, this message translates to:
-  /// **'₹3 ट्रायल शुरू करें'**
+  /// **'₹3 trial shuru karein'**
   String get paywallTrialCta;
 
   /// No description provided for @paywallSubscribeCta.
   ///
   /// In hi, this message translates to:
-  /// **'सब्सक्राइब करें'**
+  /// **'Subscribe karein'**
   String get paywallSubscribeCta;
 
   /// No description provided for @paywallMandateNote.
   ///
   /// In hi, this message translates to:
-  /// **'पहला भुगतान: ऑटोपे मेंडेट सेट करने के लिए ₹3। उसके बाद चुनी योजना अपने आप रिन्यू होगी।'**
+  /// **'Pehla bhugtan: autopay mandate set karne ke liye ₹3. Uske baad chuni yojana apne aap renew hogi.'**
   String get paywallMandateNote;
 
   /// No description provided for @paywallMandateAddon.
   ///
   /// In hi, this message translates to:
-  /// **'आज ₹{amount} मेंडेट सेटअप'**
+  /// **'Aaj ₹{amount} mandate setup'**
   String paywallMandateAddon(int amount);
 
   /// No description provided for @paywallPerWeek.
   ///
   /// In hi, this message translates to:
-  /// **'प्रति सप्ताह'**
+  /// **'prati saptah'**
   String get paywallPerWeek;
 
   /// No description provided for @paywallPerMonth.
   ///
   /// In hi, this message translates to:
-  /// **'प्रति महीना'**
+  /// **'prati mahina'**
   String get paywallPerMonth;
 
   /// No description provided for @paywallCancelAnytime.
   ///
   /// In hi, this message translates to:
-  /// **'कभी भी रद्द करें'**
+  /// **'Kabhi bhi radd karein'**
   String get paywallCancelAnytime;
 
   /// No description provided for @paywallNote.
   ///
   /// In hi, this message translates to:
-  /// **'कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे।'**
+  /// **'Katha, Chamatkar aur Live Darshan muft rahenge.'**
   String get paywallNote;
 
   /// No description provided for @lockedTitle.
   ///
   /// In hi, this message translates to:
-  /// **'सदस्यता आवश्यक'**
+  /// **'Sadasyata zaroori'**
   String get lockedTitle;
 
   /// No description provided for @lockedMessage.
   ///
   /// In hi, this message translates to:
-  /// **'यह सुविधा मासिक सदस्यता से खुलती है।'**
+  /// **'Yeh suvidha masik sadasyata se khulti hai.'**
   String get lockedMessage;
 
   /// No description provided for @unlockCta.
   ///
   /// In hi, this message translates to:
-  /// **'योजना देखें'**
+  /// **'Yojana dekhein'**
   String get unlockCta;
 
   /// No description provided for @featureCalendar.
   ///
   /// In hi, this message translates to:
-  /// **'कैलेंडर'**
+  /// **'Calendar'**
   String get featureCalendar;
 
   /// No description provided for @featureAartiAlarms.
   ///
   /// In hi, this message translates to:
-  /// **'आरती अलार्म'**
+  /// **'Alarm'**
   String get featureAartiAlarms;
 
   /// No description provided for @featureEvents.
   ///
   /// In hi, this message translates to:
-  /// **'आयोजन'**
+  /// **'Aayojan'**
   String get featureEvents;
-
-  /// No description provided for @featureSingers.
-  ///
-  /// In hi, this message translates to:
-  /// **'गायक'**
-  String get featureSingers;
-
-  /// No description provided for @featureTempleStatus.
-  ///
-  /// In hi, this message translates to:
-  /// **'मंदिर स्थिति'**
-  String get featureTempleStatus;
 
   /// No description provided for @featureTravelGuides.
   ///
   /// In hi, this message translates to:
-  /// **'यात्रा गाइड'**
+  /// **'Yatra guide'**
   String get featureTravelGuides;
 
   /// No description provided for @featureBhajans.
   ///
   /// In hi, this message translates to:
-  /// **'भजन'**
+  /// **'Bhajan'**
   String get featureBhajans;
 
   /// No description provided for @featurePosters.
   ///
   /// In hi, this message translates to:
-  /// **'फोटो पोस्टर'**
+  /// **'Photo poster'**
   String get featurePosters;
 
   /// No description provided for @featureWallpapers.
   ///
   /// In hi, this message translates to:
-  /// **'वॉलपेपर'**
+  /// **'Wallpaper'**
   String get featureWallpapers;
 
   /// No description provided for @featureRingtones.
   ///
   /// In hi, this message translates to:
-  /// **'रिंगटोन'**
+  /// **'Ringtone'**
   String get featureRingtones;
 
   /// No description provided for @featureCallerTunes.
   ///
   /// In hi, this message translates to:
-  /// **'कॉलर ट्यून'**
+  /// **'Caller tune'**
   String get featureCallerTunes;
 
   /// No description provided for @premiumActive.
   ///
   /// In hi, this message translates to:
-  /// **'सदस्यता सक्रिय'**
+  /// **'Sadasyata sakriya'**
   String get premiumActive;
 
   /// No description provided for @premiumInactive.
   ///
   /// In hi, this message translates to:
-  /// **'मुफ़्त योजना'**
+  /// **'Muft yojana'**
   String get premiumInactive;
 
   /// No description provided for @premiumActiveHint.
   ///
   /// In hi, this message translates to:
-  /// **'सभी सेवाएँ खुली हैं'**
+  /// **'Saari sevayein khuli hain'**
   String get premiumActiveHint;
 
   /// No description provided for @premiumInactiveHint.
   ///
   /// In hi, this message translates to:
-  /// **'कैलेंडर, मीडिया और अधिक खोलें'**
+  /// **'Calendar, media aur zyada kholen'**
   String get premiumInactiveHint;
 
   /// No description provided for @posterHint.
   ///
   /// In hi, this message translates to:
-  /// **'अपनी फोटो जोड़ें, नेम प्लेट संपादित करें, फिर शेयर करें।'**
+  /// **'Apni photo jodein, name plate badlein, phir share karein.'**
   String get posterHint;
 
   /// No description provided for @posterEmpty.
   ///
   /// In hi, this message translates to:
-  /// **'अभी कोई पोस्टर नहीं। जल्द वापस देखें।'**
+  /// **'Abhi koi poster nahi. Jald wapas dekhein.'**
   String get posterEmpty;
 
   /// No description provided for @posterAddPhoto.
   ///
   /// In hi, this message translates to:
-  /// **'फोटो जोड़ें'**
+  /// **'Photo jodein'**
   String get posterAddPhoto;
 
   /// No description provided for @posterChangePhoto.
   ///
   /// In hi, this message translates to:
-  /// **'फोटो बदलें'**
+  /// **'Photo badlein'**
   String get posterChangePhoto;
 
   /// No description provided for @posterAddPhotoFirst.
   ///
   /// In hi, this message translates to:
-  /// **'पहले अपनी फोटो जोड़ें'**
+  /// **'Pehle apni photo jodein'**
   String get posterAddPhotoFirst;
 
   /// No description provided for @posterShare.
   ///
   /// In hi, this message translates to:
-  /// **'शेयर करें'**
+  /// **'Share karein'**
   String get posterShare;
 
   /// No description provided for @posterShareWithPhoto.
   ///
   /// In hi, this message translates to:
-  /// **'फोटो के साथ शेयर'**
+  /// **'Photo ke saath share'**
   String get posterShareWithPhoto;
 
   /// No description provided for @posterShareWithoutPhoto.
   ///
   /// In hi, this message translates to:
-  /// **'बिना फोटो शेयर'**
+  /// **'Bina photo share'**
   String get posterShareWithoutPhoto;
 
   /// No description provided for @posterEditNamePlate.
   ///
   /// In hi, this message translates to:
-  /// **'नेम प्लेट बदलें'**
+  /// **'Name plate badlein'**
   String get posterEditNamePlate;
 
   /// No description provided for @posterNameHint.
   ///
   /// In hi, this message translates to:
-  /// **'आपका नाम'**
+  /// **'Aapka naam'**
   String get posterNameHint;
 
   /// No description provided for @posterSubtitleHint.
   ///
   /// In hi, this message translates to:
-  /// **'नाम के नीचे की पंक्ति'**
+  /// **'Naam ke neeche ki pankti'**
   String get posterSubtitleHint;
 
   /// No description provided for @posterSaveNamePlate.
   ///
   /// In hi, this message translates to:
-  /// **'सेव करें'**
+  /// **'Save karein'**
   String get posterSaveNamePlate;
 
   /// No description provided for @posterCropTitle.
   ///
   /// In hi, this message translates to:
-  /// **'फोटो क्रॉप करें'**
+  /// **'Photo crop karein'**
   String get posterCropTitle;
 
   /// No description provided for @posterRemovingBackground.
   ///
   /// In hi, this message translates to:
-  /// **'बैकग्राउंड हटाया जा रहा है…'**
+  /// **'Background hataya ja raha hai…'**
   String get posterRemovingBackground;
 
   /// No description provided for @posterPreviewTitle.
   ///
   /// In hi, this message translates to:
-  /// **'प्रीव्यू'**
+  /// **'Preview'**
   String get posterPreviewTitle;
 
   /// No description provided for @posterUsePhoto.
   ///
   /// In hi, this message translates to:
-  /// **'ठीक है'**
+  /// **'Theek hai'**
   String get posterUsePhoto;
 
   /// No description provided for @posterCancel.
   ///
   /// In hi, this message translates to:
-  /// **'रद्द करें'**
+  /// **'Radd karein'**
   String get posterCancel;
 
   /// No description provided for @useTemplate.
   ///
   /// In hi, this message translates to:
-  /// **'चुनें'**
+  /// **'Chunein'**
   String get useTemplate;
 
   /// No description provided for @setWallpaper.
   ///
   /// In hi, this message translates to:
-  /// **'सेट करें'**
+  /// **'Set karein'**
   String get setWallpaper;
 
   /// No description provided for @setRingtone.
   ///
   /// In hi, this message translates to:
-  /// **'सेट करें'**
+  /// **'Set karein'**
   String get setRingtone;
 
   /// No description provided for @activateTune.
   ///
   /// In hi, this message translates to:
-  /// **'सक्रिय करें'**
+  /// **'Sakriya karein'**
   String get activateTune;
 
   /// No description provided for @comingSoon.
   ///
   /// In hi, this message translates to:
-  /// **'जल्द आ रहा है'**
+  /// **'Jald aa raha hai'**
   String get comingSoon;
 
   /// No description provided for @retry.
   ///
   /// In hi, this message translates to:
-  /// **'फिर कोशिश करें'**
+  /// **'Phir koshish karein'**
   String get retry;
 
   /// No description provided for @errorGeneric.
   ///
   /// In hi, this message translates to:
-  /// **'कुछ गलत हो गया। कृपया पुनः प्रयास करें।'**
+  /// **'Kuch galat ho gaya. Kripya phir koshish karein.'**
   String get errorGeneric;
 }
 

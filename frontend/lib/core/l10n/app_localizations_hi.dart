@@ -9,296 +9,290 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
-  String get appName => 'खाटू श्याम बाबा';
+  String get appName => 'Khatu Shyam Baba';
 
   @override
-  String get appTagline => 'शांत भक्ति, हर दिन';
+  String get appTagline => 'Shaant bhakti, har din';
 
   @override
-  String get navHome => 'होम';
+  String get navHome => 'Home';
 
   @override
-  String get navStory => 'खोजें';
+  String get navStory => 'Khojein';
 
   @override
-  String get navChamatkar => 'समुदाय';
+  String get navChamatkar => 'Samuday';
 
   @override
-  String get navPosters => 'पोस्टर';
+  String get navPosters => 'Poster';
 
   @override
-  String get navPremium => 'प्रोफ़ाइल';
+  String get navPremium => 'Profile';
 
   @override
-  String get signInTitle => 'स्वागत है';
+  String get signInTitle => 'Swagat hai';
 
   @override
-  String get signInSubtitle => 'जारी रखने के लिए Google से साइन इन करें';
+  String get signInSubtitle => 'Aage badhne ke liye Google se sign in karein';
 
   @override
-  String get signInWithGoogle => 'Google से साइन इन करें';
+  String get signInWithGoogle => 'Google se sign in karein';
 
   @override
-  String get signOut => 'साइन आउट';
+  String get signOut => 'Sign out';
 
   @override
-  String get profileEditName => 'नाम बदलें';
+  String get profileEditName => 'Naam badlein';
 
   @override
-  String get profileNameHint => 'आपका नाम';
+  String get profileNameHint => 'Aapka naam';
 
   @override
-  String get profileSave => 'सेव करें';
+  String get profileSave => 'Save karein';
 
   @override
-  String get profilePolicies => 'नीतियाँ';
+  String get profilePolicies => 'Neetiyan';
 
   @override
   String profileDaysRemaining(int days) {
-    return '$days दिन शेष';
+    return '$days din shesh';
   }
 
   @override
-  String get homeGreeting => 'जय श्याम';
+  String get homeGreeting => 'Jai Shyam';
 
   @override
-  String get homeFreeFeatures => 'सभी के लिए मुफ़्त';
+  String get homeFreeFeatures => 'Sabhi ke liye muft';
 
   @override
-  String get homePremiumFeatures => 'सदस्यता के साथ';
+  String get homePremiumFeatures => 'Sadasyata ke saath';
 
   @override
-  String get storyTitle => 'श्याम कथा';
+  String get storyTitle => 'Shyam Katha';
 
   @override
-  String get storySubtitle => 'सरल अध्याय — मुफ़्त';
+  String get storySubtitle => 'Saral adhyay — muft';
 
   @override
-  String get storyPlaceholder => 'कथा वीडियो जल्द यहाँ आएगा।';
+  String get storyPlaceholder => 'Katha video jald yahan aayega.';
 
   @override
-  String get chamatkarTitle => 'चमत्कार';
+  String get chamatkarTitle => 'Chamatkar';
 
   @override
-  String get chamatkarSubtitle => 'भक्तों के अनुभव — मुफ़्त';
+  String get chamatkarSubtitle => 'Bhakton ke anubhav — muft';
 
   @override
-  String get chamatkarPlaceholder => 'समुदाय फ़ीड जल्द यहाँ आएगा।';
+  String get chamatkarPlaceholder => 'Samuday feed jald yahan aayega.';
 
   @override
-  String get chamatkarShareCta => 'अनुभव लिखें';
+  String get chamatkarShareCta => 'Anubhav likhein';
 
   @override
-  String get chamatkarTitleHint => 'शीर्षक';
+  String get chamatkarTitleHint => 'Shirshak';
 
   @override
-  String get chamatkarStoryHint => 'अपना अनुभव लिखें...';
+  String get chamatkarStoryHint => 'Apna anubhav likhein...';
 
   @override
-  String get chamatkarPublish => 'प्रकाशित करें';
+  String get chamatkarPublish => 'Prakashit karein';
 
   @override
-  String get chamatkarEmpty => 'अभी कोई अनुभव नहीं। पहले आप लिखें।';
+  String get chamatkarEmpty => 'Abhi koi anubhav nahi. Pehle aap likhein.';
 
   @override
-  String get featureLiveDarshan => 'लाइव दर्शन';
+  String get featureLiveDarshan => 'Live Darshan';
 
   @override
-  String get liveDarshanSubtitle => 'खाटू श्याम को YouTube पर लाइव देखें — मुफ़्त';
+  String get liveDarshanSubtitle => 'Khatu Shyam ko YouTube par live dekhein — muft';
 
   @override
-  String get liveDarshanOfflineTitle => 'लाइव दर्शन अभी बंद है';
+  String get liveDarshanOfflineTitle => 'Live Darshan abhi band hai';
 
   @override
-  String get liveDarshanOfflineMessage => 'जब आरती शुरू होगी, बाबा का लाइव यहाँ दिखेगा।';
+  String get liveDarshanOfflineMessage => 'Jab aarti shuru hogi, Baba ka live yahan dikhega.';
 
   @override
-  String get liveDarshanLiveBadge => 'अभी लाइव';
+  String get liveDarshanLiveBadge => 'Abhi live';
 
   @override
-  String get liveDarshanOfflineBadge => 'अभी लाइव नहीं';
+  String get liveDarshanOfflineBadge => 'Abhi live nahi';
 
   @override
-  String get liveDarshanWatchCta => 'लाइव देखें';
+  String get liveDarshanWatchCta => 'Live dekhein';
 
   @override
-  String get paywallTitle => 'प्रीमियम सदस्यता';
+  String get paywallTitle => 'Premium sadasyata';
 
   @override
-  String get paywallSubtitle => 'मासिक योजना से भक्ति सेवाएँ खोलें';
+  String get paywallSubtitle => 'Masik yojana se bhakti sevayein kholen';
 
   @override
-  String get paywallSubtitleTrial => '₹3 ट्रायल से शुरू करें, फिर ₹199/महीना। कभी भी रद्द करें।';
+  String get paywallSubtitleTrial => '₹3 trial se shuru karein, phir ₹199/mahina. Kabhi bhi radd karein.';
 
   @override
-  String get paywallSubtitleReturn => 'प्रीमियम के लिए साप्ताहिक या मासिक योजना चुनें';
+  String get paywallSubtitleReturn => 'Premium ke liye saptahik ya masik yojana chunein';
 
   @override
-  String get paywallCta => 'मासिक योजना शुरू करें';
+  String get paywallCta => 'Masik yojana shuru karein';
 
   @override
-  String get paywallTrialTitle => 'परिचय ट्रायल';
+  String get paywallTrialTitle => 'Parichay trial';
 
   @override
-  String get paywallWeeklyTitle => 'साप्ताहिक';
+  String get paywallWeeklyTitle => 'Saptahik';
 
   @override
-  String get paywallMonthlyTitle => 'मासिक';
+  String get paywallMonthlyTitle => 'Masik';
 
   @override
   String paywallTrialDetail(int price) {
-    return 'फिर ₹$price/महीना। कभी भी रद्द करें।';
+    return 'Phir ₹$price/mahina. Kabhi bhi radd karein.';
   }
 
   @override
-  String get paywallTrialCta => '₹3 ट्रायल शुरू करें';
+  String get paywallTrialCta => '₹3 trial shuru karein';
 
   @override
-  String get paywallSubscribeCta => 'सब्सक्राइब करें';
+  String get paywallSubscribeCta => 'Subscribe karein';
 
   @override
-  String get paywallMandateNote => 'पहला भुगतान: ऑटोपे मेंडेट सेट करने के लिए ₹3। उसके बाद चुनी योजना अपने आप रिन्यू होगी।';
+  String get paywallMandateNote => 'Pehla bhugtan: autopay mandate set karne ke liye ₹3. Uske baad chuni yojana apne aap renew hogi.';
 
   @override
   String paywallMandateAddon(int amount) {
-    return 'आज ₹$amount मेंडेट सेटअप';
+    return 'Aaj ₹$amount mandate setup';
   }
 
   @override
-  String get paywallPerWeek => 'प्रति सप्ताह';
+  String get paywallPerWeek => 'prati saptah';
 
   @override
-  String get paywallPerMonth => 'प्रति महीना';
+  String get paywallPerMonth => 'prati mahina';
 
   @override
-  String get paywallCancelAnytime => 'कभी भी रद्द करें';
+  String get paywallCancelAnytime => 'Kabhi bhi radd karein';
 
   @override
-  String get paywallNote => 'कथा, चमत्कार और लाइव दर्शन मुफ़्त रहेंगे।';
+  String get paywallNote => 'Katha, Chamatkar aur Live Darshan muft rahenge.';
 
   @override
-  String get lockedTitle => 'सदस्यता आवश्यक';
+  String get lockedTitle => 'Sadasyata zaroori';
 
   @override
-  String get lockedMessage => 'यह सुविधा मासिक सदस्यता से खुलती है।';
+  String get lockedMessage => 'Yeh suvidha masik sadasyata se khulti hai.';
 
   @override
-  String get unlockCta => 'योजना देखें';
+  String get unlockCta => 'Yojana dekhein';
 
   @override
-  String get featureCalendar => 'कैलेंडर';
+  String get featureCalendar => 'Calendar';
 
   @override
-  String get featureAartiAlarms => 'आरती अलार्म';
+  String get featureAartiAlarms => 'Alarm';
 
   @override
-  String get featureEvents => 'आयोजन';
+  String get featureEvents => 'Aayojan';
 
   @override
-  String get featureSingers => 'गायक';
+  String get featureTravelGuides => 'Yatra guide';
 
   @override
-  String get featureTempleStatus => 'मंदिर स्थिति';
+  String get featureBhajans => 'Bhajan';
 
   @override
-  String get featureTravelGuides => 'यात्रा गाइड';
+  String get featurePosters => 'Photo poster';
 
   @override
-  String get featureBhajans => 'भजन';
+  String get featureWallpapers => 'Wallpaper';
 
   @override
-  String get featurePosters => 'फोटो पोस्टर';
+  String get featureRingtones => 'Ringtone';
 
   @override
-  String get featureWallpapers => 'वॉलपेपर';
+  String get featureCallerTunes => 'Caller tune';
 
   @override
-  String get featureRingtones => 'रिंगटोन';
+  String get premiumActive => 'Sadasyata sakriya';
 
   @override
-  String get featureCallerTunes => 'कॉलर ट्यून';
+  String get premiumInactive => 'Muft yojana';
 
   @override
-  String get premiumActive => 'सदस्यता सक्रिय';
+  String get premiumActiveHint => 'Saari sevayein khuli hain';
 
   @override
-  String get premiumInactive => 'मुफ़्त योजना';
+  String get premiumInactiveHint => 'Calendar, media aur zyada kholen';
 
   @override
-  String get premiumActiveHint => 'सभी सेवाएँ खुली हैं';
+  String get posterHint => 'Apni photo jodein, name plate badlein, phir share karein.';
 
   @override
-  String get premiumInactiveHint => 'कैलेंडर, मीडिया और अधिक खोलें';
+  String get posterEmpty => 'Abhi koi poster nahi. Jald wapas dekhein.';
 
   @override
-  String get posterHint => 'अपनी फोटो जोड़ें, नेम प्लेट संपादित करें, फिर शेयर करें।';
+  String get posterAddPhoto => 'Photo jodein';
 
   @override
-  String get posterEmpty => 'अभी कोई पोस्टर नहीं। जल्द वापस देखें।';
+  String get posterChangePhoto => 'Photo badlein';
 
   @override
-  String get posterAddPhoto => 'फोटो जोड़ें';
+  String get posterAddPhotoFirst => 'Pehle apni photo jodein';
 
   @override
-  String get posterChangePhoto => 'फोटो बदलें';
+  String get posterShare => 'Share karein';
 
   @override
-  String get posterAddPhotoFirst => 'पहले अपनी फोटो जोड़ें';
+  String get posterShareWithPhoto => 'Photo ke saath share';
 
   @override
-  String get posterShare => 'शेयर करें';
+  String get posterShareWithoutPhoto => 'Bina photo share';
 
   @override
-  String get posterShareWithPhoto => 'फोटो के साथ शेयर';
+  String get posterEditNamePlate => 'Name plate badlein';
 
   @override
-  String get posterShareWithoutPhoto => 'बिना फोटो शेयर';
+  String get posterNameHint => 'Aapka naam';
 
   @override
-  String get posterEditNamePlate => 'नेम प्लेट बदलें';
+  String get posterSubtitleHint => 'Naam ke neeche ki pankti';
 
   @override
-  String get posterNameHint => 'आपका नाम';
+  String get posterSaveNamePlate => 'Save karein';
 
   @override
-  String get posterSubtitleHint => 'नाम के नीचे की पंक्ति';
+  String get posterCropTitle => 'Photo crop karein';
 
   @override
-  String get posterSaveNamePlate => 'सेव करें';
+  String get posterRemovingBackground => 'Background hataya ja raha hai…';
 
   @override
-  String get posterCropTitle => 'फोटो क्रॉप करें';
+  String get posterPreviewTitle => 'Preview';
 
   @override
-  String get posterRemovingBackground => 'बैकग्राउंड हटाया जा रहा है…';
+  String get posterUsePhoto => 'Theek hai';
 
   @override
-  String get posterPreviewTitle => 'प्रीव्यू';
+  String get posterCancel => 'Radd karein';
 
   @override
-  String get posterUsePhoto => 'ठीक है';
+  String get useTemplate => 'Chunein';
 
   @override
-  String get posterCancel => 'रद्द करें';
+  String get setWallpaper => 'Set karein';
 
   @override
-  String get useTemplate => 'चुनें';
+  String get setRingtone => 'Set karein';
 
   @override
-  String get setWallpaper => 'सेट करें';
+  String get activateTune => 'Sakriya karein';
 
   @override
-  String get setRingtone => 'सेट करें';
+  String get comingSoon => 'Jald aa raha hai';
 
   @override
-  String get activateTune => 'सक्रिय करें';
+  String get retry => 'Phir koshish karein';
 
   @override
-  String get comingSoon => 'जल्द आ रहा है';
-
-  @override
-  String get retry => 'फिर कोशिश करें';
-
-  @override
-  String get errorGeneric => 'कुछ गलत हो गया। कृपया पुनः प्रयास करें।';
+  String get errorGeneric => 'Kuch galat ho gaya. Kripya phir koshish karein.';
 }

@@ -6,6 +6,7 @@ import { ContentPage } from "./pages/ContentPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
 import { StoryPage } from "./pages/StoryPage";
+import { TravelGuidesPage } from "./pages/TravelGuidesPage";
 import { UsersPage } from "./pages/UsersPage";
 
 function Protected({ children }: { children: ReactNode }) {
@@ -37,6 +38,7 @@ export default function App() {
       >
         <Route index element={<DashboardPage />} />
         <Route path="story" element={<StoryPage />} />
+        <Route path="travel-guides" element={<TravelGuidesPage />} />
         <Route path="content" element={<ContentPage />} />
         <Route path="users" element={<UsersPage />} />
       </Route>

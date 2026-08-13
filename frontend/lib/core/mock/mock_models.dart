@@ -128,36 +128,6 @@ class EventPoster {
   final String venue;
 }
 
-class SingerContact {
-  const SingerContact({
-    required this.id,
-    required this.name,
-    required this.city,
-    required this.phone,
-    required this.specialty,
-  });
-
-  final String id;
-  final String name;
-  final String city;
-  final String phone;
-  final String specialty;
-}
-
-class TempleStatus {
-  const TempleStatus({
-    required this.isOpen,
-    required this.statusLabel,
-    required this.nextChangeLabel,
-    required this.note,
-  });
-
-  final bool isOpen;
-  final String statusLabel;
-  final String nextChangeLabel;
-  final String note;
-}
-
 class TravelGuide {
   const TravelGuide({
     required this.id,
@@ -170,20 +140,6 @@ class TravelGuide {
   final String fromCity;
   final String title;
   final List<String> steps;
-}
-
-class BhajanTrack {
-  const BhajanTrack({
-    required this.id,
-    required this.title,
-    required this.artist,
-    required this.durationLabel,
-  });
-
-  final String id;
-  final String title;
-  final String artist;
-  final String durationLabel;
 }
 
 class MediaAsset {

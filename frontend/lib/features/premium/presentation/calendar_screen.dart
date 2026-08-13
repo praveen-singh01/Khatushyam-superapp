@@ -21,7 +21,7 @@ class CalendarFeatureScreen extends ConsumerStatefulWidget {
 class _CalendarFeatureScreenState extends ConsumerState<CalendarFeatureScreen> {
   CalendarDay? _selected;
 
-  static const _headers = ['सो', 'मं', 'बु', 'गु', 'शु', 'श', 'र'];
+  static const _headers = ['So', 'Ma', 'Bu', 'Gu', 'Shu', 'Sha', 'Ra'];
 
   @override
   Widget build(BuildContext context) {
@@ -167,11 +167,11 @@ class _CalendarFeatureScreenState extends ConsumerState<CalendarFeatureScreen> {
                     const SizedBox(height: 10),
                     const Row(
                       children: [
-                        _LegendDot(color: AppColors.orange, label: 'शुभ दिन'),
+                        _LegendDot(color: AppColors.orange, label: 'Shubh din'),
                         SizedBox(width: 12),
                         _LegendDot(
                           color: AppColors.orangeDeep,
-                          label: 'आज',
+                          label: 'Aaj',
                           bordered: true,
                         ),
                       ],
@@ -191,7 +191,7 @@ class _CalendarFeatureScreenState extends ConsumerState<CalendarFeatureScreen> {
                     const SizedBox(height: 8),
                     _InfoRow(
                       icon: Icons.calendar_view_day_rounded,
-                      label: 'वार',
+                      label: 'War',
                       value:
                           locale == 'en'
                               ? selected.weekdayEn
@@ -199,19 +199,19 @@ class _CalendarFeatureScreenState extends ConsumerState<CalendarFeatureScreen> {
                     ),
                     _InfoRow(
                       icon: Icons.brightness_2_rounded,
-                      label: 'तिथि',
+                      label: 'Tithi',
                       value:
                           locale == 'en' ? selected.tithiEn : selected.tithiHi,
                     ),
                     _InfoRow(
                       icon: Icons.auto_awesome_rounded,
-                      label: 'विशेष',
+                      label: 'Vishesh',
                       value:
                           selected.isSpecial
                               ? selected.title
                               : (locale == 'en'
-                                  ? 'Ordinary day'
-                                  : 'सामान्य दिन'),
+                                  ? 'Samanya din'
+                                  : 'Samanya din'),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -223,7 +223,7 @@ class _CalendarFeatureScreenState extends ConsumerState<CalendarFeatureScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'इस माह के शुभ दिन',
+                'Is mahine ke shubh din',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -284,18 +284,18 @@ class _CalendarFeatureScreenState extends ConsumerState<CalendarFeatureScreen> {
 
   String _monthHi(int month) {
     const names = [
-      'जनवरी',
-      'फ़रवरी',
-      'मार्च',
-      'अप्रैल',
-      'मई',
-      'जून',
-      'जुलाई',
-      'अगस्त',
-      'सितंबर',
-      'अक्टूबर',
-      'नवंबर',
-      'दिसंबर',
+      'Janvari',
+      'Farvari',
+      'March',
+      'April',
+      'Mai',
+      'June',
+      'July',
+      'Agast',
+      'Sitambar',
+      'Aktubar',
+      'Navambar',
+      'Disambar',
     ];
     return names[month - 1];
   }

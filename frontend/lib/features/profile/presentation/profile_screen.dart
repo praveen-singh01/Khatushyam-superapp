@@ -139,7 +139,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final policiesAsync = ref.watch(legalPoliciesProvider);
     final name = user?.displayName?.trim().isNotEmpty == true
         ? user!.displayName!
-        : 'भक्त';
+        : 'Bhakt';
     final email = user?.email ?? '';
     final photoUrl = user?.photoUrl;
     final isPremium = sub?.isPremium ?? false;

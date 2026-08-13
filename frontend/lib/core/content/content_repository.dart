@@ -20,18 +20,18 @@ class ContentRepository {
           final t = map['title'] as Map<String, dynamic>? ?? const {};
           final b = map['body'] as Map<String, dynamic>? ?? const {};
           return StoryChapter(
-            title: (t['hi'] as String?) ?? (t['en'] as String?) ?? '',
-            body: (b['hi'] as String?) ?? (b['en'] as String?) ?? '',
+            title: (t['en'] as String?) ?? (t['hi'] as String?) ?? '',
+            body: (b['en'] as String?) ?? (b['hi'] as String?) ?? '',
           );
         }).toList();
 
     final youtube = data['youtubeVideoId'];
     return StoryContent(
-      titleHi: (title['hi'] as String?) ?? 'खाटू श्याम कथा',
+      titleHi: (title['hi'] as String?) ?? 'Khatu Shyam Katha',
       titleEn: (title['en'] as String?) ?? 'Khatu Shyam Story',
       summaryHi:
           (summary['hi'] as String?) ??
-          'श्याम बाबा की भक्ति कथा — अध्यायों में पढ़ें।',
+          'Shyam Baba ki bhakti katha — chapters mein padhein.',
       summaryEn:
           (summary['en'] as String?) ??
           'The devotion story of Shyam Baba — read in chapters.',
@@ -40,8 +40,8 @@ class ContentRepository {
           chapters.isEmpty
               ? [
                 const StoryChapter(
-                  title: 'श्याम कथा',
-                  body: 'पूरा अध्याय शीघ्र उपलब्ध होगा।',
+                  title: 'Shyam Katha',
+                  body: 'Poora chapter jald available hoga.',
                 ),
               ]
               : chapters,
@@ -93,7 +93,7 @@ class ContentRepository {
       final format = (map['format'] as String?) ?? '';
       final duration = map['durationSeconds'];
       final subtitle = switch (type) {
-        'ringtone' when duration is num => '${duration.round()} सेकंड · $category',
+        'ringtone' when duration is num => '${duration.round()} sec · $category',
         _ => category.isEmpty ? format : '$category · $format',
       };
       return MediaAsset(
@@ -110,10 +110,39 @@ class ContentRepository {
     }).toList();
   }
 
+  Future<List<TravelGuide>> fetchTravelGuides() async {
+    final response = await _api.get<Map<String, dynamic>>(
+      '/v1/content/travel-guides',
+    );
+    final items = response.data?['guides'] as List<dynamic>? ?? const [];
+    return items.map((raw) {
+      final map = raw as Map<String, dynamic>;
+      final fromCity = map['fromCity'] as Map<String, dynamic>? ?? const {};
+      final title = map['title'] as Map<String, dynamic>? ?? const {};
+      final stepsRaw = map['steps'] as List<dynamic>? ?? const [];
+      final steps =
+          stepsRaw.map((step) {
+            if (step is String) return step;
+            final s = step as Map<String, dynamic>;
+            return (s['hi'] as String?) ?? (s['en'] as String?) ?? '';
+          }).where((s) => s.isNotEmpty).toList();
+      return TravelGuide(
+        id: (map['id'] as String?) ?? '',
+        fromCity:
+            (fromCity['hi'] as String?) ??
+            (fromCity['en'] as String?) ??
+            '',
+        title:
+            (title['hi'] as String?) ?? (title['en'] as String?) ?? '',
+        steps: steps,
+      );
+    }).toList();
+  }
+
   ChamatkarPost _mapChamatkar(Map<String, dynamic> map) {
     return ChamatkarPost(
       id: (map['_id'] as String?) ?? (map['id'] as String?) ?? '',
-      authorName: (map['authorName'] as String?) ?? 'भक्त',
+      authorName: (map['authorName'] as String?) ?? 'Bhakt',
       title: (map['title'] as String?) ?? '',
       story: (map['story'] as String?) ?? '',
       language: (map['language'] as String?) ?? 'hi',

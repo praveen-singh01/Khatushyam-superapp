@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/config/app_features.dart';
 import '../../../core/l10n/app_localizations.dart';
-import '../../../core/mock/mock_providers.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/circle_action.dart';
@@ -33,8 +32,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       AppFeature.calendar => l10n.featureCalendar,
       AppFeature.aartiAlarms => l10n.featureAartiAlarms,
       AppFeature.events => l10n.featureEvents,
-      AppFeature.singers => l10n.featureSingers,
-      AppFeature.templeStatus => l10n.featureTempleStatus,
       AppFeature.travelGuides => l10n.featureTravelGuides,
       AppFeature.bhajans => l10n.featureBhajans,
       AppFeature.posters => l10n.featurePosters,
@@ -53,7 +50,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isPremium =
         ref.watch(subscriptionControllerProvider).asData?.value.isPremium ??
         false;
-    final temple = ref.watch(templeStatusProvider);
     final liveAsync = ref.watch(liveStreamProvider);
     final liveData = liveAsync.asData?.value;
     if (liveData != null) {
@@ -62,24 +58,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final live = liveData ?? _cachedLive;
     final liveVideoId = live?.youtubeVideoId;
     final isLiveNow = live?.canPlay ?? false;
-    final name = user?.displayName?.split(' ').first ?? 'भक्त';
+    final name = user?.displayName?.split(' ').first ?? 'Bhakt';
     final livePath = AppRoutes.featurePath(
       AppFeature.liveDarshan.routeSegment,
     );
 
     final quickActions = <(AppFeature?, String, IconData, String)>[
       (
-        AppFeature.liveDarshan,
-        livePath,
-        Icons.live_tv_rounded,
-        l10n.featureLiveDarshan,
+        AppFeature.posters,
+        AppRoutes.posters,
+        Icons.photo_camera_rounded,
+        l10n.featurePosters,
       ),
-      (null, AppRoutes.story, Icons.auto_stories_rounded, l10n.storyTitle),
       (
-        AppFeature.bhajans,
-        AppRoutes.featurePath('bhajans'),
-        Icons.music_note_rounded,
-        l10n.featureBhajans,
+        AppFeature.wallpapers,
+        AppRoutes.featurePath('wallpapers'),
+        Icons.wallpaper_rounded,
+        l10n.featureWallpapers,
+      ),
+      (
+        AppFeature.ringtones,
+        AppRoutes.featurePath('ringtones'),
+        Icons.ring_volume_rounded,
+        l10n.featureRingtones,
       ),
       (
         AppFeature.calendar,
@@ -87,11 +88,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         Icons.calendar_month_rounded,
         l10n.featureCalendar,
       ),
+      (null, AppRoutes.story, Icons.auto_stories_rounded, l10n.storyTitle),
       (
-        AppFeature.templeStatus,
-        AppRoutes.featurePath('temple-status'),
-        Icons.temple_hindu_rounded,
-        l10n.featureTempleStatus,
+        AppFeature.bhajans,
+        AppRoutes.featurePath('bhajans'),
+        Icons.music_note_rounded,
+        l10n.featureBhajans,
       ),
       (
         AppFeature.aartiAlarms,
@@ -111,29 +113,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         Icons.map_rounded,
         l10n.featureTravelGuides,
       ),
-      (
-        AppFeature.posters,
-        AppRoutes.posters,
-        Icons.photo_camera_rounded,
-        l10n.featurePosters,
-      ),
-      (
-        AppFeature.wallpapers,
-        AppRoutes.featurePath('wallpapers'),
-        Icons.wallpaper_rounded,
-        l10n.featureWallpapers,
-      ),
     ];
 
     Future<void> refreshHome() async {
       ref.invalidate(liveStreamProvider);
-      ref.invalidate(templeStatusProvider);
       await Future.wait<void>([
         ref
             .read(liveStreamProvider.future)
-            .then((_) {}, onError: (_) {}),
-        ref
-            .read(templeStatusProvider.future)
             .then((_) {}, onError: (_) {}),
         ref.read(subscriptionControllerProvider.notifier).refresh(),
       ]);
@@ -169,7 +155,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 radius: 22,
                 backgroundColor: AppColors.orangeSoft,
                 child: Text(
-                  name.isNotEmpty ? name.characters.first : 'भ',
+                  name.isNotEmpty ? name.characters.first : 'B',
                   style: const TextStyle(
                     color: AppColors.orange,
                     fontWeight: FontWeight.w700,
@@ -191,14 +177,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             _HomeLiveHero(
               videoId: liveVideoId,
               title:
-                  Localizations.localeOf(context).languageCode == 'en'
-                      ? live.titleEn
-                      : live.titleHi,
+                  (live.titleEn.isNotEmpty ? live.titleEn : live.titleHi),
               onOpen: () => context.push(livePath),
             )
           else
             SoftCard(
               padding: EdgeInsets.zero,
+              onTap: () => context.push(livePath),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
@@ -213,72 +198,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 padding: const EdgeInsets.all(18),
-                child: temple.when(
-                  data:
-                      (status) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "आज की आरती",
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleMedium?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.9),
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            status.nextChangeLabel,
-                            style: Theme.of(context).textTheme.headlineMedium
-                                ?.copyWith(color: Colors.white, fontSize: 24),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  status.statusLabel,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                              const Spacer(),
-                              TextButton(
-                                onPressed:
-                                    () => context.push(
-                                      AppRoutes.featurePath('temple-status'),
-                                    ),
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                ),
-                                child: const Text('विवरण'),
-                              ),
-                            ],
-                          ),
-                        ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Jai Shree Shyam',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
-                  loading:
-                      () => Text(
-                        "आज की आरती",
-                        style: Theme.of(context).textTheme.headlineMedium
-                            ?.copyWith(color: Colors.white, fontSize: 24),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      l10n.featureLiveDarshan,
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(color: Colors.white, fontSize: 24),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Live darshan ke liye yahan tap karein',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.92),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
                       ),
-                  error:
-                      (_, __) => Text(
-                        l10n.featureTempleStatus,
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -326,7 +270,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
           const SizedBox(height: 22),
-          Text('त्वरित पहुँच', style: Theme.of(context).textTheme.titleLarge),
+          Text('Turant pahunch', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 14),
           GridView.builder(
             shrinkWrap: true,
@@ -528,8 +472,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       AppFeature.calendar => Icons.calendar_month_rounded,
       AppFeature.aartiAlarms => Icons.alarm_rounded,
       AppFeature.events => Icons.event_rounded,
-      AppFeature.singers => Icons.mic_rounded,
-      AppFeature.templeStatus => Icons.temple_hindu_rounded,
       AppFeature.travelGuides => Icons.map_rounded,
       AppFeature.bhajans => Icons.music_note_rounded,
       AppFeature.posters => Icons.photo_camera_rounded,

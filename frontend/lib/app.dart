@@ -14,7 +14,7 @@ class KhatuShyamApp extends ConsumerWidget {
     final router = ref.watch(goRouterProvider);
 
     return MaterialApp.router(
-      title: 'खाटू श्याम बाबा',
+      title: 'Khatu Shyam Baba',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       locale: const Locale('hi'),

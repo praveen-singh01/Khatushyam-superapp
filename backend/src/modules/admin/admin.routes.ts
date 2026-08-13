@@ -22,6 +22,12 @@ import {
   Story,
   toStoryResponse,
 } from "../content/story.model.js";
+import {
+  DEFAULT_TRAVEL_GUIDES,
+  TRAVEL_GUIDES_KEY,
+  TravelGuides,
+  toTravelGuidesResponse,
+} from "../content/travel-guide.model.js";
 import { Chamatkar } from "../chamatkars/chamatkar.model.js";
 import { s3LibraryKey } from "../../shared/media-paths.js";
 import type { UploadPresigner } from "../../shared/ports.js";
@@ -133,6 +139,30 @@ const storyUpdateSchema = z.object({
   }),
   youtubeVideoId: z.union([z.string().max(500), z.null()]).optional(),
   chapters: z.array(storyChapterSchema).min(1).max(50),
+});
+
+const travelGuideItemSchema = z.object({
+  id: z
+    .string()
+    .trim()
+    .min(2)
+    .max(64)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/i),
+  fromCity: localizedTextSchema,
+  title: localizedTextSchema,
+  steps: z
+    .array(
+      z.object({
+        hi: z.string().trim().min(1).max(2000),
+        en: z.string().trim().min(1).max(2000),
+      }),
+    )
+    .min(1)
+    .max(30),
+});
+
+const travelGuidesUpdateSchema = z.object({
+  guides: z.array(travelGuideItemSchema).min(1).max(40),
 });
 
 const liveStreamUpdateSchema = z
@@ -673,6 +703,59 @@ export function createAdminRouter(options: AdminRouterOptions): Router {
 
       res.json({
         story: toStoryResponse(doc.toObject()),
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.get("/travel-guides", async (_req, res, next) => {
+    try {
+      const doc = await TravelGuides.findOne({ key: TRAVEL_GUIDES_KEY }).lean();
+      if (!doc) {
+        res.json({
+          travelGuides: toTravelGuidesResponse({
+            guides: DEFAULT_TRAVEL_GUIDES.map((g) => ({
+              ...g,
+              fromCity: { ...g.fromCity },
+              title: { ...g.title },
+              steps: g.steps.map((s) => ({ ...s })),
+            })),
+          }),
+        });
+        return;
+      }
+      res.json({
+        travelGuides: toTravelGuidesResponse(doc),
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.put("/travel-guides", async (req, res, next) => {
+    try {
+      const input = travelGuidesUpdateSchema.parse(req.body);
+      const ids = input.guides.map((g) => g.id.toLowerCase());
+      if (new Set(ids).size !== ids.length) {
+        res.status(400).json({ error: "DUPLICATE_GUIDE_ID" });
+        return;
+      }
+
+      const doc = await TravelGuides.findOneAndUpdate(
+        { key: TRAVEL_GUIDES_KEY },
+        {
+          $set: {
+            key: TRAVEL_GUIDES_KEY,
+            guides: input.guides,
+            updatedBy: req.user!.id,
+          },
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true },
+      );
+
+      res.json({
+        travelGuides: toTravelGuidesResponse(doc.toObject()),
       });
     } catch (error) {
       next(error);

@@ -14,10 +14,14 @@ class LiveYoutubePlayer extends StatefulWidget {
     super.key,
     required this.videoId,
     this.autoPlay = true,
+    this.showLiveBadge = true,
+    this.loop = false,
   });
 
   final String videoId;
   final bool autoPlay;
+  final bool showLiveBadge;
+  final bool loop;
 
   /// Pause every mounted player (tab change / push to another screen).
   static void pauseAll() {
@@ -57,8 +61,9 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
         // Keep false — package LiveBottomBar slider crashes on live HLS.
         isLive: false,
         forceHD: false,
-        disableDragSeek: true,
+        disableDragSeek: widget.showLiveBadge,
         hideControls: false,
+        loop: widget.loop,
       ),
     );
     LiveYoutubePlayer._registry.add(_controller);
@@ -116,13 +121,17 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
             children: [
               YoutubePlayer(
                 controller: _controller,
-                showVideoProgressIndicator: false,
-                bottomActions: const [
-                  SizedBox(width: 14),
-                  _LiveChip(),
-                  Spacer(),
-                  FullScreenButton(),
-                  SizedBox(width: 8),
+                showVideoProgressIndicator: !widget.showLiveBadge,
+                bottomActions: [
+                  const SizedBox(width: 14),
+                  if (widget.showLiveBadge) const _LiveChip(),
+                  if (!widget.showLiveBadge) ...[
+                    CurrentPosition(),
+                    ProgressBar(isExpanded: true),
+                  ] else
+                    const Spacer(),
+                  const FullScreenButton(),
+                  const SizedBox(width: 8),
                 ],
               ),
             ],

@@ -13,7 +13,10 @@
     "check": "npm run build && npm test",
     "smoke": "tsx scripts/smoke-endpoints.ts",
     "local": "tsx scripts/local-dev-server.ts",
-    "seed:content": "tsx scripts/seed-content-library.ts"
+    "seed:content": "tsx scripts/seed-content-library.ts",
+    "replace:wallpapers": "tsx scripts/replace-wallpapers-from-folder.ts",
+    "replace:ringtones": "tsx scripts/replace-ringtones-from-folder.ts",
+    "seed:travel-guides": "tsx scripts/seed-travel-guides.ts"
   },
   "keywords": [],
   "author": "",

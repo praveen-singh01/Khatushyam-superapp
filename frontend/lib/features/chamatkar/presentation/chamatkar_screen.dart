@@ -45,7 +45,7 @@ class _ChamatkarScreenState extends ConsumerState<ChamatkarScreen> {
     final l10n = AppLocalizations.of(context)!;
     final user = ref.read(authStateProvider).asData?.value;
     if (user == null) {
-      _toast('साझा करने के लिए साइन इन करें');
+      _toast('Share karne ke liye sign in karein');
       return;
     }
 
@@ -111,7 +111,7 @@ class _ChamatkarScreenState extends ConsumerState<ChamatkarScreen> {
                       final story = storyController.text.trim();
                       if (title.length < 3) {
                         setModalState(
-                          () => formError = 'शीर्षक कम से कम 3 अक्षर का हो',
+                          () => formError = 'Shirshak kam se kam 3 akshar ka ho',
                         );
                         return;
                       }
@@ -119,7 +119,7 @@ class _ChamatkarScreenState extends ConsumerState<ChamatkarScreen> {
                         setModalState(
                           () =>
                               formError =
-                                  'अनुभव कम से कम 20 अक्षर का लिखें',
+                                  'Anubhav kam se kam 20 akshar ka likhein',
                         );
                         return;
                       }
@@ -144,33 +144,33 @@ class _ChamatkarScreenState extends ConsumerState<ChamatkarScreen> {
       await ref
           .read(chamatkarListProvider.notifier)
           .addPost(
-            authorName: user.displayName ?? 'भक्त',
+            authorName: user.displayName ?? 'Bhakt',
             title: title,
             story: story,
           );
-      if (mounted) _toast('आपका अनुभव साझा हो गया 🙏');
+      if (mounted) _toast('Aapka anubhav share ho gaya 🙏');
     } catch (_) {
-      if (mounted) _toast('साझा नहीं हो सका। फिर कोशिश करें।');
+      if (mounted) _toast('Share nahi ho saka. Phir koshish karein.');
     }
   }
 
   Future<void> _toggleLike(ChamatkarPost post) async {
     final user = ref.read(authStateProvider).asData?.value;
     if (user == null) {
-      _toast('लाइक के लिए साइन इन करें');
+      _toast('Like ke liye sign in karein');
       return;
     }
     try {
       await ref.read(chamatkarListProvider.notifier).toggleLike(post.id);
     } catch (_) {
-      if (mounted) _toast('लाइक नहीं हो सका');
+      if (mounted) _toast('Like nahi ho saka');
     }
   }
 
   Future<void> _share(ChamatkarPost post) async {
-    final text = '${post.title}\n\n${post.story}\n\n— ${post.authorName}\nजय श्री श्याम';
+    final text = '${post.title}\n\n${post.story}\n\n— ${post.authorName}\nJai Shree Shyam';
     await Clipboard.setData(ClipboardData(text: text));
-    if (mounted) _toast('अनुभव कॉपी हो गया — अब शेयर करें');
+    if (mounted) _toast('Anubhav copy ho gaya — ab share karein');
   }
 
   void _toast(String msg) {
@@ -261,7 +261,7 @@ class _ChamatkarScreenState extends ConsumerState<ChamatkarScreen> {
                                 final initial =
                                     post.authorName.isNotEmpty
                                         ? post.authorName.characters.first
-                                        : 'भ';
+                                        : 'B';
                                 return SoftCard(
                                   child: Column(
                                     crossAxisAlignment:
@@ -333,7 +333,7 @@ class _ChamatkarScreenState extends ConsumerState<ChamatkarScreen> {
                                             label:
                                                 post.likeCount > 0
                                                     ? '${post.likeCount}'
-                                                    : 'लाइक',
+                                                    : 'Like',
                                             color:
                                                 post.likedByMe
                                                     ? AppColors.orange
@@ -343,7 +343,7 @@ class _ChamatkarScreenState extends ConsumerState<ChamatkarScreen> {
                                           const SizedBox(width: 16),
                                           _ActionChip(
                                             icon: Icons.ios_share_rounded,
-                                            label: 'शेयर',
+                                            label: 'Share',
                                             onTap: () => _share(post),
                                           ),
                                         ],
@@ -365,10 +365,10 @@ class _ChamatkarScreenState extends ConsumerState<ChamatkarScreen> {
 
   String _timeAgo(DateTime time) {
     final diff = DateTime.now().difference(time);
-    if (diff.inMinutes < 1) return 'अभी';
-    if (diff.inMinutes < 60) return '${diff.inMinutes} मिनेट पहले';
-    if (diff.inHours < 24) return '${diff.inHours} घंटे पहले';
-    return '${diff.inDays} दिन पहले';
+    if (diff.inMinutes < 1) return 'Abhi';
+    if (diff.inMinutes < 60) return '${diff.inMinutes} min pehle';
+    if (diff.inHours < 24) return '${diff.inHours} ghante pehle';
+    return '${diff.inDays} din pehle';
   }
 }
 

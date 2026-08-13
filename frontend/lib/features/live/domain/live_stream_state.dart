@@ -23,7 +23,7 @@ class LiveStreamState extends Equatable {
   factory LiveStreamState.offline() => const LiveStreamState(
     isLive: false,
     youtubeVideoId: null,
-    titleHi: 'खाटू श्याम लाइव दर्शन',
+    titleHi: 'Khatu Shyam Live Darshan',
     titleEn: 'Khatu Shyam Live Darshan',
   );
 
@@ -34,7 +34,7 @@ class LiveStreamState extends Equatable {
     return LiveStreamState(
       isLive: json['isLive'] == true,
       youtubeVideoId: json['youtubeVideoId'] as String?,
-      titleHi: (titleMap['hi'] as String?) ?? 'खाटू श्याम लाइव दर्शन',
+      titleHi: (titleMap['hi'] as String?) ?? 'Khatu Shyam Live Darshan',
       titleEn: (titleMap['en'] as String?) ?? 'Khatu Shyam Live Darshan',
       embedUrl: json['embedUrl'] as String?,
       access: (json['access'] as String?) ?? 'free',

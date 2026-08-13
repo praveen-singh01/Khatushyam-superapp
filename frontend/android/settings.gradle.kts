@@ -22,7 +22,8 @@ plugins {
     // START: FlutterFire Configuration
     id("com.google.gms.google-services") version("4.4.4") apply false
     // END: FlutterFire Configuration
-    id("org.jetbrains.kotlin.android") version "1.8.22" apply false
+    // alarm + permission_handler_android need Kotlin 2.0+
+    id("org.jetbrains.kotlin.android") version "2.0.21" apply false
 }
 
 include(":app")

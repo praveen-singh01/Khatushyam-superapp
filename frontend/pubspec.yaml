@@ -33,6 +33,7 @@ dependencies:
   image: ^4.8.0
   image_cropper: ^12.2.1
   razorpay_flutter: ^1.4.5
+  alarm: ^5.1.5
 
 dev_dependencies:
   flutter_test:
@@ -45,3 +46,4 @@ flutter:
   generate: true
   assets:
     - assets/applogo.png
+    - assets/sounds/default_alarm.m4a

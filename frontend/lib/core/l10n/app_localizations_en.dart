@@ -189,16 +189,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get featureCalendar => 'Calendar';
 
   @override
-  String get featureAartiAlarms => 'Aarti alarms';
+  String get featureAartiAlarms => 'Alarm';
 
   @override
   String get featureEvents => 'Events';
-
-  @override
-  String get featureSingers => 'Singers';
-
-  @override
-  String get featureTempleStatus => 'Temple status';
 
   @override
   String get featureTravelGuides => 'Travel guides';

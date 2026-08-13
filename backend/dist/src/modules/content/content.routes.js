@@ -4,6 +4,7 @@ import { ContentAsset } from "./content-asset.model.js";
 import { DEFAULT_LIVE_TITLE, LIVE_STREAM_KEY, LiveStream, toLiveStreamResponse, } from "./live-stream.model.js";
 import { isS3MediaKey } from "../../shared/media-paths.js";
 import { DEFAULT_STORY, STORY_KEY, Story, toStoryResponse, } from "./story.model.js";
+import { DEFAULT_TRAVEL_GUIDES, TRAVEL_GUIDES_KEY, TravelGuides, toTravelGuidesResponse, } from "./travel-guide.model.js";
 const LIBRARY_TYPES = new Set(["wallpaper", "ringtone", "poster"]);
 const POSTERS_PAGE_MAX = 50;
 const POSTERS_PAGE_DEFAULT = 20;
@@ -64,14 +65,33 @@ export function createContentRouter(authenticate, requirePremium, cloudFrontBase
             next(error);
         }
     });
+    /** Travel guides — admin CMS list (Hinglish / localized steps). */
+    router.get("/travel-guides", async (_req, res, next) => {
+        try {
+            const doc = await TravelGuides.findOne({ key: TRAVEL_GUIDES_KEY }).lean();
+            if (!doc) {
+                res.json(toTravelGuidesResponse({
+                    guides: DEFAULT_TRAVEL_GUIDES.map((g) => ({
+                        ...g,
+                        fromCity: { ...g.fromCity },
+                        title: { ...g.title },
+                        steps: g.steps.map((s) => ({ ...s })),
+                    })),
+                }));
+                return;
+            }
+            res.json(toTravelGuidesResponse(doc));
+        }
+        catch (error) {
+            next(error);
+        }
+    });
     router.get("/premium-manifest", authenticate, requirePremium, (_req, res) => {
         res.json({
             features: [
                 "calendar",
                 "aarti_alarms",
                 "events",
-                "singers",
-                "temple_status",
                 "travel_guides",
                 "bhajans",
                 "personalized_posters",

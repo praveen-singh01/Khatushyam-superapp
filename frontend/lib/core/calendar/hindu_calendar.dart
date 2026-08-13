@@ -6,13 +6,13 @@ class HinduCalendar {
   HinduCalendar._();
 
   static const _weekdayHi = [
-    'सोमवार',
-    'मंगलवार',
-    'बुधवार',
-    'गुरुवार',
-    'शुक्रवार',
-    'शनिवार',
-    'रविवार',
+    'Somvaar',
+    'Mangalvaar',
+    'Budhvaar',
+    'Guruvaar',
+    'Shukravaar',
+    'Shanivaar',
+    'Ravivaar',
   ];
   static const _weekdayEn = [
     'Monday',
@@ -25,36 +25,36 @@ class HinduCalendar {
   ];
 
   static const _tithiHi = [
-    'प्रतिपदा',
-    'द्वितीया',
-    'तृतीया',
-    'चतुर्थी',
-    'पंचमी',
-    'षष्ठी',
-    'सप्तमी',
-    'अष्टमी',
-    'नवमी',
-    'दशमी',
-    'एकादशी',
-    'द्वादशी',
-    'त्रयोदशी',
-    'चतुर्दशी',
-    'पूर्णिमा',
-    'प्रतिपदा',
-    'द्वितीया',
-    'तृतीया',
-    'चतुर्थी',
-    'पंचमी',
-    'षष्ठी',
-    'सप्तमी',
-    'अष्टमी',
-    'नवमी',
-    'दशमी',
-    'एकादशी',
-    'द्वादशी',
-    'त्रयोदशी',
-    'चतुर्दशी',
-    'अमावस्या',
+    'Pratipada',
+    'Dwitiya',
+    'Tritiya',
+    'Chaturthi',
+    'Panchami',
+    'Shashthi',
+    'Saptami',
+    'Ashtami',
+    'Navami',
+    'Dashami',
+    'Ekadashi',
+    'Dwadashi',
+    'Trayodashi',
+    'Chaturdashi',
+    'Purnima',
+    'Pratipada',
+    'Dwitiya',
+    'Tritiya',
+    'Chaturthi',
+    'Panchami',
+    'Shashthi',
+    'Saptami',
+    'Ashtami',
+    'Navami',
+    'Dashami',
+    'Ekadashi',
+    'Dwadashi',
+    'Trayodashi',
+    'Chaturdashi',
+    'Amavasya',
   ];
 
   static const _tithiEn = [
@@ -103,7 +103,8 @@ class HinduCalendar {
     return idx.clamp(0, 29);
   }
 
-  static String pakshaHi(int index) => index < 15 ? 'शुक्ल पक्ष' : 'कृष्ण पक्ष';
+  static String pakshaHi(int index) =>
+      index < 15 ? 'Shukla Paksha' : 'Krishna Paksha';
 
   static String pakshaEn(int index) =>
       index < 15 ? 'Shukla Paksha' : 'Krishna Paksha';
@@ -114,10 +115,10 @@ class HinduCalendar {
 
     // Fixed / approximate annual devotion markers (Gregorian anchors).
     const fixed = <String, ({String hi, String en})>{
-      '3-14': (hi: 'होली / फाल्गुन उत्सव', en: 'Holi / Phalgun fest'),
-      '8-16': (hi: 'जन्माष्टमी', en: 'Janmashtami'),
-      '10-20': (hi: 'दीपावली', en: 'Diwali'),
-      '11-5': (hi: 'गोवर्धन पूजा', en: 'Govardhan Puja'),
+      '3-14': (hi: 'Holi / Phalgun utsav', en: 'Holi / Phalgun fest'),
+      '8-16': (hi: 'Janmashtami', en: 'Janmashtami'),
+      '10-20': (hi: 'Diwali', en: 'Diwali'),
+      '11-5': (hi: 'Govardhan Puja', en: 'Govardhan Puja'),
     };
 
     if (fixed.containsKey(md)) {
@@ -128,21 +129,21 @@ class HinduCalendar {
     // Recurring lunar-auspicious days.
     if (t == 10 || t == 25) {
       return (
-        hi: 'एकादशी व्रत',
+        hi: 'Ekadashi vrat',
         en: 'Ekadashi vrat',
         special: true,
       );
     }
     if (t == 14) {
-      return (hi: 'पूर्णिमा', en: 'Purnima', special: true);
+      return (hi: 'Purnima', en: 'Purnima', special: true);
     }
     if (t == 29) {
-      return (hi: 'अमावस्या', en: 'Amavasya', special: true);
+      return (hi: 'Amavasya', en: 'Amavasya', special: true);
     }
     // Monday + Shyam devotion cue
     if (date.weekday == DateTime.monday) {
       return (
-        hi: 'सोमवार श्याम भक्ति',
+        hi: 'Somvaar Shyam bhakti',
         en: 'Monday Shyam devotion',
         special: true,
       );

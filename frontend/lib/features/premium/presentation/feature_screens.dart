@@ -14,6 +14,7 @@ import '../../live/presentation/live_darshan_screen.dart';
 import '../../live/presentation/live_youtube_player.dart';
 import '../../posters/presentation/posters_screen.dart';
 import 'calendar_screen.dart';
+import '../../alarms/presentation/alarms_screen.dart';
 import 'ringtone_actions.dart';
 import 'wallpaper_viewer.dart';
 
@@ -51,10 +52,8 @@ class _FeatureHostScreenState extends ConsumerState<FeatureHostScreen> {
     return switch (feature) {
       AppFeature.liveDarshan => const LiveDarshanScreen(),
       AppFeature.calendar => const CalendarFeatureScreen(),
-      AppFeature.aartiAlarms => const AartiAlarmsFeatureScreen(),
+      AppFeature.aartiAlarms => const AlarmsFeatureScreen(),
       AppFeature.events => const EventsFeatureScreen(),
-      AppFeature.singers => const SingersFeatureScreen(),
-      AppFeature.templeStatus => const TempleStatusFeatureScreen(),
       AppFeature.travelGuides => const TravelGuidesFeatureScreen(),
       AppFeature.bhajans => const BhajansFeatureScreen(),
       AppFeature.posters => const PostersScreen(),
@@ -74,8 +73,6 @@ class _FeatureHostScreenState extends ConsumerState<FeatureHostScreen> {
       AppFeature.calendar => l10n.featureCalendar,
       AppFeature.aartiAlarms => l10n.featureAartiAlarms,
       AppFeature.events => l10n.featureEvents,
-      AppFeature.singers => l10n.featureSingers,
-      AppFeature.templeStatus => l10n.featureTempleStatus,
       AppFeature.travelGuides => l10n.featureTravelGuides,
       AppFeature.bhajans => l10n.featureBhajans,
       AppFeature.posters => l10n.featurePosters,
@@ -107,48 +104,6 @@ class _FeatureScaffold extends StatelessWidget {
         ),
       ),
       body: child,
-    );
-  }
-}
-
-class AartiAlarmsFeatureScreen extends ConsumerWidget {
-  const AartiAlarmsFeatureScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final slots = ref.watch(aartiSlotsProvider);
-    return _FeatureScaffold(
-      title: l10n.featureAartiAlarms,
-      child: AsyncBody(
-        value: slots,
-        onRetry: () => ref.invalidate(aartiSlotsProvider),
-        builder:
-            (items) => ListView.separated(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-              itemCount: items.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 10),
-              itemBuilder: (context, index) {
-                final slot = items[index];
-                return SoftCard(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  child: SwitchListTile(
-                    value: slot.enabled,
-                    activeColor: AppColors.orange,
-                    title: Text(slot.name),
-                    subtitle: Text(slot.timeLabel),
-                    onChanged:
-                        (value) => ref
-                            .read(aartiSlotsProvider.notifier)
-                            .toggle(slot.id, value),
-                  ),
-                );
-              },
-            ),
-      ),
     );
   }
 }
@@ -202,7 +157,7 @@ class EventsFeatureScreen extends ConsumerWidget {
                             Text(event.dateLabel),
                             const SizedBox(height: 8),
                             Text(
-                              'विवरण देखें',
+                              'Vivaran dekhein',
                               style: Theme.of(context).textTheme.labelLarge
                                   ?.copyWith(color: AppColors.orange),
                             ),
@@ -214,131 +169,6 @@ class EventsFeatureScreen extends ConsumerWidget {
                 );
               },
             ),
-      ),
-    );
-  }
-}
-
-class SingersFeatureScreen extends ConsumerWidget {
-  const SingersFeatureScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final singers = ref.watch(singersProvider);
-    return _FeatureScaffold(
-      title: l10n.featureSingers,
-      child: AsyncBody(
-        value: singers,
-        onRetry: () => ref.invalidate(singersProvider),
-        builder:
-            (items) => ListView.separated(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-              itemCount: items.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 10),
-              itemBuilder: (context, index) {
-                final singer = items[index];
-                return SoftCard(
-                  child: Row(
-                    children: [
-                      const CircleAvatar(
-                        radius: 26,
-                        backgroundColor: AppColors.orangeSoft,
-                        child: Icon(Icons.mic_rounded, color: AppColors.orange),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              singer.name,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            Text('${singer.specialty} · ${singer.city}'),
-                            Text(
-                              singer.phone,
-                              style: Theme.of(context).textTheme.labelLarge
-                                  ?.copyWith(color: AppColors.orange),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.call_rounded,
-                          color: AppColors.orange,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-      ),
-    );
-  }
-}
-
-class TempleStatusFeatureScreen extends ConsumerWidget {
-  const TempleStatusFeatureScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final status = ref.watch(templeStatusProvider);
-    return _FeatureScaffold(
-      title: l10n.featureTempleStatus,
-      child: AsyncBody(
-        value: status,
-        onRetry: () => ref.invalidate(templeStatusProvider),
-        builder: (data) {
-          return ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              SoftCard(
-                color:
-                    data.isOpen
-                        ? AppColors.successSoft
-                        : const Color(0xFFFDECEA),
-                child: Column(
-                  children: [
-                    Icon(
-                      data.isOpen
-                          ? Icons.check_circle_rounded
-                          : Icons.cancel_rounded,
-                      size: 48,
-                      color: data.isOpen ? AppColors.success : AppColors.error,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      data.statusLabel,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: 6),
-                    Text(data.nextChangeLabel),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 14),
-              SoftCard(
-                child: Text(
-                  data.note,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(color: AppColors.ink),
-                ),
-              ),
-              const SizedBox(height: 14),
-              FilledButton.icon(
-                onPressed: () => ref.invalidate(templeStatusProvider),
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text('रिफ्रेश'),
-              ),
-            ],
-          );
-        },
       ),
     );
   }
@@ -470,115 +300,14 @@ class BhajansFeatureScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final tracks = ref.watch(bhajansProvider);
-    return _FeatureScaffold(
+    // Same catalog as ringtones for now.
+    return _MediaListScreen(
       title: l10n.featureBhajans,
-      child: AsyncBody(
-        value: tracks,
-        onRetry: () => ref.invalidate(bhajansProvider),
-        builder:
-            (items) => Column(
-              children: [
-                SizedBox(
-                  height: 42,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: const [
-                      _CategoryChip(label: 'सभी', selected: true),
-                      _CategoryChip(label: 'प्रातः'),
-                      _CategoryChip(label: 'संध्या'),
-                      _CategoryChip(label: 'आरती'),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-                    itemCount: items.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
-                      final track = items[index];
-                      return SoftCard(
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 54,
-                              height: 54,
-                              decoration: BoxDecoration(
-                                color: AppColors.orangeSoft,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: const Icon(
-                                Icons.music_note_rounded,
-                                color: AppColors.orange,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    track.title,
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                  Text(
-                                    '${track.artist} · ${track.durationLabel}',
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const CircleAvatar(
-                              backgroundColor: AppColors.orange,
-                              child: Icon(
-                                Icons.play_arrow_rounded,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-      ),
-    );
-  }
-}
-
-class _CategoryChip extends StatelessWidget {
-  const _CategoryChip({required this.label, this.selected = false});
-
-  final String label;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected ? AppColors.orange : AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected ? AppColors.orange : AppColors.line,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? Colors.white : AppColors.ink,
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
-          ),
-        ),
-      ),
+      value: ref.watch(bhajansProvider),
+      onRetry: () => ref.invalidate(bhajansProvider),
+      actionLabel: l10n.setRingtone,
+      icon: Icons.music_note_rounded,
+      onItemTap: (asset) => openRingtoneActions(context, asset: asset),
     );
   }
 }
@@ -589,13 +318,76 @@ class WallpapersFeatureScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    return _MediaGridScreen(
-      title: l10n.featureWallpapers,
-      value: ref.watch(wallpapersProvider),
-      onRetry: () => ref.invalidate(wallpapersProvider),
-      actionLabel: l10n.setWallpaper,
-      icon: Icons.wallpaper_rounded,
-      onItemTap: (asset) => openWallpaperViewer(context, asset: asset),
+    final value = ref.watch(wallpapersProvider);
+
+    return value.when(
+      data: (items) {
+        if (items.isEmpty) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            appBar: AppBar(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              title: Text(l10n.featureWallpapers),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                onPressed:
+                    () =>
+                        context.canPop()
+                            ? context.pop()
+                            : context.go(AppRoutes.home),
+              ),
+            ),
+            body: Center(
+              child: Text(
+                l10n.errorGeneric,
+                style: const TextStyle(color: Colors.white70),
+              ),
+            ),
+          );
+        }
+        return WallpaperCarouselPage(assets: items);
+      },
+      loading:
+          () => const Scaffold(
+            backgroundColor: Colors.black,
+            body: Center(
+              child: CircularProgressIndicator(color: AppColors.orange),
+            ),
+          ),
+      error:
+          (_, __) => Scaffold(
+            backgroundColor: Colors.black,
+            appBar: AppBar(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              title: Text(l10n.featureWallpapers),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                onPressed:
+                    () =>
+                        context.canPop()
+                            ? context.pop()
+                            : context.go(AppRoutes.home),
+              ),
+            ),
+            body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.errorGeneric,
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () => ref.invalidate(wallpapersProvider),
+                    child: Text(l10n.retry),
+                  ),
+                ],
+              ),
+            ),
+          ),
     );
   }
 }
@@ -630,94 +422,6 @@ class CallerTunesFeatureScreen extends ConsumerWidget {
       actionLabel: l10n.activateTune,
       icon: Icons.call_rounded,
       onItemTap: (asset) => openRingtoneActions(context, asset: asset),
-    );
-  }
-}
-
-class _MediaGridScreen extends StatelessWidget {
-  const _MediaGridScreen({
-    required this.title,
-    required this.value,
-    required this.onRetry,
-    required this.actionLabel,
-    required this.icon,
-    this.onItemTap,
-  });
-
-  final String title;
-  final AsyncValue<List<MediaAsset>> value;
-  final VoidCallback onRetry;
-  final String actionLabel;
-  final IconData icon;
-  final void Function(MediaAsset asset)? onItemTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return _FeatureScaffold(
-      title: title,
-      child: AsyncBody(
-        value: value,
-        onRetry: onRetry,
-        builder:
-            (items) => GridView.builder(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-              itemCount: items.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 0.86,
-              ),
-              itemBuilder: (context, index) {
-                final item = items[index];
-                final imageUrl = item.url;
-                return SoftCard(
-                  onTap: onItemTap == null ? null : () => onItemTap!(item),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child:
-                              imageUrl != null && imageUrl.isNotEmpty
-                                  ? Image.network(
-                                    imageUrl,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (_, __, ___) => _MediaPlaceholder(
-                                          icon: icon,
-                                        ),
-                                  )
-                                  : _MediaPlaceholder(icon: icon),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        item.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Text(
-                        item.subtitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        actionLabel,
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: AppColors.orange,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-      ),
     );
   }
 }
@@ -791,27 +495,6 @@ class _MediaListScreen extends StatelessWidget {
               },
             ),
       ),
-    );
-  }
-}
-
-class _MediaPlaceholder extends StatelessWidget {
-  const _MediaPlaceholder({required this.icon});
-
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFFB347), AppColors.orange],
-        ),
-      ),
-      child: Icon(icon, color: Colors.white, size: 34),
     );
   }
 }

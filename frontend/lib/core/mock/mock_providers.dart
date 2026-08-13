@@ -200,31 +200,19 @@ final eventsProvider = FutureProvider<List<EventPoster>>((ref) async {
   return ref.watch(mockApiProvider).fetchEvents();
 });
 
-final singersProvider = FutureProvider<List<SingerContact>>((ref) async {
-  if (_useApi(ref)) return const [];
-  return ref.watch(mockApiProvider).fetchSingers();
-});
-
-final templeStatusProvider = FutureProvider<TempleStatus>((ref) async {
-  if (_useApi(ref)) {
-    return const TempleStatus(
-      isOpen: true,
-      statusLabel: 'अपडेट जल्द',
-      nextChangeLabel: '—',
-      note: 'मंदिर स्थिति शीघ्र CMS से जुड़ेगी।',
-    );
-  }
-  return ref.watch(mockApiProvider).fetchTempleStatus();
-});
-
 final travelGuidesProvider = FutureProvider<List<TravelGuide>>((ref) async {
-  if (_useApi(ref)) return const [];
+  if (_useApi(ref)) {
+    return ref.watch(contentRepositoryProvider).fetchTravelGuides();
+  }
   return ref.watch(mockApiProvider).fetchTravelGuides();
 });
 
-final bhajansProvider = FutureProvider<List<BhajanTrack>>((ref) async {
-  if (_useApi(ref)) return const [];
-  return ref.watch(mockApiProvider).fetchBhajans();
+/// Bhajans reuse the ringtone library for now.
+final bhajansProvider = FutureProvider<List<MediaAsset>>((ref) async {
+  if (_useApi(ref)) {
+    return ref.watch(contentRepositoryProvider).fetchLibrary(type: 'ringtone');
+  }
+  return ref.watch(mockApiProvider).fetchRingtones();
 });
 
 final postersProvider = FutureProvider<List<PosterTemplate>>((ref) async {

@@ -73,11 +73,11 @@ class PosterProfileController extends AsyncNotifier<PosterProfileState> {
       displayName:
           (savedName != null && savedName.isNotEmpty)
               ? savedName
-              : ((authName != null && authName.isNotEmpty) ? authName : 'भक्त'),
+              : ((authName != null && authName.isNotEmpty) ? authName : 'Bhakt'),
       subtitle:
           (savedSubtitle != null && savedSubtitle.isNotEmpty)
               ? savedSubtitle
-              : 'जय श्री श्याम',
+              : 'Jai Shree Shyam',
       photoPath: photoPath,
     );
   }

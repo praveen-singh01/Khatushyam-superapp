@@ -10,6 +10,7 @@ import type {
   Paginated,
   StoryConfig,
   SubscriptionStatus,
+  TravelGuidesConfig,
   UserRole,
 } from "../types";
 
@@ -123,6 +124,27 @@ export function updateStory(
     method: "PUT",
     body: JSON.stringify(payload),
   });
+}
+
+export function fetchTravelGuides(token: string) {
+  return request<{ travelGuides: TravelGuidesConfig }>(
+    "/v1/admin/travel-guides",
+    token,
+  );
+}
+
+export function updateTravelGuides(
+  token: string,
+  payload: { guides: TravelGuidesConfig["guides"] },
+) {
+  return request<{ travelGuides: TravelGuidesConfig }>(
+    "/v1/admin/travel-guides",
+    token,
+    {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    },
+  );
 }
 
 export function fetchLive(token: string) {
