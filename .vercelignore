@@ -1,0 +1,20 @@
+# Admin is the only Vercel app; keep uploads tiny.
+frontend
+backend
+khatu-shyam-content
+docs
+**/.git
+**/node_modules
+**/dist
+**/.dart_tool
+**/build
+**/android/.gradle
+**/ios/Pods
+**/*.pem
+**/*.mp3
+**/*.m4a
+**/*.jpg
+**/*.jpeg
+**/*.png
+**/*.webp
+**/*.log
