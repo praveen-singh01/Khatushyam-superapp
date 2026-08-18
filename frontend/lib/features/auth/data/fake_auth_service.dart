@@ -32,6 +32,8 @@ class FakeAuthService implements AuthService {
   @override
   Future<String?> getIdToken({bool forceRefresh = false}) async {
     if (_user == null) return null;
+    // Email backdoor always hits the API as premium in local FakeAuth mode.
+    if (_user!.uid == 'local-reviewer') return 'premium';
     return localBearerToken;
   }
 
@@ -41,6 +43,25 @@ class FakeAuthService implements AuthService {
       uid: 'local-$localBearerToken',
       email: '$localBearerToken@local.test',
       displayName: 'Local ${localBearerToken[0].toUpperCase()}${localBearerToken.substring(1)}',
+    );
+    _user = user;
+    _controller.add(user);
+    return user;
+  }
+
+  @override
+  Future<AuthUser> signInWithEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    if (email.trim().isEmpty || password.isEmpty) {
+      throw StateError('Email and password are required.');
+    }
+    // Local / FakeAuth backdoor always acts as premium for API calls.
+    final user = AuthUser(
+      uid: 'local-reviewer',
+      email: email.trim().toLowerCase(),
+      displayName: 'Reviewer',
     );
     _user = user;
     _controller.add(user);

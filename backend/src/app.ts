@@ -42,6 +42,7 @@ export function createApp({
   const app = express();
   const auth: RequestHandler = authenticate(identityVerifier, {
     adminEmails: env.ADMIN_EMAILS,
+    premiumTestEmails: env.PREMIUM_TEST_EMAILS,
   });
   const subscriptionRouter = createSubscriptionRouter({
     authenticate: auth,
@@ -104,6 +105,7 @@ export function createApp({
   const authRouter = createAuthRouter(auth);
   const optionalAuth: RequestHandler = optionalAuthenticate(identityVerifier, {
     adminEmails: env.ADMIN_EMAILS,
+    premiumTestEmails: env.PREMIUM_TEST_EMAILS,
   });
   const chamatkarRouter = createChamatkarRouter(auth, optionalAuth);
   const contentRouter = createContentRouter(

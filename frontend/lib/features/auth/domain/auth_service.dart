@@ -14,6 +14,12 @@ abstract class AuthService {
   /// Required sign-in path: Google → Firebase credential.
   Future<AuthUser> signInWithGoogle();
 
+  /// Hidden reviewer login (email + password). Creates the account if missing.
+  Future<AuthUser> signInWithEmailPassword({
+    required String email,
+    required String password,
+  });
+
   Future<void> updateProfile({String? displayName, String? photoUrl});
 
   Future<void> signOut();

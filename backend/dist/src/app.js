@@ -18,6 +18,7 @@ export function createApp({ env, identityVerifier, subscriptionGateway, uploadPr
     const app = express();
     const auth = authenticate(identityVerifier, {
         adminEmails: env.ADMIN_EMAILS,
+        premiumTestEmails: env.PREMIUM_TEST_EMAILS,
     });
     const subscriptionRouter = createSubscriptionRouter({
         authenticate: auth,
@@ -68,6 +69,7 @@ export function createApp({ env, identityVerifier, subscriptionGateway, uploadPr
     const authRouter = createAuthRouter(auth);
     const optionalAuth = optionalAuthenticate(identityVerifier, {
         adminEmails: env.ADMIN_EMAILS,
+        premiumTestEmails: env.PREMIUM_TEST_EMAILS,
     });
     const chamatkarRouter = createChamatkarRouter(auth, optionalAuth);
     const contentRouter = createContentRouter(auth, premiumGate, env.CLOUDFRONT_BASE_URL, { useRequestHostForMedia: Boolean(env.MEDIA_LOCAL_ROOT) });

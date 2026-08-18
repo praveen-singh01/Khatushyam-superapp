@@ -8,7 +8,9 @@ function parseAdminEmails(raw) {
         .map((email) => email.trim().toLowerCase())
         .filter(Boolean));
 }
-async function resolveUser(verifier, token, adminEmails) {
+/** Far-future expiry for Play reviewer / QA premium backdoor accounts. */
+const PREMIUM_TEST_EXPIRES_AT = new Date("2099-12-31T23:59:59.000Z");
+async function resolveUser(verifier, token, adminEmails, premiumTestEmails) {
     const identity = await verifier.verify(token);
     const allowedProviders = new Set(["google.com", "password"]);
     if (!identity.signInProvider ||
@@ -24,6 +26,7 @@ async function resolveUser(verifier, token, adminEmails) {
     }
     const email = identity.email.toLowerCase();
     const shouldBeAdmin = adminEmails.has(email);
+    const shouldBePremium = premiumTestEmails.has(email);
     const setFields = {
         email,
         displayName: identity.name,
@@ -32,11 +35,21 @@ async function resolveUser(verifier, token, adminEmails) {
     if (shouldBeAdmin) {
         setFields.role = "admin";
     }
+    if (shouldBePremium) {
+        setFields.subscriptionStatus = "active";
+        setFields.currentPlan = "monthly";
+        setFields.subscriptionExpiresAt = PREMIUM_TEST_EXPIRES_AT;
+        setFields.trialUsed = true;
+    }
     const user = await User.findOneAndUpdate({ firebaseUid: identity.uid }, {
         $set: setFields,
         $setOnInsert: {
-            subscriptionStatus: "inactive",
-            trialUsed: false,
+            ...(shouldBePremium
+                ? {}
+                : {
+                    subscriptionStatus: "inactive",
+                    trialUsed: false,
+                }),
             ...(shouldBeAdmin ? {} : { role: "user" }),
         },
     }, { new: true, upsert: true }).lean();
@@ -57,6 +70,7 @@ async function resolveUser(verifier, token, adminEmails) {
 }
 export function authenticate(verifier, options = {}) {
     const adminEmails = parseAdminEmails(options.adminEmails);
+    const premiumTestEmails = parseAdminEmails(options.premiumTestEmails);
     return async (req, res, next) => {
         try {
             const header = req.header("authorization");
@@ -65,7 +79,7 @@ export function authenticate(verifier, options = {}) {
                 res.status(401).json({ error: "AUTH_REQUIRED" });
                 return;
             }
-            req.user = await resolveUser(verifier, token, adminEmails);
+            req.user = await resolveUser(verifier, token, adminEmails, premiumTestEmails);
             next();
         }
         catch (error) {
@@ -87,12 +101,13 @@ export function authenticate(verifier, options = {}) {
 /** Attaches req.user when a valid Bearer token is present; never blocks the request. */
 export function optionalAuthenticate(verifier, options = {}) {
     const adminEmails = parseAdminEmails(options.adminEmails);
+    const premiumTestEmails = parseAdminEmails(options.premiumTestEmails);
     return async (req, _res, next) => {
         try {
             const header = req.header("authorization");
             const token = header?.startsWith("Bearer ") ? header.slice(7) : undefined;
             if (token) {
-                req.user = await resolveUser(verifier, token, adminEmails);
+                req.user = await resolveUser(verifier, token, adminEmails, premiumTestEmails);
             }
         }
         catch {

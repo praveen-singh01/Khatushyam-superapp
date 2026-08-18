@@ -28,6 +28,7 @@ const env = {
     S3_MEDIA_BUCKET: "test-bucket",
     CLOUDFRONT_BASE_URL: "https://cdn.example.com",
     ADMIN_EMAILS: "admin@example.com",
+    PREMIUM_TEST_EMAILS: "reviewer@example.com",
     APP_FREE_MODE: false,
 };
 function identityFor(token) {
@@ -64,6 +65,14 @@ function identityFor(token) {
                     email: "admin@example.com",
                     name: "Admin Devotee",
                     signInProvider: "google.com",
+                };
+            }
+            if (incoming === "reviewer") {
+                return {
+                    uid: "reviewer-user",
+                    email: "reviewer@example.com",
+                    name: "Play Reviewer",
+                    signInProvider: "password",
                 };
             }
             return {
@@ -553,6 +562,20 @@ describe("admin dashboard APIs", () => {
         expect(stats.body.users.total).toBe(1);
         expect(stats.body.users.admins).toBe(1);
         expect(stats.body.categories.wallpapers).toBeGreaterThan(0);
+    });
+    it("grants premium to PREMIUM_TEST_EMAILS on login", async () => {
+        const me = await request(app)
+            .get("/v1/auth/me")
+            .set("Authorization", "Bearer reviewer");
+        expect(me.status).toBe(200);
+        expect(me.body.user.email).toBe("reviewer@example.com");
+        expect(me.body.user.subscriptionStatus).toBe("active");
+        expect(me.body.user.subscriptionExpiresAt).toBeTruthy();
+        const status = await request(app)
+            .get("/v1/subscriptions/status")
+            .set("Authorization", "Bearer reviewer");
+        expect(status.status).toBe(200);
+        expect(status.body.isPremium).toBe(true);
     });
     it("creates and lists content categories", async () => {
         await request(app)

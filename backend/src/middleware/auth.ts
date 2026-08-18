@@ -1,5 +1,9 @@
 import type { NextFunction, Request, RequestHandler, Response } from "express";
-import type { IdentityVerifier, UserRole } from "../shared/types.js";
+import type {
+  IdentityVerifier,
+  SubscriptionStatus,
+  UserRole,
+} from "../shared/types.js";
 import { User } from "../modules/auth/user.model.js";
 import { computeIsPremium } from "../modules/subscriptions/premium.js";
 
@@ -13,10 +17,14 @@ function parseAdminEmails(raw?: string): Set<string> {
   );
 }
 
+/** Far-future expiry for Play reviewer / QA premium backdoor accounts. */
+const PREMIUM_TEST_EXPIRES_AT = new Date("2099-12-31T23:59:59.000Z");
+
 async function resolveUser(
   verifier: IdentityVerifier,
   token: string,
   adminEmails: Set<string>,
+  premiumTestEmails: Set<string>,
 ) {
   const identity = await verifier.verify(token);
   const allowedProviders = new Set(["google.com", "password"]);
@@ -36,11 +44,16 @@ async function resolveUser(
 
   const email = identity.email.toLowerCase();
   const shouldBeAdmin = adminEmails.has(email);
+  const shouldBePremium = premiumTestEmails.has(email);
   const setFields: {
     email: string;
     displayName?: string;
     photoUrl?: string;
     role?: UserRole;
+    subscriptionStatus?: SubscriptionStatus;
+    currentPlan?: string;
+    subscriptionExpiresAt?: Date;
+    trialUsed?: boolean;
   } = {
     email,
     displayName: identity.name,
@@ -49,14 +62,24 @@ async function resolveUser(
   if (shouldBeAdmin) {
     setFields.role = "admin";
   }
+  if (shouldBePremium) {
+    setFields.subscriptionStatus = "active";
+    setFields.currentPlan = "monthly";
+    setFields.subscriptionExpiresAt = PREMIUM_TEST_EXPIRES_AT;
+    setFields.trialUsed = true;
+  }
 
   const user = await User.findOneAndUpdate(
     { firebaseUid: identity.uid },
     {
       $set: setFields,
       $setOnInsert: {
-        subscriptionStatus: "inactive",
-        trialUsed: false,
+        ...(shouldBePremium
+          ? {}
+          : {
+              subscriptionStatus: "inactive" as const,
+              trialUsed: false,
+            }),
         ...(shouldBeAdmin ? {} : { role: "user" as UserRole }),
       },
     },
@@ -81,9 +104,10 @@ async function resolveUser(
 
 export function authenticate(
   verifier: IdentityVerifier,
-  options: { adminEmails?: string } = {},
+  options: { adminEmails?: string; premiumTestEmails?: string } = {},
 ): RequestHandler {
   const adminEmails = parseAdminEmails(options.adminEmails);
+  const premiumTestEmails = parseAdminEmails(options.premiumTestEmails);
 
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -94,7 +118,12 @@ export function authenticate(
         return;
       }
 
-      req.user = await resolveUser(verifier, token, adminEmails);
+      req.user = await resolveUser(
+        verifier,
+        token,
+        adminEmails,
+        premiumTestEmails,
+      );
       next();
     } catch (error) {
       const code =
@@ -117,16 +146,22 @@ export function authenticate(
 /** Attaches req.user when a valid Bearer token is present; never blocks the request. */
 export function optionalAuthenticate(
   verifier: IdentityVerifier,
-  options: { adminEmails?: string } = {},
+  options: { adminEmails?: string; premiumTestEmails?: string } = {},
 ): RequestHandler {
   const adminEmails = parseAdminEmails(options.adminEmails);
+  const premiumTestEmails = parseAdminEmails(options.premiumTestEmails);
 
   return async (req: Request, _res: Response, next: NextFunction) => {
     try {
       const header = req.header("authorization");
       const token = header?.startsWith("Bearer ") ? header.slice(7) : undefined;
       if (token) {
-        req.user = await resolveUser(verifier, token, adminEmails);
+        req.user = await resolveUser(
+          verifier,
+          token,
+          adminEmails,
+          premiumTestEmails,
+        );
       }
     } catch {
       // Public feed stays available even with a bad/expired token.

@@ -28,6 +28,11 @@ const envSchema = z.object({
   /** Comma-separated emails granted admin on first authenticated request. */
   ADMIN_EMAILS: z.string().default(""),
   /**
+   * Comma-separated emails that always get premium (Play reviewer / QA backdoor).
+   * Used with the hidden email+password login on the Flutter sign-in screen.
+   */
+  PREMIUM_TEST_EMAILS: z.string().default(""),
+  /**
    * When true, all signed-in users get premium access (no paywall).
    * Flip to false before enabling Razorpay billing.
    */

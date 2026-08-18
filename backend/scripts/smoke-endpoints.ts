@@ -17,10 +17,14 @@ const env: AppEnv = {
   RAZORPAY_KEY_SECRET: "test_secret",
   RAZORPAY_PLAN_ID: "plan_test",
   RAZORPAY_WEBHOOK_SECRET: "webhook_test",
+  TRIAL_DURATION_HOURS: 24,
+  TRIAL_AMOUNT_INR: 3,
   AWS_REGION: "ap-south-1",
   S3_MEDIA_BUCKET: "smoke-bucket",
   CLOUDFRONT_BASE_URL: "https://cdn.example.com",
   ADMIN_EMAILS: "admin@smoke.test",
+  PREMIUM_TEST_EMAILS: "reviewer@smoke.test",
+  APP_FREE_MODE: false,
 };
 
 const app = createApp({

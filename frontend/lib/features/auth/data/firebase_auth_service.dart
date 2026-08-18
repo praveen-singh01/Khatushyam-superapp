@@ -70,6 +70,49 @@ class FirebaseAuthService implements AuthService {
   }
 
   @override
+  Future<AuthUser> signInWithEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    final trimmedEmail = email.trim();
+    if (trimmedEmail.isEmpty || password.isEmpty) {
+      throw StateError('Email and password are required.');
+    }
+
+    UserCredential credential;
+    try {
+      credential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: trimmedEmail,
+        password: password,
+      );
+    } on FirebaseAuthException catch (error) {
+      // Same as Mitro: create on first use for Play reviewer accounts.
+      if (error.code == 'user-not-found' ||
+          error.code == 'invalid-credential') {
+        try {
+          credential = await _firebaseAuth.createUserWithEmailAndPassword(
+            email: trimmedEmail,
+            password: password,
+          );
+        } on FirebaseAuthException catch (createError) {
+          if (createError.code == 'email-already-in-use') {
+            throw error;
+          }
+          rethrow;
+        }
+      } else {
+        rethrow;
+      }
+    }
+
+    final mapped = _mapUser(credential.user);
+    if (mapped == null) {
+      throw StateError('Email sign-in succeeded without a user.');
+    }
+    return mapped;
+  }
+
+  @override
   Future<void> updateProfile({String? displayName, String? photoUrl}) async {
     final user = _firebaseAuth.currentUser;
     if (user == null) throw StateError('Not signed in');
