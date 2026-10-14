@@ -101,6 +101,7 @@ export function createApp({
 
   const entitlementRouter = createEntitlementRouter(auth, env.RAZORPAY_PLAN_ID, {
     freeMode: env.APP_FREE_MODE,
+    trialAmountInr: env.TRIAL_AMOUNT_INR,
   });
   const authRouter = createAuthRouter(auth);
   const optionalAuth: RequestHandler = optionalAuthenticate(identityVerifier, {

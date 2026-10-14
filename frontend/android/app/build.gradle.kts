@@ -35,7 +35,8 @@ android {
         applicationId = "com.khatushyam.khatushyam_app"
         // Firebase Auth / Messaging require API 23+.
         minSdk = maxOf(23, flutter.minSdkVersion)
-        targetSdk = flutter.targetSdkVersion
+        // Google Play requires target API 36+ (Android 16) from Aug 31, 2026.
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         // Local HTTP API only in debug; release builds require HTTPS.

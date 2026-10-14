@@ -1,13 +1,17 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/analytics/fb_tracker.dart';
 import '../../../core/config/app_features.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/soft_card.dart';
+import '../../auth/presentation/auth_providers.dart';
 import '../../live/presentation/live_youtube_player.dart';
+import '../../profile/presentation/profile_providers.dart';
 import '../domain/subscription_state.dart';
 import 'razorpay_checkout.dart';
 import 'subscription_providers.dart';
@@ -17,6 +21,56 @@ const _kTrialPaywallVideoId = 'QfoBOzqSCLw';
 
 class PaywallScreen extends ConsumerWidget {
   const PaywallScreen({super.key});
+
+  String _checkoutErrorMessage(Object? error, AppLocalizations l10n) {
+    if (error is DioException) {
+      final data = error.response?.data;
+      if (data is Map) {
+        final code = data['error']?.toString();
+        final message = data['message']?.toString();
+        if (message != null && message.trim().isNotEmpty) {
+          return message.trim();
+        }
+        switch (code) {
+          case 'SUBSCRIPTION_ALREADY_ACTIVE':
+            return 'Aapka premium pehle se active hai';
+          case 'RAZORPAY_ERROR':
+            return 'Payment start nahi ho saka. Phir try karein';
+        }
+      }
+      if (error.type == DioExceptionType.connectionError ||
+          error.type == DioExceptionType.connectionTimeout) {
+        return 'Internet check karein aur phir try karein';
+      }
+    }
+    return l10n.errorGeneric;
+  }
+
+  double _amountForPlan(SubscriptionPlanId plan, SubscriptionState state) {
+    final offer = state.displayOffers.cast<SubscriptionOffer?>().firstWhere(
+      (o) => o?.id == plan,
+      orElse: () => null,
+    );
+    if (offer == null) {
+      return switch (plan) {
+        SubscriptionPlanId.trialMonthly => 1,
+        SubscriptionPlanId.weekly => 49,
+        SubscriptionPlanId.monthly => 199,
+      };
+    }
+    if (offer.isTrial) {
+      return (offer.trialPriceInr ?? 1).toDouble();
+    }
+    return offer.priceInr.toDouble();
+  }
+
+  String _planKey(SubscriptionPlanId plan) {
+    return switch (plan) {
+      SubscriptionPlanId.trialMonthly => 'trial_monthly',
+      SubscriptionPlanId.weekly => 'weekly',
+      SubscriptionPlanId.monthly => 'monthly',
+    };
+  }
 
   String _label(AppLocalizations l10n, AppFeature feature) {
     return switch (feature) {
@@ -55,6 +109,19 @@ class PaywallScreen extends ConsumerWidget {
     SubscriptionPlanId plan,
   ) async {
     final l10n = AppLocalizations.of(context)!;
+    final current =
+        ref.read(subscriptionControllerProvider).asData?.value ??
+        const SubscriptionState.free();
+    final amount = _amountForPlan(plan, current);
+    final planKey = _planKey(plan);
+    final isTrial = plan == SubscriptionPlanId.trialMonthly;
+
+    await FBTracker.logInitiateCheckout(
+      amount: amount,
+      contentId: planKey,
+      params: {'plan': planKey},
+    );
+
     final prepared = await ref
         .read(subscriptionControllerProvider.notifier)
         .prepareCheckout(plan);
@@ -62,9 +129,10 @@ class PaywallScreen extends ConsumerWidget {
 
     final asyncState = ref.read(subscriptionControllerProvider);
     if (asyncState.hasError || prepared == null) {
+      final message = _checkoutErrorMessage(asyncState.error, l10n);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(l10n.errorGeneric)));
+      ).showSnackBar(SnackBar(content: Text(message)));
       await ref.read(subscriptionControllerProvider.notifier).refresh();
       return;
     }
@@ -79,11 +147,25 @@ class PaywallScreen extends ConsumerWidget {
       return;
     }
 
+    final authUser = ref.read(authStateProvider).asData?.value;
+    final profile = ref.read(appProfileProvider).asData?.value;
+    final displayName = profile?.displayName?.trim();
+    final email = () {
+      final fromProfile = profile?.email.trim() ?? '';
+      if (fromProfile.isNotEmpty) return fromProfile;
+      return authUser?.email?.trim();
+    }();
     final checkout = await openRazorpaySubscriptionCheckout(
       keyId: keyId,
       subscriptionId: subId,
       name: l10n.paywallTitle,
       description: _planDescription(l10n, plan),
+      customerName:
+          (displayName != null && displayName.isNotEmpty)
+              ? displayName
+              : authUser?.displayName,
+      email: email,
+      contact: profile?.phone,
     );
     if (!context.mounted) return;
 
@@ -99,6 +181,19 @@ class PaywallScreen extends ConsumerWidget {
             razorpaySignature: checkout.signature!,
           );
       unlocked = verified?.isPremium ?? false;
+
+      // Meta Purchase — same place Yaaro fires FBTracker.logPurchase after verify.
+      if (checkout.success) {
+        await FBTracker.logPurchase(
+          amount: amount,
+          params: {
+            'plan': planKey,
+            'payment_id': checkout.paymentId!,
+          },
+          orderId: checkout.subscriptionId ?? subId,
+          isTrial: isTrial,
+        );
+      }
     }
 
     if (!unlocked) {
@@ -136,7 +231,7 @@ class PaywallScreen extends ConsumerWidget {
             ? l10n.paywallWeeklyTitle
             : l10n.paywallMonthlyTitle;
     final priceText =
-        isTrial ? '₹${offer.trialPriceInr ?? 3}' : '₹${offer.priceInr}';
+        isTrial ? '₹${offer.trialPriceInr ?? 1}' : '₹${offer.priceInr}';
     final detail =
         isTrial
             ? l10n.paywallTrialDetail(offer.priceInr)

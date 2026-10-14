@@ -196,7 +196,9 @@ class AartiSlotsController extends AsyncNotifier<List<AartiSlot>> {
 }
 
 final eventsProvider = FutureProvider<List<EventPoster>>((ref) async {
-  if (_useApi(ref)) return const [];
+  if (_useApi(ref)) {
+    return ref.watch(contentRepositoryProvider).fetchEvents();
+  }
   return ref.watch(mockApiProvider).fetchEvents();
 });
 

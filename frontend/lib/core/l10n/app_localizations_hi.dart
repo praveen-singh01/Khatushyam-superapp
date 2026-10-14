@@ -128,7 +128,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get paywallSubtitle => 'Masik yojana se bhakti sevayein kholen';
 
   @override
-  String get paywallSubtitleTrial => '₹3 trial se shuru karein, phir ₹199/mahina. Kabhi bhi radd karein.';
+  String get paywallSubtitleTrial => '₹1 trial (24 ghante), phir ₹199/mahina. Kabhi bhi radd karein.';
 
   @override
   String get paywallSubtitleReturn => 'Premium ke liye saptahik ya masik yojana chunein';
@@ -147,17 +147,17 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String paywallTrialDetail(int price) {
-    return 'Phir ₹$price/mahina. Kabhi bhi radd karein.';
+    return '24 ghante baad ₹$price/mahina. Kabhi bhi radd karein.';
   }
 
   @override
-  String get paywallTrialCta => '₹3 trial shuru karein';
+  String get paywallTrialCta => '₹1 trial shuru karein';
 
   @override
   String get paywallSubscribeCta => 'Subscribe karein';
 
   @override
-  String get paywallMandateNote => 'Pehla bhugtan: autopay mandate set karne ke liye ₹3. Uske baad chuni yojana apne aap renew hogi.';
+  String get paywallMandateNote => 'Pehla bhugtan: 24 ghante ke liye ₹1. Phir plan ₹199/mahina par renew hogi.';
 
   @override
   String paywallMandateAddon(int amount) {

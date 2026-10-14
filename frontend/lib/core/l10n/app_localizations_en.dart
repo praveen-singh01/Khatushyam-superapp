@@ -128,7 +128,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallSubtitle => 'Unlock devotion tools with a monthly plan';
 
   @override
-  String get paywallSubtitleTrial => 'Start with ₹3 trial, then ₹199/month. Cancel anytime.';
+  String get paywallSubtitleTrial => 'Start with ₹1 trial for 24 hours, then ₹199/month. Cancel anytime.';
 
   @override
   String get paywallSubtitleReturn => 'Choose a weekly or monthly plan to unlock premium';
@@ -147,17 +147,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String paywallTrialDetail(int price) {
-    return 'Then ₹$price/month. Cancel anytime.';
+    return 'Then ₹$price/month after 24 hours. Cancel anytime.';
   }
 
   @override
-  String get paywallTrialCta => 'Start ₹3 trial';
+  String get paywallTrialCta => 'Start ₹1 trial';
 
   @override
   String get paywallSubscribeCta => 'Subscribe';
 
   @override
-  String get paywallMandateNote => 'First payment: ₹3 to set up autopay mandate. Then your chosen plan renews automatically.';
+  String get paywallMandateNote => 'First payment: ₹1 for 24 hours. Then your plan renews at ₹199/month.';
 
   @override
   String paywallMandateAddon(int amount) {

@@ -47,10 +47,10 @@ class _PostersScreenState extends ConsumerState<PostersScreen> {
     final profile = ref.read(posterProfileProvider).asData?.value;
     if (profile?.isProcessingPhoto == true) return;
 
-    final preparedPath = await runPosterPhotoFlow(context);
-    if (preparedPath == null || !mounted) return;
-
     try {
+      final preparedPath = await runPosterPhotoFlow(context);
+      if (preparedPath == null || !mounted) return;
+
       await ref
           .read(posterProfileProvider.notifier)
           .commitPreparedPhoto(preparedPath);
@@ -200,7 +200,17 @@ class _PostersScreenState extends ConsumerState<PostersScreen> {
                       displayName: profile.displayName,
                       subtitle: profile.subtitle,
                       userPhoto: profile.photoFile,
+                      photoScale: profile.photoScale,
+                      photoOffsetX: profile.photoOffsetX,
+                      photoOffsetY: profile.photoOffsetY,
                       onPickPhoto: _pickSharedPhoto,
+                      onPhotoTransform: (scale, ox, oy) {
+                        ref.read(posterProfileProvider.notifier).setPhotoTransform(
+                          scale: scale,
+                          offsetX: ox,
+                          offsetY: oy,
+                        );
+                      },
                       onEditNamePlate:
                           () => _editNamePlate(
                             profile.displayName,

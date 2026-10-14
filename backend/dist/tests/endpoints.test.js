@@ -23,7 +23,7 @@ const env = {
     RAZORPAY_PLAN_ID: "plan_test",
     RAZORPAY_WEBHOOK_SECRET: "webhook_test",
     TRIAL_DURATION_HOURS: 24,
-    TRIAL_AMOUNT_INR: 3,
+    TRIAL_AMOUNT_INR: 1,
     AWS_REGION: "ap-south-1",
     S3_MEDIA_BUCKET: "test-bucket",
     CLOUDFRONT_BASE_URL: "https://cdn.example.com",
@@ -186,7 +186,33 @@ describe("auth and entitlement", () => {
         expect(response.status).toBe(200);
         expect(response.body.user.email).toBe("free@example.com");
         expect(response.body.user.subscriptionStatus).toBe("inactive");
+        expect(response.body.user.onboardingCompleted).toBe(false);
         expect(await User.countDocuments()).toBe(1);
+    });
+    it("completes onboarding with phone + name once", async () => {
+        await request(app)
+            .get("/v1/auth/me")
+            .set("Authorization", "Bearer free");
+        const bad = await request(app)
+            .post("/v1/auth/onboarding")
+            .set("Authorization", "Bearer free")
+            .send({ phone: "123" });
+        expect(bad.status).toBe(400);
+        const ok = await request(app)
+            .post("/v1/auth/onboarding")
+            .set("Authorization", "Bearer free")
+            .send({ phone: "9876543210" });
+        expect(ok.status).toBe(200);
+        expect(ok.body.user.onboardingCompleted).toBe(true);
+        expect(ok.body.user.phone).toBe("9876543210");
+        const patched = await request(app)
+            .patch("/v1/auth/me")
+            .set("Authorization", "Bearer free")
+            .send({ phone: "9123456789", displayName: "Updated Bhakt" });
+        expect(patched.status).toBe(200);
+        expect(patched.body.user.phone).toBe("9123456789");
+        expect(patched.body.user.displayName).toBe("Updated Bhakt");
+        expect(patched.body.user.onboardingCompleted).toBe(true);
     });
     it("returns free entitlement for inactive users", async () => {
         const response = await request(app)
@@ -206,7 +232,7 @@ describe("auth and entitlement", () => {
                 id: "trial_monthly",
                 priceInr: 199,
                 period: "month",
-                trialPriceInr: 3,
+                trialPriceInr: 1,
             },
         ]);
     });

@@ -30,7 +30,7 @@ const env: AppEnv = {
   RAZORPAY_WEBHOOK_SECRET:
     process.env.RAZORPAY_WEBHOOK_SECRET ?? "local_webhook_secret",
   TRIAL_DURATION_HOURS: Number(process.env.TRIAL_DURATION_HOURS ?? 24),
-  TRIAL_AMOUNT_INR: Number(process.env.TRIAL_AMOUNT_INR ?? 3),
+  TRIAL_AMOUNT_INR: Number(process.env.TRIAL_AMOUNT_INR ?? 1),
   AWS_REGION: process.env.AWS_REGION ?? "ap-south-1",
   S3_MEDIA_BUCKET: process.env.S3_MEDIA_BUCKET ?? "khatu-shyam-local",
   CLOUDFRONT_BASE_URL:

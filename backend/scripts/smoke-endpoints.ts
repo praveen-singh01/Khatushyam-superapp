@@ -18,7 +18,7 @@ const env: AppEnv = {
   RAZORPAY_PLAN_ID: "plan_test",
   RAZORPAY_WEBHOOK_SECRET: "webhook_test",
   TRIAL_DURATION_HOURS: 24,
-  TRIAL_AMOUNT_INR: 3,
+  TRIAL_AMOUNT_INR: 1,
   AWS_REGION: "ap-south-1",
   S3_MEDIA_BUCKET: "smoke-bucket",
   CLOUDFRONT_BASE_URL: "https://cdn.example.com",

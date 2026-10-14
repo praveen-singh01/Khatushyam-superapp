@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
+import 'core/analytics/fb_tracker.dart';
 import 'core/config/app_config.dart';
 import 'core/config/messaging_service.dart';
 import 'features/auth/presentation/auth_providers.dart';
@@ -22,6 +23,9 @@ Future<void> main() async {
     );
     await MessagingService(messaging: FirebaseMessaging.instance).initialize();
   }
+
+  // Meta App Events (same pattern as Yaaro FBTracker / initializeFBSdk).
+  await FBTracker.initialize();
 
   runApp(
     ProviderScope(

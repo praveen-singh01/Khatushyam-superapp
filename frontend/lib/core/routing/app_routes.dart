@@ -6,6 +6,7 @@ abstract final class AppRoutes {
   static const chamatkar = '/chamatkar';
   static const posters = '/posters';
   static const profile = '/profile';
+  static const onboarding = '/onboarding';
   static const paywall = '/premium';
   static const feature = '/feature/:id';
 

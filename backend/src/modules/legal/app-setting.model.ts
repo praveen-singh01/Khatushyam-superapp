@@ -62,7 +62,7 @@ Active subscriptions should be cancelled before deletion to avoid further charge
     title: "Cancellation & Refund Policy",
     body: `You can cancel auto-renewal anytime. Access continues until the end of the paid period.
 
-The ₹3 mandate setup fee is non-refundable once the payment mandate is created.
+The ₹1 mandate setup fee is non-refundable once the payment mandate is created.
 
 Plan charges (₹49 weekly / ₹199 monthly) follow Razorpay settlement rules. Refund requests for unused paid periods can be reviewed within 7 days of charge by contacting support.`,
   },

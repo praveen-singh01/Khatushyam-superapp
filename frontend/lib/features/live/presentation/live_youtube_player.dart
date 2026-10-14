@@ -6,14 +6,15 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/soft_card.dart';
 
-/// Live / VOD YouTube player via system WebView (not youtube_player_flutter).
+/// Live / VOD YouTube player via system WebView.
 ///
-/// Uses an official embed iframe with `baseUrl: https://www.youtube.com` so
-/// YouTube gets a valid Referer — avoids "can't play in another app" / error 153
-/// that the old IFrame API wrapper often hit on temple live streams.
+/// Loads an HTML shell from our API (`/v1/content/youtube-embed/:id`) so the
+/// document origin is a real HTTPS domain. Direct YouTube embeds from Android
+/// WebViews often fail with error 153 (`EMBEDDER_IDENTITY_DENIED`).
 class LiveYoutubePlayer extends StatefulWidget {
   const LiveYoutubePlayer({
     super.key,
@@ -51,12 +52,24 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // Pause other players before registering this one.
     if (widget.autoPlay) {
       LiveYoutubePlayer.pauseAll();
     }
     LiveYoutubePlayer._registry.add(this);
     _initController();
+  }
+
+  Uri _embedPageUri(String videoId) {
+    final base = AppConfig.development.apiBaseUrl;
+    return Uri.parse('$base/v1/content/youtube-embed/$videoId').replace(
+      queryParameters: {
+        'autoplay': widget.autoPlay ? '1' : '0',
+        'mute': '0',
+        if (widget.loop) 'loop': '1',
+        // Bust any intermediate caches while iterating on embed fixes.
+        'v': '2',
+      },
+    );
   }
 
   void _initController() {
@@ -73,16 +86,33 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
     final controller = WebViewController.fromPlatformCreationParams(params)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.black)
+      ..addJavaScriptChannel(
+        'YtBridge',
+        onMessageReceived: (message) {
+          if (message.message == 'error' && mounted) {
+            setState(() {
+              _failed = true;
+              _loading = false;
+            });
+          }
+        },
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (_) {
-            if (mounted) setState(() => _loading = true);
+            if (mounted) {
+              setState(() {
+                _loading = true;
+                _failed = false;
+              });
+            }
           },
-          onPageFinished: (_) {
-            if (mounted) setState(() => _loading = false);
+          onPageFinished: (_) async {
+            if (!mounted) return;
+            setState(() => _loading = false);
+            await _injectErrorWatcher();
           },
           onWebResourceError: (error) {
-            // Ignore subresource noise; only surface main-frame failures.
             if (error.isForMainFrame == true && mounted) {
               setState(() {
                 _failed = true;
@@ -102,9 +132,9 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
                 host.contains('google.com') ||
                 host.contains('googlevideo.com') ||
                 host.contains('gstatic.com') ||
-                host.contains('ytimg.com');
+                host.contains('ytimg.com') ||
+                host.contains('yaaro.online');
             if (!allowed) {
-              // External links (channel, ads) → open outside the in-app player.
               launchUrl(uri, mode: LaunchMode.externalApplication);
               return NavigationDecision.prevent;
             }
@@ -123,60 +153,6 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
     _loadVideo(widget.videoId);
   }
 
-  String _embedHtml(String videoId) {
-    final autoplay = widget.autoPlay ? '1' : '0';
-    final loop = widget.loop ? '1' : '0';
-    final loopParams =
-        widget.loop ? '&loop=1&playlist=${Uri.encodeComponent(videoId)}' : '';
-    final src =
-        'https://www.youtube.com/embed/${Uri.encodeComponent(videoId)}'
-        '?playsinline=1'
-        '&rel=0'
-        '&modestbranding=1'
-        '&controls=1'
-        '&fs=1'
-        '&enablejsapi=1'
-        '&origin=${Uri.encodeComponent('https://www.youtube.com')}'
-        '&autoplay=$autoplay'
-        '$loopParams';
-
-    // baseUrl below must be youtube.com so Referer passes embed checks.
-    return '''
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <style>
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
-    iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  </style>
-</head>
-<body>
-  <iframe
-    id="player"
-    src="$src"
-    title="YouTube"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-    allowfullscreen
-    referrerpolicy="strict-origin-when-cross-origin"
-    data-loop="$loop"
-  ></iframe>
-  <script>
-    function pauseYt() {
-      var iframe = document.getElementById('player');
-      if (!iframe || !iframe.contentWindow) return;
-      iframe.contentWindow.postMessage(
-        JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }),
-        '*'
-      );
-    }
-  </script>
-</body>
-</html>
-''';
-  }
-
   Future<void> _loadVideo(String videoId) async {
     final controller = _controller;
     if (controller == null || videoId.isEmpty) return;
@@ -184,17 +160,37 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
       _failed = false;
       _loading = true;
     });
-    await controller.loadHtmlString(
-      _embedHtml(videoId),
-      baseUrl: 'https://www.youtube.com/',
-    );
+    await controller.loadRequest(_embedPageUri(videoId));
+  }
+
+  Future<void> _injectErrorWatcher() async {
+    final controller = _controller;
+    if (controller == null) return;
+    try {
+      await controller.runJavaScript('''
+        (function() {
+          var tries = 0;
+          var timer = setInterval(function() {
+            tries++;
+            var text = (document.body && document.body.innerText) || '';
+            if (/unavailable|error 153|configuration error/i.test(text)) {
+              clearInterval(timer);
+              if (window.YtBridge) YtBridge.postMessage('error');
+            }
+            if (tries > 10) clearInterval(timer);
+          }, 700);
+        })();
+      ''');
+    } catch (_) {}
   }
 
   Future<void> pause() async {
     final controller = _controller;
     if (controller == null) return;
     try {
-      await controller.runJavaScript('pauseYt();');
+      await controller.runJavaScript(
+        'try { pauseYt(); } catch (e) {}',
+      );
     } catch (_) {}
   }
 
@@ -221,7 +217,8 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
 
   @override
   void deactivate() {
-    pause();
+    // Don't pause here — ListView / route rebuilds call deactivate and would
+    // stop Live Darshan mid-play. pauseAll() + lifecycle cover real leaves.
     super.deactivate();
   }
 
@@ -242,6 +239,82 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
     super.dispose();
   }
 
+  Widget _buildWebView(WebViewController controller) {
+    final gestures = <Factory<OneSequenceGestureRecognizer>>{
+      Factory<EagerGestureRecognizer>(EagerGestureRecognizer.new),
+    };
+    final platform = controller.platform;
+    if (platform is AndroidWebViewController) {
+      return WebViewWidget.fromPlatformCreationParams(
+        params: AndroidWebViewWidgetCreationParams(
+          controller: platform,
+          displayWithHybridComposition: true,
+          gestureRecognizers: gestures,
+        ),
+      );
+    }
+    return WebViewWidget(
+      controller: controller,
+      gestureRecognizers: gestures,
+    );
+  }
+
+  Widget _thumbnailFallback() {
+    final thumb = 'https://i.ytimg.com/vi/${widget.videoId}/hqdefault.jpg';
+    return ColoredBox(
+      color: Colors.black,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.network(
+            thumb,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+          ),
+          Container(color: Colors.black54),
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'In-app play block ho gaya',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'YouTube app / browser mein kholen',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+                const SizedBox(height: 14),
+                FilledButton.icon(
+                  onPressed: _openInYouTube,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.orange,
+                    foregroundColor: Colors.white,
+                  ),
+                  icon: const Icon(Icons.play_arrow_rounded),
+                  label: const Text('Play on YouTube'),
+                ),
+                TextButton(
+                  onPressed: () => _loadVideo(widget.videoId),
+                  child: const Text(
+                    'Dobara try karein',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = _controller;
@@ -254,19 +327,7 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
           child: Stack(
             fit: StackFit.expand,
             children: [
-              if (controller != null && !_failed)
-                WebViewWidget(
-                  controller: controller,
-                  gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                    Factory<HorizontalDragGestureRecognizer>(
-                      HorizontalDragGestureRecognizer.new,
-                    ),
-                    Factory<VerticalDragGestureRecognizer>(
-                      VerticalDragGestureRecognizer.new,
-                    ),
-                    Factory<EagerGestureRecognizer>(EagerGestureRecognizer.new),
-                  },
-                ),
+              if (controller != null && !_failed) _buildWebView(controller),
               if (_loading && !_failed)
                 const ColoredBox(
                   color: Colors.black,
@@ -277,77 +338,47 @@ class _LiveYoutubePlayerState extends State<LiveYoutubePlayer>
                     ),
                   ),
                 ),
-              if (_failed)
-                ColoredBox(
-                  color: Colors.black,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Video yahan play nahi ho paya',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white70),
-                          ),
-                          const SizedBox(height: 12),
-                          FilledButton.icon(
-                            onPressed: _openInYouTube,
-                            icon: const Icon(Icons.open_in_new_rounded),
-                            label: const Text('YouTube mein kholen'),
-                          ),
-                          TextButton(
-                            onPressed: () => _loadVideo(widget.videoId),
-                            child: const Text(
-                              'Dobara try karein',
-                              style: TextStyle(color: Colors.white70),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+              if (_failed) _thumbnailFallback(),
               if (widget.showLiveBadge)
                 const Positioned(left: 10, top: 10, child: _LiveChip()),
-              Positioned(
-                right: 8,
-                bottom: 8,
-                child: Material(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.circular(20),
-                  child: InkWell(
-                    onTap: _openInYouTube,
+              if (!_failed)
+                Positioned(
+                  right: 8,
+                  bottom: 8,
+                  child: Material(
+                    color: Colors.black54,
                     borderRadius: BorderRadius.circular(20),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.open_in_new_rounded,
-                            size: 14,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            'YouTube',
-                            style: TextStyle(
+                    child: InkWell(
+                      onTap: _openInYouTube,
+                      borderRadius: BorderRadius.circular(20),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.open_in_new_rounded,
+                              size: 14,
                               color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 4),
+                            Text(
+                              'YouTube',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),

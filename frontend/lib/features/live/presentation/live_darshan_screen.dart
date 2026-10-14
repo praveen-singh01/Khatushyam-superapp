@@ -41,7 +41,12 @@ class LiveDarshanScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 if (state.canPlay)
-                  LiveYoutubePlayer(videoId: state.youtubeVideoId!)
+                  LiveYoutubePlayer(
+                    key: ValueKey('live-${state.youtubeVideoId}'),
+                    videoId: state.youtubeVideoId!,
+                    autoPlay: true,
+                    showLiveBadge: true,
+                  )
                 else
                   SoftCard(
                     child: Column(

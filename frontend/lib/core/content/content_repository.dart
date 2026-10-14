@@ -20,8 +20,9 @@ class ContentRepository {
           final t = map['title'] as Map<String, dynamic>? ?? const {};
           final b = map['body'] as Map<String, dynamic>? ?? const {};
           return StoryChapter(
-            title: (t['en'] as String?) ?? (t['hi'] as String?) ?? '',
-            body: (b['en'] as String?) ?? (b['hi'] as String?) ?? '',
+            // App is Hinglish-first — prefer hi (Hinglish), fall back to en.
+            title: (t['hi'] as String?) ?? (t['en'] as String?) ?? '',
+            body: (b['hi'] as String?) ?? (b['en'] as String?) ?? '',
           );
         }).toList();
 
@@ -135,6 +136,23 @@ class ContentRepository {
         title:
             (title['hi'] as String?) ?? (title['en'] as String?) ?? '',
         steps: steps,
+      );
+    }).toList();
+  }
+
+  Future<List<EventPoster>> fetchEvents() async {
+    final response = await _api.get<Map<String, dynamic>>(
+      '/v1/content/events',
+    );
+    final items = response.data?['items'] as List<dynamic>? ?? const [];
+    return items.map((raw) {
+      final map = raw as Map<String, dynamic>;
+      return EventPoster(
+        id: (map['id'] as String?) ?? '',
+        title: (map['title'] as String?) ?? '',
+        city: (map['city'] as String?) ?? '',
+        dateLabel: (map['dateLabel'] as String?) ?? '',
+        venue: (map['venue'] as String?) ?? '',
       );
     }).toList();
   }

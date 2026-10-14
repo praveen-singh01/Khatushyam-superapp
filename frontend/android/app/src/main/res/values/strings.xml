@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Khatu Shyam</string>
+    <string name="facebook_app_id">1219859294552977</string>
+    <string name="facebook_client_token">bc499b1a8519aa35d624236b24470335</string>
+    <string name="fb_login_protocol_scheme">fb1219859294552977</string>
+</resources>

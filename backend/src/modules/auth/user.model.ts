@@ -10,10 +10,14 @@ export interface UserDocument {
   email: string;
   displayName?: string;
   photoUrl?: string;
+  /** E.164-ish / local mobile number collected at onboarding. */
+  phone?: string | null;
+  /** True after the user finishes one-time name+phone onboarding. */
+  onboardingCompleted: boolean;
   role: UserRole;
   fcmTokens: string[];
   subscriptionStatus: SubscriptionStatus;
-  /** After first trial start/charge/cancel, never offer ₹3 trial again. */
+  /** After first trial start/charge/cancel, never offer ₹1 trial again. */
   trialUsed: boolean;
   currentPlan?: SubscriptionPlanOffer | null;
   subscriptionExpiresAt?: Date | null;
@@ -28,6 +32,8 @@ const userSchema = new Schema<UserDocument>(
     email: { type: String, required: true, lowercase: true, trim: true },
     displayName: String,
     photoUrl: String,
+    phone: { type: String, default: null, trim: true },
+    onboardingCompleted: { type: Boolean, default: false, index: true },
     role: {
       type: String,
       enum: ["user", "admin"],

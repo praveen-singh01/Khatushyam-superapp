@@ -20,7 +20,14 @@ final subscriptionControllerProvider =
 
 class SubscriptionController extends AsyncNotifier<SubscriptionState> {
   @override
-  Future<SubscriptionState> build() {
+  Future<SubscriptionState> build() async {
+    // Re-fetch whenever the signed-in user changes (fixes stale premium
+    // after switching from reviewer / another account).
+    final auth = ref.watch(authStateProvider);
+    final uid = auth.asData?.value?.uid;
+    if (uid == null) {
+      return const SubscriptionState.free();
+    }
     return ref.read(subscriptionRepositoryProvider).fetchEntitlement();
   }
 

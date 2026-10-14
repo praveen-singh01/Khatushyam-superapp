@@ -54,19 +54,40 @@ class FirebaseAuthService implements AuthService {
   Future<AuthUser> signInWithGoogle() async {
     await _ensureGoogleInitialized();
 
-    final account = await _googleSignIn.authenticate();
-    final idToken = account.authentication.idToken;
-    if (idToken == null) {
-      throw StateError('Google Sign-In did not return an ID token.');
-    }
+    // Clear any stale Google session — after Firebase user deletes / SHA
+    // mismatches, cached accounts often fail with "[16] Account reauth failed".
+    try {
+      await _googleSignIn.signOut();
+    } catch (_) {}
 
-    final credential = GoogleAuthProvider.credential(idToken: idToken);
-    final result = await _firebaseAuth.signInWithCredential(credential);
-    final mapped = _mapUser(result.user);
-    if (mapped == null) {
-      throw StateError('Firebase sign-in succeeded without a user.');
+    try {
+      final account = await _googleSignIn.authenticate();
+      final idToken = account.authentication.idToken;
+      if (idToken == null) {
+        throw StateError('Google Sign-In did not return an ID token.');
+      }
+
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
+      final result = await _firebaseAuth.signInWithCredential(credential);
+      final mapped = _mapUser(result.user);
+      if (mapped == null) {
+        throw StateError('Firebase sign-in succeeded without a user.');
+      }
+      return mapped;
+    } on GoogleSignInException catch (error) {
+      final details = error.description ?? error.toString();
+      if (details.contains('16') ||
+          details.toLowerCase().contains('reauth')) {
+        throw StateError(
+          'Google sign-in config mismatch (Play signing key). '
+          'Add Play Console App signing SHA-1 in Firebase, then retry.',
+        );
+      }
+      if (error.code == GoogleSignInExceptionCode.canceled) {
+        throw StateError('Google sign-in cancel ho gaya.');
+      }
+      rethrow;
     }
-    return mapped;
   }
 
   @override

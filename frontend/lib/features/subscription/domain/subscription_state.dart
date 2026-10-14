@@ -17,7 +17,7 @@ class SubscriptionOffer extends Equatable {
   final SubscriptionPlanId id;
   final int priceInr;
   final SubscriptionOfferPeriod period;
-  /// First charge for intro trial (₹3); then [priceInr] renews.
+  /// First charge for intro trial (₹1 / 24h); then [priceInr] renews.
   final int? trialPriceInr;
 
   bool get isTrial =>
@@ -66,7 +66,7 @@ const kDefaultTrialOffers = [
     id: SubscriptionPlanId.trialMonthly,
     priceInr: 199,
     period: SubscriptionOfferPeriod.month,
-    trialPriceInr: 3,
+    trialPriceInr: 1,
   ),
 ];
 

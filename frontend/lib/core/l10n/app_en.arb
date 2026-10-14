@@ -45,21 +45,21 @@
   "liveDarshanWatchCta": "Watch live",
   "paywallTitle": "Premium membership",
   "paywallSubtitle": "Unlock devotion tools with a monthly plan",
-  "paywallSubtitleTrial": "Start with ₹3 trial, then ₹199/month. Cancel anytime.",
+  "paywallSubtitleTrial": "Start with ₹1 trial for 24 hours, then ₹199/month. Cancel anytime.",
   "paywallSubtitleReturn": "Choose a weekly or monthly plan to unlock premium",
   "paywallCta": "Start monthly plan",
   "paywallTrialTitle": "Intro trial",
   "paywallWeeklyTitle": "Weekly",
   "paywallMonthlyTitle": "Monthly",
-  "paywallTrialDetail": "Then ₹{price}/month. Cancel anytime.",
+  "paywallTrialDetail": "Then ₹{price}/month after 24 hours. Cancel anytime.",
   "@paywallTrialDetail": {
     "placeholders": {
       "price": { "type": "int" }
     }
   },
-  "paywallTrialCta": "Start ₹3 trial",
+  "paywallTrialCta": "Start ₹1 trial",
   "paywallSubscribeCta": "Subscribe",
-  "paywallMandateNote": "First payment: ₹3 to set up autopay mandate. Then your chosen plan renews automatically.",
+  "paywallMandateNote": "First payment: ₹1 for 24 hours. Then your plan renews at ₹199/month.",
   "paywallMandateAddon": "₹{amount} mandate setup today",
   "@paywallMandateAddon": {
     "placeholders": {

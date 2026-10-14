@@ -8,15 +8,15 @@ const envSchema = z.object({
   FIREBASE_PROJECT_ID: z.string().min(1),
   RAZORPAY_KEY_ID: z.string().min(1),
   RAZORPAY_KEY_SECRET: z.string().min(1),
-  /** Monthly plan (₹199) — also used after ₹3 intro trial. */
+  /** Monthly plan (₹199) — also used after ₹1 intro trial. */
   RAZORPAY_PLAN_ID: z.string().min(1),
   /** Weekly plan (₹49) for returning users. */
   RAZORPAY_PLAN_ID_WEEKLY: z.string().min(1).optional(),
   RAZORPAY_WEBHOOK_SECRET: z.string().min(1),
-  /** Hours of premium after ₹3 trial payment before first recurring charge. */
+  /** Hours of premium after ₹1 trial payment before first recurring charge. */
   TRIAL_DURATION_HOURS: z.coerce.number().int().positive().default(24),
   /** Upfront trial/mandate addon in INR (Razorpay addon amount). */
-  TRIAL_AMOUNT_INR: z.coerce.number().positive().default(3),
+  TRIAL_AMOUNT_INR: z.coerce.number().positive().default(1),
   AWS_REGION: z.string().default("ap-south-1"),
   S3_MEDIA_BUCKET: z.string().min(1),
   CLOUDFRONT_BASE_URL: z.string().url(),

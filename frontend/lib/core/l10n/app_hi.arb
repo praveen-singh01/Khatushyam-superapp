@@ -45,21 +45,21 @@
   "liveDarshanWatchCta": "Live dekhein",
   "paywallTitle": "Premium sadasyata",
   "paywallSubtitle": "Masik yojana se bhakti sevayein kholen",
-  "paywallSubtitleTrial": "₹3 trial se shuru karein, phir ₹199/mahina. Kabhi bhi radd karein.",
+  "paywallSubtitleTrial": "₹1 trial (24 ghante), phir ₹199/mahina. Kabhi bhi radd karein.",
   "paywallSubtitleReturn": "Premium ke liye saptahik ya masik yojana chunein",
   "paywallCta": "Masik yojana shuru karein",
   "paywallTrialTitle": "Parichay trial",
   "paywallWeeklyTitle": "Saptahik",
   "paywallMonthlyTitle": "Masik",
-  "paywallTrialDetail": "Phir ₹{price}/mahina. Kabhi bhi radd karein.",
+  "paywallTrialDetail": "24 ghante baad ₹{price}/mahina. Kabhi bhi radd karein.",
   "@paywallTrialDetail": {
     "placeholders": {
       "price": { "type": "int" }
     }
   },
-  "paywallTrialCta": "₹3 trial shuru karein",
+  "paywallTrialCta": "₹1 trial shuru karein",
   "paywallSubscribeCta": "Subscribe karein",
-  "paywallMandateNote": "Pehla bhugtan: autopay mandate set karne ke liye ₹3. Uske baad chuni yojana apne aap renew hogi.",
+  "paywallMandateNote": "Pehla bhugtan: 24 ghante ke liye ₹1. Phir plan ₹199/mahina par renew hogi.",
   "paywallMandateAddon": "Aaj ₹{amount} mandate setup",
   "@paywallMandateAddon": {
     "placeholders": {

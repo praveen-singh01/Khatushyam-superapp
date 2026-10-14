@@ -16,9 +16,11 @@ export interface AuthenticatedUser {
   email: string;
   displayName?: string;
   photoUrl?: string;
+  phone?: string | null;
+  onboardingCompleted: boolean;
   role: UserRole;
   subscriptionStatus: SubscriptionStatus;
-  /** Once true, the ₹3 intro trial must never be offered again. */
+  /** Once true, the ₹1 intro trial must never be offered again. */
   trialUsed: boolean;
   currentPlan?: SubscriptionPlanOffer | null;
   subscriptionExpiresAt?: string | null;

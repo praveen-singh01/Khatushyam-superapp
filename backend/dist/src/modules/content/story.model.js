@@ -77,6 +77,34 @@ export const DEFAULT_STORY = {
                 en: "On Ekadashi, Amavasya and festivals, devotees gather at Khatu Dham. Even from home, chanting Shyam's name, aarti, bhajans and seva — this is true devotion. Jai Shree Shyam.",
             },
         },
+        {
+            title: { hi: "फागुन मेला और ग्यारस", en: "Phalgun Mela and Gyaras" },
+            body: {
+                hi: "फागुन शुक्ल एकादशी पर खाटू धाम में विशाल मेला लगता है। लाखों भक्त पैदल, बस और ट्रेन से पहुँचते हैं। ग्यारस की रात मंदिर परिसर भक्ति और कीर्तन से गूंजता रहता है। कहा जाता है कि इस दिन बाबा विशेष कृपा करते हैं।",
+                en: "On Phalgun Shukla Ekadashi a grand fair is held at Khatu Dham. Lakhs of devotees arrive on foot, by bus and train. On Gyaras night the temple complex resonates with devotion and kirtan. It is said Baba grants special grace on this day.",
+            },
+        },
+        {
+            title: { hi: "खाटू आने का मार्ग", en: "The path to Khatu" },
+            body: {
+                hi: "खाटू धाम राजस्थान के सीकर जिले में है। जयपुर, दिल्ली या सीकर से बस/ट्रेन से रिंगस या सीकर पहुँचकर फिर खाटू मंदिर के लिए स्थानीय बस या टैक्सी मिलती है। मार्ग में भक्त ‘जय श्री श्याम’ का जयघोष करते हुए बाबा के दर्शन को आतुर रहते हैं।",
+                en: "Khatu Dham is in Sikar district, Rajasthan. From Jaipur, Delhi or Sikar, reach Ringas or Sikar by bus/train, then take a local bus or taxi to the temple. Along the way devotees chant Jai Shree Shyam, eager for darshan.",
+            },
+        },
+        {
+            title: { hi: "सातवारा और मनोकामना", en: "Saatwara and wishes" },
+            body: {
+                hi: "भक्त अक्सर सात शनिवार लगातार बाबा का ध्यान, भजन या मंदिर जाना करते हैं — इसे सातवारा कहते हैं। आस्था है कि सच्ची भावना से किया गया सातवारा मनोकामना पूर्ण करता है। परंतु बाबा सिखाते हैं — लालच नहीं, श्रद्धा और सेवा सबसे बड़ी भेंट है।",
+                en: "Devotees often observe seven consecutive Saturdays of remembrance, bhajan or temple visits — called Saatwara. Faith holds that sincere Saatwara fulfills wishes. Yet Baba teaches — not greed, but faith and seva are the greatest offering.",
+            },
+        },
+        {
+            title: { hi: "श्याम नाम की महिमा", en: "Glory of Shyam's name" },
+            body: {
+                hi: "‘श्याम’ नाम कलियुग में सहज और शक्तिशाली जाप माना जाता है। घर, मार्ग या कार्यस्थल पर भी मन में जय श्री श्याम दोहराना भक्तों को शांति देता है। कथा कहती है — जो एक बार सच्चे हृदय से बाबा को पुकारता है, बाबा उसे अपना लेते हैं।",
+                en: "The name ‘Shyam’ is considered a simple yet powerful chant in Kaliyuga. Repeating Jai Shree Shyam at home, on the road or at work brings peace to devotees. The lore says — whoever calls Baba with a true heart, Baba makes them His own.",
+            },
+        },
     ],
 };
 export function toStoryResponse(doc) {

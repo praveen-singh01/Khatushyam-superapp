@@ -15,7 +15,7 @@ export interface SubscriptionGateway {
     userId: string;
     planOffer: SubscriptionPlanOffer | "weekly" | "monthly";
     isTrial: boolean;
-    /** One-time addon in INR (e.g. ₹3 intro trial). */
+    /** One-time addon in INR (e.g. ₹1 intro trial). */
     trialAddonInr?: number;
     /** Unix seconds — first recurring charge after trial window. */
     startAtUnix?: number;
@@ -38,8 +38,11 @@ export interface UploadPresigner {
   }): Promise<string>;
 }
 
-export function offersForUser(user: AuthenticatedUser) {
-  // First-time: ₹3 intro trial → then ₹199/month.
+export function offersForUser(
+  user: AuthenticatedUser,
+  trialPriceInr = 1,
+) {
+  // First-time: ₹1 intro trial (24h) → then ₹199/month.
   // After trial used (cancel/expiry): ₹49/week + ₹199/month only.
   if (!user.trialUsed) {
     return [
@@ -47,7 +50,7 @@ export function offersForUser(user: AuthenticatedUser) {
         id: "trial_monthly" as const,
         priceInr: 199,
         period: "month" as const,
-        trialPriceInr: 3,
+        trialPriceInr,
       },
     ];
   }
@@ -73,13 +76,19 @@ export function entitlementFromUser(
     keyId?: string;
     freeMode?: boolean;
     mongoSubscriptionId?: string;
+    trialAmountInr?: number;
   } = {},
 ) {
   const freeMode = extras.freeMode === true;
   const isPremium = userIsPremium(user, freeMode);
   const trialUsed = Boolean(user.trialUsed);
   const trialEligible = !trialUsed;
-  const { freeMode: _freeMode, ...rest } = extras;
+  const trialAmountInr = extras.trialAmountInr ?? 1;
+  const {
+    freeMode: _freeMode,
+    trialAmountInr: _trialAmountInr,
+    ...rest
+  } = extras;
   const activePlan =
     (user.currentPlan as SubscriptionPlanOffer | null | undefined) ??
     (isPremium || user.subscriptionStatus === "pending" ? "monthly" : null);
@@ -110,7 +119,7 @@ export function entitlementFromUser(
     subscriptionStatus: freeMode ? ("active" as const) : user.subscriptionStatus,
     trialUsed,
     trialEligible,
-    offers: offersForUser({ ...user, trialUsed }),
+    offers: offersForUser({ ...user, trialUsed }, trialAmountInr),
     ...rest,
   };
 }

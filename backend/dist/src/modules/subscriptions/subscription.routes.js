@@ -53,15 +53,53 @@ async function startSubscription(options, requestedPlan, req, res, next) {
             res.status(409).json({ error: "SUBSCRIPTION_ALREADY_ACTIVE" });
             return;
         }
-        // Block duplicate in-flight / active period subscriptions.
-        const existingOpen = await Subscription.countDocuments({
+        // Abandoned checkouts leave status=created/pending and block retries.
+        // Cancel them (and Razorpay if possible), then allow a fresh start —
+        // important when trial amount/plan changes (e.g. ₹3 → ₹1).
+        const staleOpen = await Subscription.find({
             userId: user.id,
+            paymentStatus: "pending",
             subscriptionStatus: {
-                $in: ["created", "authenticated", "active", "pending"],
+                $in: ["created", "pending", "authenticated"],
+            },
+        }).lean();
+        for (const stale of staleOpen) {
+            try {
+                await options.gateway.cancelSubscription({
+                    razorpaySubscriptionId: stale.razorpaySubscriptionId,
+                    cancelAtCycleEnd: false,
+                });
+            }
+            catch {
+                // Already cancelled / expired on Razorpay — continue cleanup.
+            }
+            await Subscription.findByIdAndUpdate(stale._id, {
+                $set: {
+                    subscriptionStatus: "cancelled",
+                    paymentStatus: "failed",
+                    isActive: false,
+                    cancelledAt: new Date(),
+                },
+            });
+        }
+        if (staleOpen.length > 0 || user.subscriptionStatus === "pending") {
+            await User.findByIdAndUpdate(user.id, {
+                $set: {
+                    subscriptionStatus: "authenticated",
+                    razorpaySubscriptionId: null,
+                },
+            });
+        }
+        // Still block if a paid/active period is open.
+        const existingActive = await Subscription.countDocuments({
+            userId: user.id,
+            paymentStatus: "completed",
+            subscriptionStatus: {
+                $in: ["authenticated", "active"],
             },
             endDate: { $gte: new Date() },
         });
-        if (existingOpen > 0) {
+        if (existingActive > 0) {
             res.status(409).json({ error: "SUBSCRIPTION_ALREADY_ACTIVE" });
             return;
         }
@@ -126,6 +164,7 @@ async function startSubscription(options, requestedPlan, req, res, next) {
             keyId: options.keyId,
             mongoSubscriptionId: doc._id.toString(),
             freeMode: options.freeMode,
+            trialAmountInr: options.trialAmountInr,
         }));
     }
     catch (error) {
@@ -179,7 +218,7 @@ async function verifyPayment(options, req, res, next) {
                 subscriptionExpiresAt: fresh?.subscriptionExpiresAt
                     ? new Date(fresh.subscriptionExpiresAt).toISOString()
                     : user.subscriptionExpiresAt,
-            }, resolvePlan(fresh?.currentPlan ?? "monthly"), { freeMode: options.freeMode }));
+            }, resolvePlan(fresh?.currentPlan ?? "monthly"), { freeMode: options.freeMode, trialAmountInr: options.trialAmountInr }));
             return;
         }
         if (sub.paymentStatus !== "pending") {
@@ -216,7 +255,7 @@ async function verifyPayment(options, req, res, next) {
             trialUsed: sub.isTrial ? true : user.trialUsed,
             currentPlan: resolvePlan(sub.plan),
             subscriptionExpiresAt: premiumExpiresAt.toISOString(),
-        }, resolvePlan(sub.plan), { freeMode: options.freeMode }));
+        }, resolvePlan(sub.plan), { freeMode: options.freeMode, trialAmountInr: options.trialAmountInr }));
     }
     catch (error) {
         next(error);
@@ -273,7 +312,7 @@ async function cancelSubscription(options, req, res, next) {
                 trialUsed: true,
                 subscriptionExpiresAt: expiresAt.toISOString(),
                 currentPlan: fresh?.currentPlan ?? user.currentPlan,
-            }, resolvePlan(fresh?.currentPlan ?? "monthly"), { freeMode: options.freeMode }),
+            }, resolvePlan(fresh?.currentPlan ?? "monthly"), { freeMode: options.freeMode, trialAmountInr: options.trialAmountInr }),
             message: expiresAt.getTime() > now.getTime()
                 ? `Subscription cancelled. Premium access will end at ${expiresAt.toISOString()}`
                 : "Subscription cancelled",
@@ -310,6 +349,7 @@ export function createSubscriptionRouter(options) {
     router.get("/status", options.authenticate, (req, res) => {
         res.json(entitlementFromUser(req.user, options.planId, {
             freeMode: options.freeMode,
+            trialAmountInr: options.trialAmountInr,
         }));
     });
     return router;

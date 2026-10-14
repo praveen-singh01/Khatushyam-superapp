@@ -5,6 +5,7 @@ import { DEFAULT_LIVE_TITLE, LIVE_STREAM_KEY, LiveStream, toLiveStreamResponse, 
 import { isS3MediaKey } from "../../shared/media-paths.js";
 import { DEFAULT_STORY, STORY_KEY, Story, toStoryResponse, } from "./story.model.js";
 import { DEFAULT_TRAVEL_GUIDES, TRAVEL_GUIDES_KEY, TravelGuides, toTravelGuidesResponse, } from "./travel-guide.model.js";
+import { Event, DEFAULT_EVENTS, } from "./event.model.js";
 const LIBRARY_TYPES = new Set(["wallpaper", "ringtone", "poster"]);
 const POSTERS_PAGE_MAX = 50;
 const POSTERS_PAGE_DEFAULT = 20;
@@ -65,6 +66,124 @@ export function createContentRouter(authenticate, requirePremium, cloudFrontBase
             next(error);
         }
     });
+    /**
+     * Public HTML shell for in-app YouTube playback.
+     * Mobile WebViews often hit error 153 when embedding without a real HTTPS
+     * document origin — this page is served from our domain so Referer is valid.
+     */
+    router.get("/youtube-embed/:videoId", (req, res) => {
+        const videoId = String(req.params.videoId ?? "");
+        if (!/^[a-zA-Z0-9_-]{6,20}$/.test(videoId)) {
+            res.status(400).type("text/plain").send("Invalid video id");
+            return;
+        }
+        const autoplay = req.query.autoplay !== "0";
+        // Default unmuted; pass mute=1 only when caller explicitly wants silent autoplay.
+        const mute = req.query.mute === "1";
+        const loop = req.query.loop === "1";
+        const host = req.get("x-forwarded-host") || req.get("host") || "baba.yaaro.online";
+        const proto = req.get("x-forwarded-proto") === "http" ? "http" : "https";
+        const origin = `${proto}://${host}`;
+        res.status(200);
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        res.setHeader("Cache-Control", "no-store");
+        res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+        // Allow WebView / iframe clients to load this shell (helmet defaults block).
+        res.removeHeader("Cross-Origin-Resource-Policy");
+        res.removeHeader("Cross-Origin-Opener-Policy");
+        res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+        // Override helmet CSP so the YouTube iframe / IFrame API can load.
+        res.setHeader("Content-Security-Policy", [
+            "default-src 'none'",
+            "script-src 'unsafe-inline' https://www.youtube.com https://www.youtube-nocookie.com https://s.ytimg.com",
+            "style-src 'unsafe-inline'",
+            "img-src https: data:",
+            "media-src https: blob:",
+            "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
+            "connect-src https://www.youtube.com https://www.youtube-nocookie.com https://s.ytimg.com",
+            "worker-src blob:",
+            "child-src blob: https://www.youtube.com",
+            "base-uri 'none'",
+        ].join("; "));
+        res.send(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>YouTube</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
+    #player { position: absolute; inset: 0; width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <div id="player"></div>
+  <script>
+    var YT_VIDEO_ID = ${JSON.stringify(videoId)};
+    var YT_ORIGIN = ${JSON.stringify(origin)};
+    var YT_AUTOPLAY = ${autoplay ? "true" : "false"};
+    var YT_MUTE = ${mute ? "true" : "false"};
+    var YT_LOOP = ${loop ? "true" : "false"};
+    var ytPlayer = null;
+
+    function pauseYt() {
+      try { if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); } catch (e) {}
+    }
+
+    function onYouTubeIframeAPIReady() {
+      ytPlayer = new YT.Player('player', {
+        width: '100%',
+        height: '100%',
+        videoId: YT_VIDEO_ID,
+        host: 'https://www.youtube.com',
+        playerVars: {
+          autoplay: YT_AUTOPLAY ? 1 : 0,
+          mute: YT_MUTE ? 1 : 0,
+          playsinline: 1,
+          rel: 0,
+          modestbranding: 1,
+          controls: 1,
+          fs: 1,
+          origin: YT_ORIGIN,
+          enablejsapi: 1,
+          loop: YT_LOOP ? 1 : 0,
+          playlist: YT_LOOP ? YT_VIDEO_ID : undefined
+        },
+        events: {
+          onReady: function (event) {
+            try {
+              if (!YT_MUTE) event.target.unMute();
+              if (YT_AUTOPLAY) {
+                event.target.playVideo();
+                // Some WebViews ignore first unmuted autoplay — retry once.
+                setTimeout(function () {
+                  try {
+                    if (!YT_MUTE) event.target.unMute();
+                    event.target.setVolume(100);
+                    if (event.target.getPlayerState && event.target.getPlayerState() !== 1) {
+                      event.target.playVideo();
+                    }
+                  } catch (e) {}
+                }, 400);
+              }
+            } catch (e) {}
+          },
+          onError: function () {
+            document.body.setAttribute('data-yt-error', '1');
+            document.body.innerText = 'Video unavailable';
+          }
+        }
+      });
+    }
+
+    var tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  </script>
+</body>
+</html>`);
+    });
     /** Travel guides — admin CMS list (Hinglish / localized steps). */
     router.get("/travel-guides", async (_req, res, next) => {
         try {
@@ -81,6 +200,33 @@ export function createContentRouter(authenticate, requirePremium, cloudFrontBase
                 return;
             }
             res.json(toTravelGuidesResponse(doc));
+        }
+        catch (error) {
+            next(error);
+        }
+    });
+    /** Community / temple events for the Events tab. */
+    router.get("/events", async (_req, res, next) => {
+        try {
+            const docs = await Event.find({ status: "published" })
+                .sort({ sortOrder: 1, createdAt: -1 })
+                .lean();
+            const items = docs.length > 0
+                ? docs
+                : DEFAULT_EVENTS.map((e, i) => ({
+                    _id: `default-${i}`,
+                    ...e,
+                    status: "published",
+                }));
+            res.json({
+                items: items.map((e) => ({
+                    id: String(e._id),
+                    title: e.title,
+                    city: e.city,
+                    dateLabel: e.dateLabel,
+                    venue: e.venue,
+                })),
+            });
         }
         catch (error) {
             next(error);

@@ -1,6 +1,6 @@
 import { userIsPremium } from "../modules/subscriptions/premium.js";
-export function offersForUser(user) {
-    // First-time: ₹3 intro trial → then ₹199/month.
+export function offersForUser(user, trialPriceInr = 1) {
+    // First-time: ₹1 intro trial (24h) → then ₹199/month.
     // After trial used (cancel/expiry): ₹49/week + ₹199/month only.
     if (!user.trialUsed) {
         return [
@@ -8,7 +8,7 @@ export function offersForUser(user) {
                 id: "trial_monthly",
                 priceInr: 199,
                 period: "month",
-                trialPriceInr: 3,
+                trialPriceInr,
             },
         ];
     }
@@ -30,7 +30,8 @@ export function entitlementFromUser(user, planId, extras = {}) {
     const isPremium = userIsPremium(user, freeMode);
     const trialUsed = Boolean(user.trialUsed);
     const trialEligible = !trialUsed;
-    const { freeMode: _freeMode, ...rest } = extras;
+    const trialAmountInr = extras.trialAmountInr ?? 1;
+    const { freeMode: _freeMode, trialAmountInr: _trialAmountInr, ...rest } = extras;
     const activePlan = user.currentPlan ??
         (isPremium || user.subscriptionStatus === "pending" ? "monthly" : null);
     const expiresAt = user.subscriptionExpiresAt ?? null;
@@ -58,7 +59,7 @@ export function entitlementFromUser(user, planId, extras = {}) {
         subscriptionStatus: freeMode ? "active" : user.subscriptionStatus,
         trialUsed,
         trialEligible,
-        offers: offersForUser({ ...user, trialUsed }),
+        offers: offersForUser({ ...user, trialUsed }, trialAmountInr),
         ...rest,
     };
 }

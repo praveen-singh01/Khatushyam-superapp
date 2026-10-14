@@ -4,6 +4,8 @@ const userSchema = new Schema({
     email: { type: String, required: true, lowercase: true, trim: true },
     displayName: String,
     photoUrl: String,
+    phone: { type: String, default: null, trim: true },
+    onboardingCompleted: { type: Boolean, default: false, index: true },
     role: {
         type: String,
         enum: ["user", "admin"],

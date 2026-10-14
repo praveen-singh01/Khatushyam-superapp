@@ -10,7 +10,9 @@ import '../../auth/presentation/auth_providers.dart';
 const _kPhotoPath = 'poster_user_photo_path';
 const _kDisplayName = 'poster_display_name';
 const _kSubtitle = 'poster_subtitle';
-
+const _kPhotoScale = 'poster_user_photo_scale';
+const _kPhotoOffsetX = 'poster_user_photo_offset_x';
+const _kPhotoOffsetY = 'poster_user_photo_offset_y';
 
 class PosterProfileState {
   const PosterProfileState({
@@ -18,12 +20,18 @@ class PosterProfileState {
     required this.subtitle,
     this.photoPath,
     this.isProcessingPhoto = false,
+    this.photoScale = 1.0,
+    this.photoOffsetX = 0.0,
+    this.photoOffsetY = 0.0,
   });
 
   final String displayName;
   final String subtitle;
   final String? photoPath;
   final bool isProcessingPhoto;
+  final double photoScale;
+  final double photoOffsetX;
+  final double photoOffsetY;
 
   File? get photoFile {
     final path = photoPath;
@@ -37,6 +45,9 @@ class PosterProfileState {
     String? subtitle,
     String? photoPath,
     bool? isProcessingPhoto,
+    double? photoScale,
+    double? photoOffsetX,
+    double? photoOffsetY,
     bool clearPhoto = false,
   }) =>
       PosterProfileState(
@@ -44,6 +55,9 @@ class PosterProfileState {
         subtitle: subtitle ?? this.subtitle,
         photoPath: clearPhoto ? null : (photoPath ?? this.photoPath),
         isProcessingPhoto: isProcessingPhoto ?? this.isProcessingPhoto,
+        photoScale: photoScale ?? this.photoScale,
+        photoOffsetX: photoOffsetX ?? this.photoOffsetX,
+        photoOffsetY: photoOffsetY ?? this.photoOffsetY,
       );
 }
 
@@ -53,6 +67,9 @@ final posterProfileProvider =
     );
 
 class PosterProfileController extends AsyncNotifier<PosterProfileState> {
+  static const minPhotoScale = 0.55;
+  static const maxPhotoScale = 1.85;
+
   @override
   Future<PosterProfileState> build() async {
     final prefs = await SharedPreferences.getInstance();
@@ -62,6 +79,9 @@ class PosterProfileController extends AsyncNotifier<PosterProfileState> {
     final savedName = prefs.getString(_kDisplayName)?.trim();
     final savedSubtitle = prefs.getString(_kSubtitle)?.trim();
     final savedPhoto = prefs.getString(_kPhotoPath);
+    final savedScale = prefs.getDouble(_kPhotoScale) ?? 1.0;
+    final savedOx = prefs.getDouble(_kPhotoOffsetX) ?? 0.0;
+    final savedOy = prefs.getDouble(_kPhotoOffsetY) ?? 0.0;
 
     var photoPath = savedPhoto;
     if (photoPath != null && !File(photoPath).existsSync()) {
@@ -79,6 +99,9 @@ class PosterProfileController extends AsyncNotifier<PosterProfileState> {
               ? savedSubtitle
               : 'Jai Shree Shyam',
       photoPath: photoPath,
+      photoScale: savedScale.clamp(minPhotoScale, maxPhotoScale),
+      photoOffsetX: savedOx,
+      photoOffsetY: savedOy,
     );
   }
 
@@ -99,6 +122,27 @@ class PosterProfileController extends AsyncNotifier<PosterProfileState> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kDisplayName, next.displayName);
     await prefs.setString(_kSubtitle, next.subtitle);
+  }
+
+  Future<void> setPhotoTransform({
+    required double scale,
+    required double offsetX,
+    required double offsetY,
+  }) async {
+    final current = state.asData?.value;
+    if (current == null) return;
+
+    final next = current.copyWith(
+      photoScale: scale.clamp(minPhotoScale, maxPhotoScale),
+      photoOffsetX: offsetX,
+      photoOffsetY: offsetY,
+    );
+    state = AsyncData(next);
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble(_kPhotoScale, next.photoScale);
+    await prefs.setDouble(_kPhotoOffsetX, next.photoOffsetX);
+    await prefs.setDouble(_kPhotoOffsetY, next.photoOffsetY);
   }
 
   /// Persists an already-cropped/cutout photo after the user taps OK.
@@ -130,11 +174,17 @@ class PosterProfileController extends AsyncNotifier<PosterProfileState> {
       final next = current.copyWith(
         photoPath: saved.path,
         isProcessingPhoto: false,
+        photoScale: 1.0,
+        photoOffsetX: 0.0,
+        photoOffsetY: 0.0,
       );
       state = AsyncData(next);
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_kPhotoPath, saved.path);
+      await prefs.setDouble(_kPhotoScale, 1.0);
+      await prefs.setDouble(_kPhotoOffsetX, 0.0);
+      await prefs.setDouble(_kPhotoOffsetY, 0.0);
 
       if (previousPath != null &&
           previousPath.isNotEmpty &&
@@ -150,4 +200,3 @@ class PosterProfileController extends AsyncNotifier<PosterProfileState> {
     }
   }
 }
-

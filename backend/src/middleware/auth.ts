@@ -5,6 +5,7 @@ import type {
   UserRole,
 } from "../shared/types.js";
 import { User } from "../modules/auth/user.model.js";
+import { serializeAuthUser } from "../modules/auth/user.serialize.js";
 import { computeIsPremium } from "../modules/subscriptions/premium.js";
 
 function parseAdminEmails(raw?: string): Set<string> {
@@ -47,7 +48,6 @@ async function resolveUser(
   const shouldBePremium = premiumTestEmails.has(email);
   const setFields: {
     email: string;
-    displayName?: string;
     photoUrl?: string;
     role?: UserRole;
     subscriptionStatus?: SubscriptionStatus;
@@ -56,7 +56,6 @@ async function resolveUser(
     trialUsed?: boolean;
   } = {
     email,
-    displayName: identity.name,
     photoUrl: identity.picture,
   };
   if (shouldBeAdmin) {
@@ -74,6 +73,8 @@ async function resolveUser(
     {
       $set: setFields,
       $setOnInsert: {
+        displayName: identity.name,
+        onboardingCompleted: false,
         ...(shouldBePremium
           ? {}
           : {
@@ -86,20 +87,7 @@ async function resolveUser(
     { new: true, upsert: true },
   ).lean();
 
-  return {
-    id: user._id.toString(),
-    firebaseUid: user.firebaseUid,
-    email: user.email,
-    displayName: user.displayName,
-    photoUrl: user.photoUrl,
-    role: (user.role as UserRole | undefined) ?? "user",
-    subscriptionStatus: user.subscriptionStatus,
-    trialUsed: Boolean(user.trialUsed),
-    currentPlan: user.currentPlan ?? null,
-    subscriptionExpiresAt: user.subscriptionExpiresAt
-      ? new Date(user.subscriptionExpiresAt).toISOString()
-      : null,
-  };
+  return serializeAuthUser(user as Parameters<typeof serializeAuthUser>[0]);
 }
 
 export function authenticate(

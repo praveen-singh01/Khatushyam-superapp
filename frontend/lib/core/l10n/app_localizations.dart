@@ -332,7 +332,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallSubtitleTrial.
   ///
   /// In hi, this message translates to:
-  /// **'₹3 trial se shuru karein, phir ₹199/mahina. Kabhi bhi radd karein.'**
+  /// **'₹1 trial (24 ghante), phir ₹199/mahina. Kabhi bhi radd karein.'**
   String get paywallSubtitleTrial;
 
   /// No description provided for @paywallSubtitleReturn.
@@ -368,13 +368,13 @@ abstract class AppLocalizations {
   /// No description provided for @paywallTrialDetail.
   ///
   /// In hi, this message translates to:
-  /// **'Phir ₹{price}/mahina. Kabhi bhi radd karein.'**
+  /// **'24 ghante baad ₹{price}/mahina. Kabhi bhi radd karein.'**
   String paywallTrialDetail(int price);
 
   /// No description provided for @paywallTrialCta.
   ///
   /// In hi, this message translates to:
-  /// **'₹3 trial shuru karein'**
+  /// **'₹1 trial shuru karein'**
   String get paywallTrialCta;
 
   /// No description provided for @paywallSubscribeCta.
@@ -386,7 +386,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallMandateNote.
   ///
   /// In hi, this message translates to:
-  /// **'Pehla bhugtan: autopay mandate set karne ke liye ₹3. Uske baad chuni yojana apne aap renew hogi.'**
+  /// **'Pehla bhugtan: 24 ghante ke liye ₹1. Phir plan ₹199/mahina par renew hogi.'**
   String get paywallMandateNote;
 
   /// No description provided for @paywallMandateAddon.

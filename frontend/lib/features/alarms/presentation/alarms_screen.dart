@@ -11,6 +11,7 @@ import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/async_body.dart';
 import '../../../core/widgets/soft_card.dart';
+import '../../subscription/presentation/premium_gate.dart';
 import '../domain/app_alarm.dart';
 import 'alarms_providers.dart';
 
@@ -32,7 +33,7 @@ class _AlarmsFeatureScreenState extends ConsumerState<AlarmsFeatureScreen> {
   }
 
   Future<void> _openCreate() async {
-    // Alarm feature is free for now (testing).
+    if (!requirePremiumOrOpenPaywall(context, ref)) return;
     final created = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
